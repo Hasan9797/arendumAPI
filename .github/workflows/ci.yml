@@ -25,13 +25,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install -g pnpm
-
-      - name: Install dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Notify Telegram on push success
         if: github.event_name == 'push' && success()
