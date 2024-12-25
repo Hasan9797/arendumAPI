@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js 22
         uses: actions/setup-node@v3
         with:
-          node-version: '22' # Set Node.js version to 22
+          node-version: '22'  # Set Node.js version to 22
 
       # Step 3: Setup SSH and run necessary commands
       - name: Setup SSH and deploy
@@ -28,7 +28,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          script:
+          script: |
             # Loyiha katalogiga o'tish
             cd ~/arendum-api/
             git stash || { echo "git stash failed"; exit 1; }
