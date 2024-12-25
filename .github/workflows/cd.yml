@@ -25,7 +25,7 @@ jobs:
 
       # Step 3: Install dependencies
       - name: Install dependencies
-        run: pnpm install # pnpm yordamida barcha kerakli paketlarni o'rnatish
+        run: npm install # pnpm yordamida barcha kerakli paketlarni o'rnatish
 
       # Step 4: Setup SSH and deploy
       - name: Setup SSH
