@@ -20,8 +20,8 @@ jobs:
           node-version: '22' # Node.js versiyasi 22
 
       # Step 2: Install pnpm globally
-      - name: Install pnpm
-        run: npm install -g pnpm # pnpm ni global tarzda o'rnatish
+      #- name: Install pnpm
+        #run: npm install -g pnpm # pnpm ni global tarzda o'rnatish
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -42,7 +42,8 @@ jobs:
             cd ~/arendum-api/  # Loyiha papkasiga o'tish
             git stash || { echo "git stash failed"; exit 1; }
             git pull origin main || { echo "git pull failed"; exit 1; }
-            pnpm install  # pnpm yordamida o'rnatish
+            npm install  # pnpm yordamida o'rnatish
+            npm install -g prisma
             npx prisma generate  # Prisma fayllarini generatsiya qilish
             npx prisma migrate deploy  # Prisma migratsiyasini bajarish
             pm2 restart 0  # PM2 bilan ilovani qayta ishga tushirish
