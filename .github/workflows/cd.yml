@@ -18,8 +18,11 @@ jobs:
         with:
           node-version: '22' # Node versiyasi
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Install dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Setup SSH
         uses: appleboy/ssh-action@master
