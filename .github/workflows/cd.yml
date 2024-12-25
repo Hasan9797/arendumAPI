@@ -10,21 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 1: Set up Node.js v22
+      # Step 2: Set up Node.js v22
       - name: Setup Node.js v22
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '22'  # Node.js versiyasini 22 ga sozlash
+          node-version: '22'  # Node.js versiyasini 22 ga o'rnatish
 
-      # Step 2: Install dependencies using npm
+      # Step 3: Install pnpm globally
+      - name: Install pnpm
+        run: |
+          npm install -g pnpm  # pnpm ni global tarzda o'rnatish
+
+      # Step 4: Install dependencies
       - name: Install dependencies
-        run: npm install  # npm yordamida barcha kerakli paketlarni o'rnatish
+        run: pnpm install  # pnpm yordamida o'rnatish
 
-      # Step 3: Setup SSH and deploy
-      - name: Setup SSH
+      # Step 5: Setup SSH and deploy
+      - name: Setup SSH and deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_NAME }}
@@ -34,15 +40,12 @@ jobs:
           script: |
             # Node.js versiyasini tekshirish
             node -v
-            cd ~/arendum-api/
-            git stash || { echo "git stash failed"; exit 1; }
-            git pull origin main || { echo "git pull failed"; exit 1; }
-            npm install  # npm yordamida o'rnatish
+            pnpm install
             npx prisma migrate deploy --name migrated  # Prisma migratsiya
             npx prisma generate  # Prisma fayllarini generatsiya qilish
-            pm2 restart 0  # PM2 bilan qayta ishga tushirish
+            pm2 restart 0  # PM2 orqali qayta ishga tushirish
 
-      # Step 4: Notify Telegram on success
+      # Step 6: Notify Telegram on success
       - name: Notify Telegram on success
         if: success()
         run: |
@@ -52,7 +55,7 @@ jobs:
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="CD Successfully.%0ACommit: $COMMIT_MESSAGE%0AAuthor: $COMMIT_AUTHOR"
 
-      # Step 5: Notify Telegram on failure
+      # Step 7: Notify Telegram on failure
       - name: Notify Telegram on failure
         if: failure()
         run: |
