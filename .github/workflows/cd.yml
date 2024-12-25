@@ -24,26 +24,15 @@ jobs:
       - name: Setup SSH and deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_NAME }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          script: |
-            # Node.js versiyasini tekshirish va yangilash
-            node -v
-            if [ $(node -v | grep -oP 'v\K[0-9]+') -lt 18 ]; then
-              echo "Node.js versiyasi 18 dan past. Yangilashni boshlayapmiz..."
-              curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-              sudo apt-get install -y nodejs
-            fi
-
+          script:
             # Loyiha katalogiga o'tish
             cd ~/arendum-api/
             git stash || { echo "git stash failed"; exit 1; }
             git pull origin main || { echo "git pull failed"; exit 1; }
-
-            # pnpm va pm2 o'rnatish
-            npm install -g pnpm pm2
 
             pnpm install
             npx prisma migrate deploy --name migrated  # Prisma migratsiya
