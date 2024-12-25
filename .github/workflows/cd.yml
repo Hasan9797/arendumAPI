@@ -1,0 +1,71 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Node.js v22
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22' # Set Node.js version to 22
+
+      # Step 3: Setup SSH and run necessary commands
+      - name: Setup SSH and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            # Node.js versiyasini tekshirish va yangilash
+            node -v
+            if [ $(node -v | grep -oP 'v\K[0-9]+') -lt 18 ]; then
+              echo "Node.js versiyasi 18 dan past. Yangilashni boshlayapmiz..."
+              curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+              sudo apt-get install -y nodejs
+            fi
+
+            # Loyiha katalogiga o'tish
+            cd ~/arendum-api/
+            git stash || { echo "git stash failed"; exit 1; }
+            git pull origin main || { echo "git pull failed"; exit 1; }
+
+            # pnpm va pm2 o'rnatish
+            npm install -g pnpm pm2
+
+            pnpm install
+            npx prisma migrate deploy --name migrated  # Prisma migratsiya
+            npx prisma generate  # Prisma fayllarini generatsiya qilish
+            pm2 restart 0
+
+      # Step 4: Notify Telegram on success
+      - name: Notify Telegram on success
+        if: success()
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
+          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -d text="CD Successfully.%0ACommit: $COMMIT_MESSAGE%0AAuthor: $COMMIT_AUTHOR"
+
+      # Step 5: Notify Telegram on failure
+      - name: Notify Telegram on failure
+        if: failure()
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
+          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -d text="CD Failed.\\nCommit: $COMMIT_MESSAGE\\nAuthor: $COMMIT_AUTHOR"

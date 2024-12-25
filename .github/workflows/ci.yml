@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js 22.12.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.12.0'
+
+      - name: Configure npm registry
+        run: npm config set registry https://registry.npmjs.org/
+
+      - name: Install pnpm manually # Qo'lda pnpm o'rnatish
+        run: |
+          npm install -g pnpm@9.15.1
+
+      - name: Install dependencies
+        run: |
+          pnpm install
+
+      - name: Notify Telegram on push success
+        if: github.event_name == 'push' && success()
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
+          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
+          COMMIT_MESSAGE_ENCODED=$(echo $COMMIT_MESSAGE | jq -sRr @uri)
+          COMMIT_AUTHOR_ENCODED=$(echo $COMMIT_AUTHOR | jq -sRr @uri)
+          MESSAGE="Push successful.%0ACommit: $COMMIT_MESSAGE_ENCODED%0AAuthor: $COMMIT_AUTHOR_ENCODED"
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -d text="$MESSAGE"
