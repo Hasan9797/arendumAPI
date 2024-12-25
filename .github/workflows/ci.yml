@@ -20,7 +20,7 @@ jobs:
       - name: Configure npm registry
         run: npm config set registry https://registry.npmjs.org/
 
-      - name: Install pnpm manually # Qo'lda pnpm o'rnatish
+      - name: Install pnpm manually 
         run: |
           npm install -g pnpm@9.15.1
 
