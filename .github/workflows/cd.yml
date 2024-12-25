@@ -18,12 +18,11 @@ jobs:
       - name: Setup Node.js v22
         uses: actions/setup-node@v3
         with:
-          node-version: '22'  # Node.js versiyasini 22 ga o'rnatish
+          node-version: '22'  # Node.js v22 versiyasini o'rnatish
 
       # Step 3: Install pnpm globally
       - name: Install pnpm
-        run: |
-          npm install -g pnpm  # pnpm ni global tarzda o'rnatish
+        run: npm install -g pnpm  # pnpm ni global tarzda o'rnatish
 
       # Step 4: Install dependencies
       - name: Install dependencies
@@ -39,11 +38,11 @@ jobs:
           port: 22
           script: |
             # Node.js versiyasini tekshirish
-            node -v
+            node -v  # Verifying Node.js version
             pnpm install
             npx prisma migrate deploy --name migrated  # Prisma migratsiya
             npx prisma generate  # Prisma fayllarini generatsiya qilish
-            pm2 restart 0  # PM2 orqali qayta ishga tushirish
+            pm2 restart 0  # PM2 bilan qayta ishga tushirish
 
       # Step 6: Notify Telegram on success
       - name: Notify Telegram on success
