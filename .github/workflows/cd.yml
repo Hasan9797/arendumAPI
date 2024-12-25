@@ -18,10 +18,15 @@ jobs:
       - name: Set up Node.js 22
         uses: actions/setup-node@v3
         with:
-          node-version: '22'  # Ensure Node.js v22 is being used
-          cache: 'pnpm'  # Use pnpm cache for faster builds
+          node-version: '22' # Set Node.js version to 22
+          cache: 'pnpm' # Cache pnpm packages for faster builds
 
-      # Step 3: Setup SSH and run necessary commands
+      # Step 3: Install pnpm globally
+      - name: Install pnpm
+        run: |
+          npm install -g pnpm  # Install pnpm globally
+
+      # Step 4: Setup SSH and run necessary commands
       - name: Setup SSH and deploy
         uses: appleboy/ssh-action@master
         with:
@@ -31,13 +36,13 @@ jobs:
           port: 22
           script: |
             # Node.js versiyasini tekshirish
-            node -v  # Verifying Node.js version
+            node -v
             pnpm install
             npx prisma migrate deploy --name migrated  # Prisma migratsiya
             npx prisma generate  # Prisma fayllarini generatsiya qilish
             pm2 restart 0
 
-      # Step 4: Notify Telegram on success
+      # Step 5: Notify Telegram on success
       - name: Notify Telegram on success
         if: success()
         run: |
@@ -47,7 +52,7 @@ jobs:
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="CD Successfully.%0ACommit: $COMMIT_MESSAGE%0AAuthor: $COMMIT_AUTHOR"
 
-      # Step 5: Notify Telegram on failure
+      # Step 6: Notify Telegram on failure
       - name: Notify Telegram on failure
         if: failure()
         run: |
