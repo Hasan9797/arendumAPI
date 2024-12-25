@@ -13,34 +13,41 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Step 1: Setup Node.js version 22
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '22' # Node versiyasi
+          node-version: '22' # Node.js versiyasi 22
 
+      # Step 2: Install pnpm globally
       - name: Install pnpm
-        run: npm install -g pnpm
+        run: npm install -g pnpm # pnpm ni global tarzda o'rnatish
 
+      # Step 3: Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: pnpm install # pnpm yordamida barcha kerakli paketlarni o'rnatish
 
+      # Step 4: Setup SSH and deploy
       - name: Setup SSH
         uses: appleboy/ssh-action@master
         id: ssh
         with:
           host: ${{ secrets.HOST_NAME }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY  }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd ~/arendum-api/
+            # Node.js versiyasini tekshirish
+            node -v
+            cd ~/arendum-api/  # Loyiha papkasiga o'tish
             git stash || { echo "git stash failed"; exit 1; }
             git pull origin main || { echo "git pull failed"; exit 1; }
-            pnpm install
-            npx prisma generate
-            npx prisma migrate deploy
-            pm2 restart 0
+            pnpm install  # pnpm yordamida o'rnatish
+            npx prisma generate  # Prisma fayllarini generatsiya qilish
+            npx prisma migrate deploy  # Prisma migratsiyasini bajarish
+            pm2 restart 0  # PM2 bilan ilovani qayta ishga tushirish
 
+      # Step 5: Notify Telegram on success
       - name: Notify Telegram on success
         if: success()
         run: |
@@ -50,6 +57,7 @@ jobs:
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="CD Successfully.\\nCommit: $COMMIT_MESSAGE\\nAuthor: $COMMIT_AUTHOR"
 
+      # Step 6: Notify Telegram on failure
       - name: Notify Telegram on failure
         if: failure()
         run: |
