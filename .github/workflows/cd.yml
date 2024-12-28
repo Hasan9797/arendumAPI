@@ -30,7 +30,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd ~/ecommApi/
+            cd ~/arendumAPI/
             git stash || { echo "git stash failed"; exit 1; }
             git pull origin main || { echo "git pull failed"; exit 1; }
             npm install
