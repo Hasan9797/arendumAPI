@@ -23,10 +23,6 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm # pnpm ni global tarzda o'rnatish
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
-        run: npm install # pnpm yordamida barcha kerakli paketlarni o'rnatish
-
       # Step 4: Setup SSH and deploy
       - name: Setup SSH
         uses: appleboy/ssh-action@master
