@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '22' # Node.js versiyasini 22 ga o'rnatish
 
-      # Step 4: SSH through to the server and pull the latest changes
+      # Step 3: SSH through to the server and pull the latest changes
       - name: SSH and pull the latest changes
         uses: appleboy/ssh-action@master
         with:
@@ -31,12 +31,12 @@ jobs:
           script: |
             cd ~/arendumAPI  # Loyiha papkasiga o'tish
             git pull origin main  # Git repozitoriyasidan so'nggi o'zgarishlarni olish
-            npm install  # Barcha kerakli paketlarni o'rnatish (pnpm ni ishlatish uchun, iltimos, pnpm o'rnatish)
+            pnpm install  # Barcha kerakli paketlarni o'rnatish (pnpm ni ishlatish)
             npx prisma migrate deploy  # Prisma migratsiyasini bajarish
             npx prisma generate  # Prisma fayllarini generatsiya qilish
             pm2 restart 0  # PM2 orqali ilovani qayta ishga tushirish
 
-      # Step 5: Notify Telegram on success
+      # Step 4: Notify Telegram on success
       - name: Notify Telegram on success
         if: success()
         run: |
@@ -46,7 +46,7 @@ jobs:
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="CD Successfully.%0ACommit: $COMMIT_MESSAGE%0AAuthor: $COMMIT_AUTHOR"
 
-      # Step 6: Notify Telegram on failure
+      # Step 5: Notify Telegram on failure
       - name: Notify Telegram on failure
         if: failure()
         run: |
