@@ -3,7 +3,7 @@ name: CD
 on:
   push:
     branches:
-      - main  # 'main' branchga push qilganda trigger bo'ladi
+      - main # 'main' branchga push qilganda trigger bo'ladi
 
 jobs:
   deploy:
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js v22
         uses: actions/setup-node@v3
         with:
-          node-version: '22.12.0'  # Node.js versiyasini 22.12.0 ga o'rnatish
+          node-version: '22.12.0' # Node.js versiyasini 22.12.0 ga o'rnatish
 
       # Step 3: SSH through to the server and install dependencies
       - name: SSH and install dependencies
@@ -29,13 +29,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # Node.js va npm ni o'rnatish (agar o'rnatilmagan bo'lsa)
-            # curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-            # sudo apt-get install -y nodejs
-            # Node.js va npm versiyasini tekshirish
-            # node -v
-            # npm -v
-            # Ilovaning so'nggi o'zgarishlarini olish
             cd ~/arendumAPI  # Loyiha papkasiga o'tish
             git pull origin main  # Git repozitoriyasidan so'nggi o'zgarishlarni olish
             pnpm install  # Kerakli paketlarni o'rnatish
