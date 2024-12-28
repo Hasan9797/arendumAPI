@@ -37,6 +37,7 @@ jobs:
           script: |
             cd ~/arendumAPI  # Loyiha papkasiga o'tish
             git pull origin main  # Git repozitoriyasidan so'nggi o'zgarishlarni olish
+            npm install  # Barcha kerakli paketlarni o'rnatish (pnpm ni ishlatish uchun, iltimos, pnpm o'rnatish)
             pnpm install  # Barcha kerakli paketlarni o'rnatish
             npx prisma migrate deploy  # Prisma migratsiyasini bajarish
             npx prisma generate  # Prisma fayllarini generatsiya qilish
