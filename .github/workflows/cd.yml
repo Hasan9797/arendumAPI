@@ -3,44 +3,54 @@ name: CD
 on:
   push:
     branches:
-      - main
+      - main # 'main' branchga push qilganda trigger bo'ladi
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 1: Setup Node.js version 22
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      # Step 2: Set up Node.js v22
+      - name: Set up Node.js v22
+        uses: actions/setup-node@v3
         with:
-          node-version: '22' # Node.js versiyasi 22
+          node-version: '22' # Node.js versiyasini 22 ga o'rnatish
 
-      # Step 4: Setup SSH and deploy
-      - name: Setup SSH
+      # Step 3: Install pnpm globally
+      - name: Install pnpm globally
+        run: npm install -g pnpm # pnpm ni global tarzda o'rnatish
+
+      # Step 4: SSH through to the server and pull the latest changes
+      - name: SSH and pull the latest changes
         uses: appleboy/ssh-action@master
-        id: ssh
         with:
           host: ${{ secrets.HOST_NAME }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # Node.js versiyasini tekshirish
-            node -v
-            cd ~/arendum-api/  # Loyiha papkasiga o'tish
-            git stash || { echo "git stash failed"; exit 1; }
-            git pull origin main || { echo "git pull failed"; exit 1; }
-            npm install -g pnpm  # pnpm ni global tarzda o'rnatish
-            pnpm install  # pnpm yordamida o'rnatish
-            npx prisma generate  # Prisma fayllarini generatsiya qilish
-            npx prisma migrate deploy  # Prisma migratsiyasini bajarish
-            pm2 restart 0  # PM2 bilan ilovani qayta ishga tushirish
+            cd ~/arendumAPI  # Loyiha papkasiga o'tish
+            git pull origin main  # Git repozitoriyasidan so'nggi o'zgarishlarni olish
 
-      # Step 5: Notify Telegram on success
+      # Step 5: Install dependencies using pnpm
+      - name: Install dependencies
+        run: pnpm install # pnpm yordamida barcha kerakli paketlarni o'rnatish
+
+      # Step 6: Run Prisma migrations and generate Prisma client
+      - name: Run Prisma migrate and generate
+        run: |
+          npx prisma migrate deploy  # Prisma migratsiyasini bajarish
+          npx prisma generate  # Prisma fayllarini generatsiya qilish
+
+      # Step 7: Restart the application using PM2
+      - name: Restart the application with PM2
+        run: pm2 restart 0 # PM2 orqali ilovani qayta ishga tushirish
+
+      # Step 8: Notify Telegram on success
       - name: Notify Telegram on success
         if: success()
         run: |
@@ -48,9 +58,9 @@ jobs:
           COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -d text="CD Successfully.\\nCommit: $COMMIT_MESSAGE\\nAuthor: $COMMIT_AUTHOR"
+          -d text="CD Successfully.%0ACommit: $COMMIT_MESSAGE%0AAuthor: $COMMIT_AUTHOR"
 
-      # Step 6: Notify Telegram on failure
+      # Step 9: Notify Telegram on failure
       - name: Notify Telegram on failure
         if: failure()
         run: |
