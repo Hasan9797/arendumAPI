@@ -20,12 +20,6 @@ jobs:
         with:
           node-version: '22' # Node.js versiyasini 22 ga o'rnatish
 
-      # Step 3: Install pnpm globally
-      - name: Install pnpm globally
-        run: |
-          npm install -g pnpm  # pnpm ni global tarzda o'rnatish
-          npm install -g pm2  # pm2 ni global tarzda o'rnatish
-
       # Step 4: SSH through to the server and pull the latest changes
       - name: SSH and pull the latest changes
         uses: appleboy/ssh-action@master
@@ -38,7 +32,6 @@ jobs:
             cd ~/arendumAPI  # Loyiha papkasiga o'tish
             git pull origin main  # Git repozitoriyasidan so'nggi o'zgarishlarni olish
             npm install  # Barcha kerakli paketlarni o'rnatish (pnpm ni ishlatish uchun, iltimos, pnpm o'rnatish)
-            pnpm install  # Barcha kerakli paketlarni o'rnatish
             npx prisma migrate deploy  # Prisma migratsiyasini bajarish
             npx prisma generate  # Prisma fayllarini generatsiya qilish
             pm2 restart 0  # PM2 orqali ilovani qayta ishga tushirish
