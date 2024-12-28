@@ -18,9 +18,16 @@ jobs:
       - name: Set up Node.js v22
         uses: actions/setup-node@v3
         with:
-          node-version: '22'  # Node.js versiyasini 22 ga o'rnatish
+          node-version: '22' # Node.js versiyasini 22 ga o'rnatish
 
-      # Step 3: SSH through to the server and pull the latest changes
+      # Step 3: Install npm, pm2 globally
+      - name: Install npm and pm2 globally
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y npm
+          sudo npm install -g pm2  # PM2 ni global tarzda o'rnatish
+
+      # Step 4: SSH through to the server and pull the latest changes
       - name: SSH and pull the latest changes
         uses: appleboy/ssh-action@master
         with:
@@ -36,7 +43,7 @@ jobs:
             npx prisma generate  # Prisma fayllarini generatsiya qilish
             pm2 restart 0  # PM2 orqali ilovani qayta ishga tushirish
 
-      # Step 4: Notify Telegram on success
+      # Step 5: Notify Telegram on success
       - name: Notify Telegram on success
         if: success()
         run: |
@@ -46,7 +53,7 @@ jobs:
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="CD Successfully.%0ACommit: $COMMIT_MESSAGE%0AAuthor: $COMMIT_AUTHOR"
 
-      # Step 5: Notify Telegram on failure
+      # Step 6: Notify Telegram on failure
       - name: Notify Telegram on failure
         if: failure()
         run: |
