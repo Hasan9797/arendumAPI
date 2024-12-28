@@ -15,8 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x]
-        # Node.js qo'llab-quvvatlanadigan versiyalar jadvalini https://nodejs.org/en/about/releases/ sahifasida ko'rishingiz mumkin
+        node-version: '22.12.0'
 
     steps:
       - uses: actions/checkout@v2
@@ -25,10 +24,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Notify Telegram on push success
         if: github.event_name == 'push' && success()
