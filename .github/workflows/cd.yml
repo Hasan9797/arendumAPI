@@ -35,22 +35,12 @@ jobs:
           script: |
             cd ~/arendumAPI  # Loyiha papkasiga o'tish
             git pull origin main  # Git repozitoriyasidan so'nggi o'zgarishlarni olish
+            pnpm install  # Barcha kerakli paketlarni o'rnatish
+            npx prisma migrate deploy  # Prisma migratsiyasini bajarish
+            npx prisma generate  # Prisma fayllarini generatsiya qilish
+            pm2 restart 0  # PM2 orqali ilovani qayta ishga tushirish
 
-      # Step 5: Install dependencies using pnpm
-      - name: Install dependencies
-        run: pnpm install # pnpm yordamida barcha kerakli paketlarni o'rnatish
-
-      # Step 6: Run Prisma migrations and generate Prisma client
-      - name: Run Prisma migrate and generate
-        run: |
-          npx prisma migrate deploy  # Prisma migratsiyasini bajarish
-          npx prisma generate  # Prisma fayllarini generatsiya qilish
-
-      # Step 7: Restart the application using PM2
-      - name: Restart the application with PM2
-        run: pm2 restart 0 # PM2 orqali ilovani qayta ishga tushirish
-
-      # Step 8: Notify Telegram on success
+      # Step 5: Notify Telegram on success
       - name: Notify Telegram on success
         if: success()
         run: |
@@ -60,7 +50,7 @@ jobs:
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="CD Successfully.%0ACommit: $COMMIT_MESSAGE%0AAuthor: $COMMIT_AUTHOR"
 
-      # Step 9: Notify Telegram on failure
+      # Step 6: Notify Telegram on failure
       - name: Notify Telegram on failure
         if: failure()
         run: |
