@@ -61,7 +61,7 @@ const login = async (req, res) => {
 };
 
 const refreshToken = async (req, res) => {
-  const userRefreshToken = req.body;
+  const userRefreshToken = req.body.refreshToken || null;
 
   if (!userRefreshToken) {
     return res
