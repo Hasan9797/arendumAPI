@@ -30,15 +30,15 @@ jobs:
           port: 22
           script: |
             # Node.js va npm ni o'rnatish (agar o'rnatilmagan bo'lsa)
-            curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-            sudo apt-get install -y nodejs
+            # curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+            # sudo apt-get install -y nodejs
             # Node.js va npm versiyasini tekshirish
-            node -v
-            npm -v
+            # node -v
+            # npm -v
             # Ilovaning so'nggi o'zgarishlarini olish
             cd ~/arendumAPI  # Loyiha papkasiga o'tish
             git pull origin main  # Git repozitoriyasidan so'nggi o'zgarishlarni olish
-            npm install  # Kerakli paketlarni o'rnatish
+            pnpm install  # Kerakli paketlarni o'rnatish
             npx prisma migrate deploy  # Prisma migratsiyasini bajarish
             npx prisma generate  # Prisma fayllarini generatsiya qilish
             pm2 restart 0  # PM2 orqali ilovani qayta ishga tushirish
