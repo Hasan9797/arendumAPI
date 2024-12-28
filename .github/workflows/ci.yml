@@ -23,12 +23,12 @@ jobs:
       # Step 3: Install dependencies (using npm instead of pnpm)
       - name: Install dependencies
         run: |
-          pnpm install # Kerakli paketlarni o'rnatish
+          npm install # Kerakli paketlarni o'rnatish
 
       # Step 4: Run Tests
       - name: Run tests
         run: |
-          pnpm test # Testlarni bajarish (agar testlar bo'lsa)
+          npm test # Testlarni bajarish (agar testlar bo'lsa)
 
       # Step 5: Notify Telegram on success
       - name: Notify Telegram on success
