@@ -34,8 +34,8 @@ jobs:
             git stash || { echo "git stash failed"; exit 1; }
             git pull origin main || { echo "git pull failed"; exit 1; }
             npm install
-            # npx prisma migrate deploy || { echo "prisma migrate deploy failed"; exit 1; }
-            # npx prisma generate || { echo "prisma generate failed"; exit 1; }
+            npx prisma migrate deploy || { echo "prisma migrate deploy failed"; exit 1; }
+            npx prisma generate || { echo "prisma generate failed"; exit 1; }
             pm2 restart 0 || { echo "pm2 restart failed"; exit 1; }
 
       - name: Notify Telegram on success
