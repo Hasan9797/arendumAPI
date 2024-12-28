@@ -22,7 +22,9 @@ jobs:
 
       # Step 3: Install pnpm globally
       - name: Install pnpm globally
-        run: npm install -g pnpm # pnpm ni global tarzda o'rnatish
+        run: |
+          npm install -g pnpm  # pnpm ni global tarzda o'rnatish
+          npm install -g pm2  # pm2 ni global tarzda o'rnatish
 
       # Step 4: SSH through to the server and pull the latest changes
       - name: SSH and pull the latest changes
