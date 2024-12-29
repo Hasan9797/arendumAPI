@@ -7,7 +7,7 @@ const router = Router();
 
 router.get('/', clientController.getAll);
 
-router.get('/show/:id', clientController.getAll);
+router.get('/:id', clientController.getAll);
 
 router.post('/add', clientController.create);
 

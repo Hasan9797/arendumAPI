@@ -14,7 +14,7 @@ import {
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
 const login = async (req, res) => {
-  const { phoneNumber, mobileHash } = req.body;
+  const { phoneNumber } = req.body;
 
   if (!phoneNumber) {
     return res
@@ -27,9 +27,7 @@ const login = async (req, res) => {
   });
 
   if (!user) {
-    return res
-      .status(401)
-      .json({ message: 'Invalid credentials', success: false });
+    return res.status(401).json({ message: 'User not found', success: false });
   }
 
   // SMS code generation
@@ -40,7 +38,7 @@ const login = async (req, res) => {
   await saveSmsCode(phoneNumber, smsCode, expiresAt);
 
   // Send SMS code
-  await sendSms(phoneNumber, `Your login code is: ${smsCode}`, mobileHash);
+  await sendSms(phoneNumber, `Your login code is: ${smsCode}`);
 
   return res
     .status(200)
@@ -48,42 +46,50 @@ const login = async (req, res) => {
 };
 
 const verifySmsCode = async (req, res) => {
-  const { phoneNumber, code } = req.body;
-  const savedCode = await getSmsCode(phoneNumber);
+  try {
+    const { phoneNumber, code } = req.body;
+    const savedCode = await getSmsCode(phoneNumber);
 
-  if (!savedCode) {
-    throw new Error('SMS code not found or expired');
+    if (!savedCode) {
+      throw new Error('SMS code not found or expired');
+    }
+
+    if (savedCode != code) {
+      throw new Error('Invalid SMS code');
+    }
+
+    // Delete the SMS code temporarily
+    await deleteSmsCode(phoneNumber);
+
+    const user = await prisma.user.findUnique({
+      where: { phone: phoneNumber },
+    });
+
+    const payload = {
+      id: user.id,
+      fullName: user.fullName,
+      phone: user.phone,
+      role: user?.role || 10,
+    };
+
+    const accessToken = generateAccessToken(payload);
+
+    const refreshToken = generateRefreshAccessToken(payload);
+
+    const userToken = {
+      token: refreshToken,
+      userId: user.id,
+      expire: '7d',
+    };
+
+    await prisma.userToken.create({ data: userToken });
+
+    return res
+      .status(200)
+      .json({ message: 'Verification successful', accessToken, refreshToken });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
   }
-
-  if (savedCode != code) {
-    throw new Error('Invalid SMS code');
-  }
-
-  // Delete the SMS code temporarily
-  await deleteSmsCode(phoneNumber);
-
-  const user = await prisma.user.findUnique({
-    where: { phone: phoneNumber },
-  });
-
-  if (!user) {
-    return res.status(401).json({ message: 'Invalid credentials' });
-  }
-
-  const payload = {
-    id: user.id,
-    fullName: user.fullName,
-    phone: user.phone,
-    role: user?.role || 10,
-  };
-
-  const accessToken = generateAccessToken(payload);
-
-  const refreshToken = generateRefreshAccessToken(payload);
-
-  return res
-    .status(200)
-    .json({ message: 'Verification successful', accessToken, refreshToken });
 };
 
 export default { login, verifySmsCode };
