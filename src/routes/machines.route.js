@@ -6,7 +6,7 @@ import {
   authorization,
 } from '../middlewares/auth.middleware.js';
 
-import { ROLES } from '../constants/user-role.constant.js';
+import UserRole from '../constants/user-role.constant.js';
 
 const router = Router();
 

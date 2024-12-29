@@ -22,7 +22,7 @@ const login = async (req, res) => {
       .json({ message: 'phoneNumber is required', success: false });
   }
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.driver.findUnique({
     where: { phone: phoneNumber },
   });
 
@@ -61,7 +61,7 @@ const verifySmsCode = async (req, res) => {
     // Delete the SMS code temporarily
     await deleteSmsCode(phoneNumber);
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.driver.findUnique({
       where: { phone: phoneNumber },
     });
 
@@ -82,7 +82,7 @@ const verifySmsCode = async (req, res) => {
       expire: '7d',
     };
 
-    await prisma.userToken.create({ data: userToken });
+    await prisma.driverToken.create({ data: userToken });
 
     return res
       .status(200)

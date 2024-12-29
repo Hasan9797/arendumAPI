@@ -22,6 +22,7 @@ model Driver {
   id                      Int    @id @default(autoincrement())
   fullName                String @map("full_name")
   phone                   String @unique
+  merchantId              Int?   @map("merchant_id")
   photoTexPassport        Json   @default("[]") @map("photo_tex_passport")
   photoPassport           Json   @default("[]") @map("photo_passport")
   photoLicense            Json   @default("[]") @map("photo_license")
@@ -32,11 +33,12 @@ model Driver {
 }
 
 model Client {
-  id        Int    @id @default(autoincrement())
-  fullName  String @map("full_name")
-  phone     String @unique
-  createdAt Int    @default(0) @map("created_at")
-  updatedAt Int    @default(0) @map("updated_at")
+  id        Int     @id @default(autoincrement())
+  fullName  String  @map("full_name")
+  phone     String  @unique
+  legal     Boolean @default(false)
+  createdAt Int     @default(0) @map("created_at")
+  updatedAt Int     @default(0) @map("updated_at")
 }
 
 model Machines {
@@ -84,4 +86,13 @@ model UserToken {
   userId    Int    @map("user_id")
   createdAt Int    @default(0) @map("created_at")
   updatedAt Int    @default(0) @map("updated_at")
+}
+
+model Merchant {
+  id        Int     @id @default(autoincrement())
+  fullName  String  @map("full_name")
+  phone     String  @unique
+  legal     Boolean @default(false)
+  createdAt Int     @default(0) @map("created_at")
+  updatedAt Int     @default(0) @map("updated_at")
 }

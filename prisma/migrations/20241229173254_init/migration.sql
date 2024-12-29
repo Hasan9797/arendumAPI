@@ -17,6 +17,7 @@ CREATE TABLE "Driver" (
     "id" SERIAL NOT NULL,
     "full_name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
+    "merchant_id" INTEGER,
     "photo_tex_passport" JSONB NOT NULL DEFAULT '[]',
     "photo_passport" JSONB NOT NULL DEFAULT '[]',
     "photo_license" JSONB NOT NULL DEFAULT '[]',
@@ -33,6 +34,7 @@ CREATE TABLE "Client" (
     "id" SERIAL NOT NULL,
     "full_name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
+    "legal" BOOLEAN NOT NULL DEFAULT false,
     "created_at" INTEGER NOT NULL DEFAULT 0,
     "updated_at" INTEGER NOT NULL DEFAULT 0,
 
@@ -97,6 +99,18 @@ CREATE TABLE "UserToken" (
     CONSTRAINT "UserToken_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Merchant" (
+    "id" SERIAL NOT NULL,
+    "full_name" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "legal" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" INTEGER NOT NULL DEFAULT 0,
+    "updated_at" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "Merchant_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
 
@@ -108,6 +122,9 @@ CREATE UNIQUE INDEX "Driver_phone_key" ON "Driver"("phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Client_phone_key" ON "Client"("phone");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Merchant_phone_key" ON "Merchant"("phone");
 
 -- AddForeignKey
 ALTER TABLE "MachineParams" ADD CONSTRAINT "MachineParams_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
