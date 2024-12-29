@@ -7,11 +7,11 @@ const router = Router();
 
 router.get('/', clientController.getAll);
 
-router.get('/:id', clientController.getAll);
+router.get('/:id', clientController.getById);
 
-router.post('/add', clientController.create);
+router.post('/create', clientController.create);
 
-router.post('/update/:id', clientController.update);
+router.put('/update/:id', clientController.update);
 
 router.delete('/delete/:id', clientController.distroy);
 

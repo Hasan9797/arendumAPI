@@ -82,7 +82,7 @@ const verifySmsCode = async (req, res) => {
       expire: '7d',
     };
 
-    await prisma.clientToken.create({ data: userToken });
+    await updateOrCreateUserToken(userToken);
 
     return res
       .status(200)

@@ -12,7 +12,9 @@ const router = Router();
 
 router.get('/', authentication, machinParamsController.getAll);
 
-router.post('/add', authentication, machinParamsController.create);
+router.get('/:id', machinParamsController.getById);
+
+router.post('/create', authentication, machinParamsController.create);
 
 router.put('/update/:id', machinParamsController.update);
 
