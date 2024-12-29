@@ -66,9 +66,12 @@ const updateUser = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {};
+
 export default {
   getUsers,
   getUserById,
   createUser,
   updateUser,
+  deleteUser,
 };

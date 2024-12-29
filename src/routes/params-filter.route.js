@@ -12,7 +12,9 @@ const router = Router();
 
 router.get('/', paramsFiltersController.getAll);
 
-router.post('/add', paramsFiltersController.create);
+router.get('/:id', paramsFiltersController.getById);
+
+router.post('/create', paramsFiltersController.create);
 
 router.put('/update/:id', paramsFiltersController.update);
 

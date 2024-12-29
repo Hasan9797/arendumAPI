@@ -12,10 +12,10 @@ const router = Router();
 
 router.get('/', authentication, machinsController.getAll);
 
-router.get('/by/:id', machinsController.getById);
+router.get('/:id', machinsController.getById);
 
 router.post(
-  '/add',
+  '/create',
   authentication,
   authorization([1]),
   machinsController.create

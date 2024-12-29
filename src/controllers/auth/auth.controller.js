@@ -5,6 +5,8 @@ import {
   generateAccessToken,
   generateRefreshAccessToken,
 } from '../../utils/auth.util.js';
+import { ROLE_NAME } from '../../constants/user-role.constant.js';
+import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'secret';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh';
@@ -49,11 +51,17 @@ const login = async (req, res) => {
       expire: '7d',
     };
 
-    await prisma.userToken.create({ data: userToken });
+    await updateOrCreateUserToken(userToken);
 
-    return res
-      .status(200)
-      .json({ message: 'Login successful', accessToken, refreshToken });
+    return res.status(200).json({
+      message: 'Login successful',
+      accessToken,
+      refreshToken,
+      role: {
+        number: user.role,
+        name: ROLE_NAME[user.role],
+      },
+    });
   } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({ message: 'Internal server error' });

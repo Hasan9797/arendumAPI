@@ -7,11 +7,11 @@ const router = Router();
 
 router.get('/', driverController.getAll);
 
-router.get('/by/:id', driverController.getAll);
+router.get('/:id', driverController.getById);
 
-router.post('/add', driverController.create);
+router.post('/create', driverController.create);
 
-router.post('/update/:id', driverController.update);
+router.put('/update/:id', driverController.update);
 
 router.delete('/delete/:id', driverController.distroy);
 
