@@ -14,12 +14,7 @@ router.get('/', authentication, machinsController.getAll);
 
 router.get('/:id', machinsController.getById);
 
-router.post(
-  '/create',
-  authentication,
-  authorization([1]),
-  machinsController.create
-);
+router.post('/create', machinsController.create);
 
 router.put('/update/:id', machinsController.update);
 

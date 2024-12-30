@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-export const findAll = async (query) => {
+export const getAll = async (query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (page - 1) * limit;
@@ -30,17 +30,17 @@ export const findAll = async (query) => {
       ? { [sort.column]: sort.value }
       : { id: 'desc' };
 
-    const drivers = await prisma.driver.findMany({
+    const categories = await prisma.structure.findMany({
       where,
       orderBy,
       skip,
       take: limit,
     });
 
-    const total = await prisma.driver.count({ where });
+    const total = await prisma.structure.count({ where });
 
     return {
-      data: drivers,
+      data: categories,
       pagination: {
         totalUsers: total,
         totalPages: Math.ceil(total / limit),
@@ -54,28 +54,23 @@ export const findAll = async (query) => {
   }
 };
 
-const create = async (newDriver) => {
-  try {
-    return await prisma.driver.create({
-      data: newDriver,
-    });
-  } catch (error) {
-    console.error('Error creating user:', error);
-    throw error;
-  }
-};
-
 const getById = async (id) => {
-  return await prisma.driver.findUnique({
+  return await prisma.structure.findUnique({
     where: { id },
   });
 };
 
-const updateById = async (id, driverData) => {
+const create = async (newUser) => {
+  return await prisma.structure.create({
+    data: newUser,
+  });
+};
+
+const updateById = async (id, machineData) => {
   try {
-    const updatedUser = await prisma.driver.update({
+    const updatedUser = await prisma.structure.update({
       where: { id },
-      data: driverData,
+      data: machineData,
     });
     return updatedUser;
   } catch (error) {
@@ -85,13 +80,17 @@ const updateById = async (id, driverData) => {
 };
 
 const deleteById = async (id) => {
-  return await prisma.driver.delete({
-    where: { id },
-  });
+  try {
+    return await prisma.structure.delete({
+      where: { id },
+    });
+  } catch (error) {
+    throw error.message;
+  }
 };
 
 export default {
-  findAll,
+  getAll,
   getById,
   create,
   updateById,

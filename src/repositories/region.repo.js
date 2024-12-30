@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-export const findAll = async (query) => {
+export const getAll = async (query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (page - 1) * limit;
@@ -30,17 +30,17 @@ export const findAll = async (query) => {
       ? { [sort.column]: sort.value }
       : { id: 'desc' };
 
-    const drivers = await prisma.driver.findMany({
+    const categories = await prisma.region.findMany({
       where,
       orderBy,
       skip,
       take: limit,
     });
 
-    const total = await prisma.driver.count({ where });
+    const total = await prisma.region.count({ where });
 
     return {
-      data: drivers,
+      data: categories,
       pagination: {
         totalUsers: total,
         totalPages: Math.ceil(total / limit),
@@ -54,28 +54,33 @@ export const findAll = async (query) => {
   }
 };
 
-const create = async (newDriver) => {
-  try {
-    return await prisma.driver.create({
-      data: newDriver,
-    });
-  } catch (error) {
-    console.error('Error creating user:', error);
-    throw error;
-  }
+const createRegion = async (newUser) => {
+  return await prisma.region.create({
+    data: newUser,
+  });
 };
 
 const getById = async (id) => {
-  return await prisma.driver.findUnique({
+  return await prisma.region.findUnique({
     where: { id },
   });
 };
 
-const updateById = async (id, driverData) => {
+const deleteById = async (id) => {
   try {
-    const updatedUser = await prisma.driver.update({
+    return await prisma.region.delete({
       where: { id },
-      data: driverData,
+    });
+  } catch (error) {
+    throw error.message;
+  }
+};
+
+const updateById = async (id, machineData) => {
+  try {
+    const updatedUser = await prisma.region.update({
+      where: { id },
+      data: machineData,
     });
     return updatedUser;
   } catch (error) {
@@ -84,16 +89,10 @@ const updateById = async (id, driverData) => {
   }
 };
 
-const deleteById = async (id) => {
-  return await prisma.driver.delete({
-    where: { id },
-  });
-};
-
 export default {
-  findAll,
+  getAll,
   getById,
-  create,
+  createRegion,
   updateById,
   deleteById,
 };

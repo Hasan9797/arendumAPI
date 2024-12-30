@@ -19,26 +19,40 @@ model User {
 }
 
 model Driver {
-  id                      Int    @id @default(autoincrement())
-  fullName                String @map("full_name")
-  phone                   String @unique
-  merchantId              Int?   @map("merchant_id")
-  photoTexPassport        Json   @default("[]") @map("photo_tex_passport")
-  photoPassport           Json   @default("[]") @map("photo_passport")
-  photoLicense            Json   @default("[]") @map("photo_license")
-  photoConfidencePassport Json   @default("[]") @map("photo_confidence_passport")
-  photoDriverLicense      Json   @default("[]") @map("photo_driver_license")
-  createdAt               Int    @default(0) @map("created_at")
-  updatedAt               Int    @default(0) @map("updated_at")
+  id                      Int       @id @default(autoincrement())
+  fullName                String    @map("full_name")
+  phone                   String    @unique
+  machineId               Int?      @map("machine_id")
+  status                  Int       @default(0)
+  photoTexPassport        Json      @default("[]") @map("photo_tex_passport")
+  photoPassport           Json      @default("[]") @map("photo_passport")
+  photoLicense            Json      @default("[]") @map("photo_license")
+  photoConfidencePassport Json      @default("[]") @map("photo_confidence_passport")
+  photoDriverLicense      Json      @default("[]") @map("photo_driver_license")
+  merchantId              Int?      @map("merchant_id")
+  machine                 Machines? @relation("MachineDrivers", fields: [machineId], references: [id])
+  regionId                Int       @map("region_id")
+  structureId             Int       @map("structure_id")
+  structure               Structure @relation("DriverStructure", fields: [structureId], references: [id])
+  region                  Region    @relation("DriverRegion", fields: [regionId], references: [id])
+  createdAt               Int       @default(0) @map("created_at")
+  updatedAt               Int       @default(0) @map("updated_at")
+  Order                   Order[]
 }
 
 model Client {
-  id        Int     @id @default(autoincrement())
-  fullName  String  @map("full_name")
-  phone     String  @unique
-  legal     Boolean @default(false)
-  createdAt Int     @default(0) @map("created_at")
-  updatedAt Int     @default(0) @map("updated_at")
+  id          Int        @id @default(autoincrement())
+  fullName    String     @map("full_name")
+  phone       String     @unique
+  legal       Boolean    @default(false)
+  status      Int        @default(0)
+  regionId    Int        @map("region_id")
+  region      Region     @relation("ClientRegion", fields: [regionId], references: [id])
+  structureId Int        @map("structure_id")
+  structure   Structure? @relation("ClientStructures", fields: [structureId], references: [id])
+  createdAt   Int        @default(0) @map("created_at")
+  updatedAt   Int        @default(0) @map("updated_at")
+  Order       Order[]    @relation("ClientOrder")
 }
 
 model Machines {
@@ -49,6 +63,8 @@ model Machines {
   machineParamsFilters MachineParamsFilters[]
   createdAt            Int                    @default(0) @map("created_at")
   updatedAt            Int                    @default(0) @map("updated_at")
+  drivers              Driver[]               @relation("MachineDrivers")
+  Order                Order[]
 }
 
 model MachineParams {
@@ -95,4 +111,41 @@ model Merchant {
   legal     Boolean @default(false)
   createdAt Int     @default(0) @map("created_at")
   updatedAt Int     @default(0) @map("updated_at")
+}
+
+model Region {
+  id         Int         @id @default(autoincrement())
+  name       String      @map("name")
+  status     Int         @default(1)
+  structures Structure[] @relation("RegionStructures")
+  createdAt  Int         @default(0) @map("created_at")
+  updatedAt  Int         @default(0) @map("updated_at")
+  Driver     Driver[]    @relation("DriverRegion")
+  Client     Client[]    @relation("ClientRegion")
+}
+
+model Structure {
+  id        Int      @id @default(autoincrement())
+  name      String   @map("name")
+  status    Int      @default(1)
+  regionId  Int      @map("region_id")
+  region    Region?  @relation("RegionStructures", fields: [regionId], references: [id])
+  createdAt Int      @default(0) @map("created_at")
+  updatedAt Int      @default(0) @map("updated_at")
+  Client    Client[] @relation("ClientStructures")
+  Driver    Driver[] @relation("DriverStructure")
+}
+
+model Order {
+  id          Int       @id @default(autoincrement())
+  clientId    Int       @map("client_id")
+  client      Client    @relation("ClientOrder", fields: [clientId], references: [id])
+  driverId    Int       @map("driver_id")
+  driver      Driver    @relation(fields: [driverId], references: [id])
+  machineId   Int?      @map("machine_id")
+  machine     Machines? @relation(fields: [machineId], references: [id])
+  status      Int       @default(1)
+  createdAt   Int       @default(0) @map("created_at")
+  updatedAt   Int       @default(0) @map("updated_at")
+  orderParams Json      @default("[]") @map("order_params")
 }
