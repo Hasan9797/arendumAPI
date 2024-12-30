@@ -9,7 +9,12 @@ const getById = async (id) => {
 };
 
 const create = async (data) => {
-  return await driverRepository.create(data);
+  try {
+    return await driverRepository.create(data);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
 };
 
 const updateById = async (id, data) => {

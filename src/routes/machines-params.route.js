@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import machinParamsController from '../controllers/admin/machine.params.controller.js';
+import machinParamsController from '../controllers/admin/machine-params.controller.js';
 import {
   authentication,
   authorization,

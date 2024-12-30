@@ -23,6 +23,8 @@ import driverRoute from './routes/driver.route.js';
 import clientRoute from './routes/client.route.js';
 import paramsFilterRoute from './routes/params-filter.route.js';
 import uploadRoute from './routes/upload.route.js';
+import regionRoute from './routes/region.route.js';
+import structureRoute from './routes/structure.route.js';
 
 // File uploads route
 app.use('/api/file-upload', uploadRoute);
@@ -34,10 +36,10 @@ app.use('/api/machines-params', machinesParamsRoute);
 app.use('/api/driver', driverRoute);
 app.use('/api/client', clientRoute);
 app.use('/api/params-filter', paramsFilterRoute);
+app.use('/api/region', regionRoute);
+app.use('/api/structure', structureRoute);
 // app.use('/api/deposit',);
 // app.use('/api/payment',);
-// app.use('/api/region',);
-// app.use('/api/structure',);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
