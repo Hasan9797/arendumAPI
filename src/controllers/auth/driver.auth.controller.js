@@ -9,7 +9,7 @@ import {
 import {
   generateAccessToken,
   generateRefreshAccessToken,
-} from '../../utils/auth.util.js';
+} from '../../helpers/jwt-token.helper.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 

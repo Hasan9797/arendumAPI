@@ -89,10 +89,20 @@ const updateMachineById = async (id, machineData) => {
   }
 };
 
+const getMachinesIdAnName = async () => {
+  return await prisma.machines.findMany({
+    select: {
+      id: true,
+      title: true,
+    },
+  });
+};
+
 export default {
   getMachines,
   getMachineById,
   createMachine,
   updateMachineById,
   deleteMachineById,
+  getMachinesIdAnName,
 };

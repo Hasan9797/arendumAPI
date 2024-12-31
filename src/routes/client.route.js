@@ -15,4 +15,6 @@ router.put('/update/:id', clientController.update);
 
 router.delete('/delete/:id', clientController.distroy);
 
+// router.get('/static', );
+
 export default router;

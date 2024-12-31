@@ -88,10 +88,24 @@ const distroy = async (req, res) => {
   }
 };
 
+const getMachineOptions = async (req, res) => {
+  try {
+    const options = await machinesService.getOptions();
+    res.status(200).json({ success: true, options });
+  } catch (error) {
+    console.error('Error fetching options:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch options',
+    });
+  }
+};
+
 export default {
   getAll,
   getById,
   create,
   update,
   distroy,
+  getMachineOptions,
 };

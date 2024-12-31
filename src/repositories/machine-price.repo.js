@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-export const findAll = async (query) => {
+export const getMachinesPrice = async (query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (page - 1) * limit;
@@ -30,20 +30,20 @@ export const findAll = async (query) => {
       ? { [sort.column]: sort.value }
       : { id: 'desc' };
 
-    const clients = await prisma.client.findMany({
+    const categories = await prisma.machinePrice.findMany({
       where,
       orderBy,
       skip,
       take: limit,
       include: {
-        region: true,
+        machines: true,
       },
     });
 
-    const total = await prisma.client.count({ where });
+    const total = await prisma.machinePrice.count({ where });
 
     return {
-      data: clients,
+      data: categories,
       pagination: {
         totalUsers: total,
         totalPages: Math.ceil(total / limit),
@@ -57,29 +57,23 @@ export const findAll = async (query) => {
   }
 };
 
-const createClient = async (newClient) => {
-  return await prisma.client.create({
-    data: newClient,
+const createMachinePrice = async (newUser) => {
+  return await prisma.machinePrice.create({
+    data: newUser,
   });
 };
 
-const getById = async (id) => {
-  return await prisma.client.findUnique({
+const getMachinePriceById = async (id) => {
+  return await prisma.machinePrice.findUnique({
     where: { id },
   });
 };
 
-const deleteClientById = async (id) => {
-  return await prisma.client.delete({
-    where: { id },
-  });
-};
-
-const updateClientById = async (id, userData) => {
+const updateMachinePriceById = async (id, machineData) => {
   try {
-    const updatedUser = await prisma.client.update({
+    const updatedUser = await prisma.machinePrice.update({
       where: { id },
-      data: userData,
+      data: machineData,
     });
     return updatedUser;
   } catch (error) {
@@ -88,10 +82,20 @@ const updateClientById = async (id, userData) => {
   }
 };
 
+const deleteMachinePriceById = async (id) => {
+  try {
+    return await prisma.machinePrice.delete({
+      where: { id },
+    });
+  } catch (error) {
+    throw error.message;
+  }
+};
+
 export default {
-  findAll,
-  getById,
-  createClient,
-  updateClientById,
-  deleteClientById,
+  getMachinesPrice,
+  getMachinePriceById,
+  createMachinePrice,
+  updateMachinePriceById,
+  deleteMachinePriceById,
 };

@@ -17,7 +17,8 @@ CREATE TABLE "Driver" (
     "id" SERIAL NOT NULL,
     "full_name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
-    "machine_id" INTEGER,
+    "machine_id" INTEGER NOT NULL,
+    "email" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
     "photo_tex_passport" JSONB NOT NULL DEFAULT '[]',
     "photo_passport" JSONB NOT NULL DEFAULT '[]',
@@ -39,6 +40,7 @@ CREATE TABLE "Client" (
     "full_name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "legal" BOOLEAN NOT NULL DEFAULT false,
+    "email" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
     "region_id" INTEGER NOT NULL,
     "structure_id" INTEGER NOT NULL,
@@ -155,6 +157,18 @@ CREATE TABLE "Order" (
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "MachinePrice" (
+    "id" SERIAL NOT NULL,
+    "machine_id" INTEGER NOT NULL,
+    "km_price" INTEGER NOT NULL,
+    "hour_price" INTEGER NOT NULL,
+    "created_at" INTEGER NOT NULL DEFAULT 0,
+    "updated_at" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "MachinePrice_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
 
@@ -165,13 +179,19 @@ CREATE UNIQUE INDEX "User_login_key" ON "User"("login");
 CREATE UNIQUE INDEX "Driver_phone_key" ON "Driver"("phone");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Driver_email_key" ON "Driver"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Client_phone_key" ON "Client"("phone");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Merchant_phone_key" ON "Merchant"("phone");
 
 -- AddForeignKey
-ALTER TABLE "Driver" ADD CONSTRAINT "Driver_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Driver" ADD CONSTRAINT "Driver_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Driver" ADD CONSTRAINT "Driver_structure_id_fkey" FOREIGN KEY ("structure_id") REFERENCES "Structure"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -202,3 +222,6 @@ ALTER TABLE "Order" ADD CONSTRAINT "Order_driver_id_fkey" FOREIGN KEY ("driver_i
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MachinePrice" ADD CONSTRAINT "MachinePrice_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

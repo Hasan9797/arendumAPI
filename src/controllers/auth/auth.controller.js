@@ -4,8 +4,9 @@ import prisma from '../../config/prisma.js';
 import {
   generateAccessToken,
   generateRefreshAccessToken,
-} from '../../utils/auth.util.js';
-import { ROLE_NAME } from '../../constants/user-role.constant.js';
+} from '../../helpers/jwt-token.helper.js';
+
+import { ROLE_NAME } from '../../enums/user/user-role.enum.js';
 import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'secret';
