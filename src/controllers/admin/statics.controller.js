@@ -17,7 +17,7 @@ const driverOptions = (req, res) => {
 const clientOptions = (req, res) => {
   res
     .status(200)
-    .json({ success: true, status: driverStatusEnum.STATUS_OPTIONS });
+    .json({ success: true, status: clientStatusEnum.STATUS_OPTIONS });
 };
 
 const machineOptions = (req, res) => {};

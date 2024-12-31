@@ -32,6 +32,7 @@ import uploadRoute from './routes/upload.route.js';
 import regionRoute from './routes/region.route.js';
 import structureRoute from './routes/structure.route.js';
 import machinePriceRoute from './routes/machine-price.route.js';
+import staticRoute from './routes/static.route.js';
 
 // File uploads route
 app.use('/api/file-upload', uploadRoute);
@@ -47,6 +48,7 @@ app.use('/api/params-filter', paramsFilterRoute);
 app.use('/api/region', regionRoute);
 app.use('/api/structure', structureRoute);
 app.use('/api/machine-price', machinePriceRoute);
+app.use('/api/static', staticRoute);
 
 // Initialize Socket.IO server
 socketServer(server);

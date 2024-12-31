@@ -5,9 +5,9 @@ const STATUSES = {
 };
 
 const STATUS_OPTIONS = [
-  { value: [STATUSES.ACTIVE], label: 'Active' },
-  { value: [STATUSES.INACTIVE], label: 'Inactive' },
-  { value: [STATUSES.CREATED], label: 'Created' },
+  { value: STATUSES.ACTIVE, label: 'Active' },
+  { value: STATUSES.INACTIVE, label: 'Inactive' },
+  { value: STATUSES.CREATED, label: 'Created' },
 ];
 
 const STATUS_LABELS = {
