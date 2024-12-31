@@ -10,7 +10,7 @@ import UserRole from '../enums/user/user-role.enum.js';
 
 const router = Router();
 
-router.get('/', authentication, machinePriceController.getAll);
+router.get('/', machinePriceController.getAll);
 
 router.get('/:id', machinePriceController.getById);
 
