@@ -35,12 +35,39 @@ export const findAll = async (query) => {
       orderBy,
       skip,
       take: limit,
+      include: {
+        region: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+          },
+        },
+        structure: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+          },
+        },
+        machine: {
+          select: {
+            id: true,
+            title: true,
+            img: true,
+          },
+        },
+      },
     });
 
     const total = await prisma.driver.count({ where });
 
+    const sanitizedDrivers = drivers.map(
+      ({ regionId, structureId, machineId, ...rest }) => rest
+    );
+
     return {
-      data: drivers,
+      data: sanitizedDrivers,
       pagination: {
         totalUsers: total,
         totalPages: Math.ceil(total / limit),

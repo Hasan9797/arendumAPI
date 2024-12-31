@@ -1,4 +1,5 @@
 import driverService from '../../services/driver.service.js';
+import driverStatusEnum from '../../enums/driver/driver-status.enum.js';
 
 const getAll = async (req, res) => {
   const query = {
@@ -26,8 +27,8 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const user = await driverService.getById(parseInt(req.params.id));
-    res.status(200).json(user);
+    const driver = await driverService.getById(parseInt(req.params.id));
+    res.status(200).json(driver);
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({
@@ -67,6 +68,7 @@ const update = async (req, res) => {
 };
 
 const distroy = async (req, res) => {};
+
 
 export default {
   getAll,

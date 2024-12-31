@@ -1,23 +1,23 @@
 import { Router } from 'express';
 
-import machinsController from '../controllers/admin/machines.controller.js';
+import machinesController from '../controllers/admin/machines.controller.js';
 import {
   authentication,
   authorization,
 } from '../middlewares/auth.middleware.js';
 
-import UserRole from '../constants/user-role.constant.js';
+import UserRole from '../enums/user/user-role.enum.js';
 
 const router = Router();
 
-router.get('/', authentication, machinsController.getAll);
+router.get('/', authentication, machinesController.getAll);
 
-router.get('/:id', machinsController.getById);
+router.get('/:id', machinesController.getById);
 
-router.post('/create', machinsController.create);
+router.post('/create', machinesController.create);
 
-router.put('/update/:id', machinsController.update);
+router.put('/update/:id', machinesController.update);
 
-router.delete('/delete/:id', machinsController.distroy);
+router.delete('/delete/:id', machinesController.distroy);
 
 export default router;

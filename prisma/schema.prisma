@@ -22,7 +22,8 @@ model Driver {
   id                      Int       @id @default(autoincrement())
   fullName                String    @map("full_name")
   phone                   String    @unique
-  machineId               Int?      @map("machine_id")
+  machineId               Int      @map("machine_id")
+  email                   String?   @unique
   status                  Int       @default(0)
   photoTexPassport        Json      @default("[]") @map("photo_tex_passport")
   photoPassport           Json      @default("[]") @map("photo_passport")
@@ -30,7 +31,7 @@ model Driver {
   photoConfidencePassport Json      @default("[]") @map("photo_confidence_passport")
   photoDriverLicense      Json      @default("[]") @map("photo_driver_license")
   merchantId              Int?      @map("merchant_id")
-  machine                 Machines? @relation("MachineDrivers", fields: [machineId], references: [id])
+  machine                 Machines @relation("MachineDrivers", fields: [machineId], references: [id])
   regionId                Int       @map("region_id")
   structureId             Int       @map("structure_id")
   structure               Structure @relation("DriverStructure", fields: [structureId], references: [id])
@@ -45,6 +46,7 @@ model Client {
   fullName    String     @map("full_name")
   phone       String     @unique
   legal       Boolean    @default(false)
+  email       String?    @unique
   status      Int        @default(0)
   regionId    Int        @map("region_id")
   region      Region     @relation("ClientRegion", fields: [regionId], references: [id])
@@ -65,6 +67,7 @@ model Machines {
   updatedAt            Int                    @default(0) @map("updated_at")
   drivers              Driver[]               @relation("MachineDrivers")
   Order                Order[]
+  MachinePrice         MachinePrice[]
 }
 
 model MachineParams {
@@ -148,4 +151,14 @@ model Order {
   createdAt   Int       @default(0) @map("created_at")
   updatedAt   Int       @default(0) @map("updated_at")
   orderParams Json      @default("[]") @map("order_params")
+}
+
+model MachinePrice {
+  id        Int      @id @default(autoincrement())
+  machineId Int      @map("machine_id")
+  machines  Machines @relation(fields: [machineId], references: [id])
+  kmPrice   Int      @map("km_price")
+  hourPrice Int      @map("hour_price")
+  createdAt Int      @default(0) @map("created_at")
+  updatedAt Int      @default(0) @map("updated_at")
 }
