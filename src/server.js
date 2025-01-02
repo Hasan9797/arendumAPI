@@ -4,13 +4,20 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import http from 'http'; // HTTP serverni yaratish uchun
 import cors from 'cors';
-import socketServer from './socket/index.js'; // Socket.IO serverni ulash
+import socketHandler from './socket/index.js'; // Socket.IO serverni ulash
+import { Server } from 'socket.io';
 
 dotenv.config();
 
 const app = express();
-const server = http.createServer(app); // HTTP server
 app.use(cors());
+
+// Socket.IO Server creation
+const server = http.createServer(app);
+const io = new Server(server);
+
+// Namespace-larni ulash
+socketHandler(io);
 
 // Middleware
 app.use(express.json());
@@ -50,8 +57,7 @@ app.use('/api/structure', structureRoute);
 app.use('/api/machine-price', machinePriceRoute);
 app.use('/api/static', staticRoute);
 
-// Initialize Socket.IO server
-socketServer(server);
+// Error handler
 
 // Start the server
 const PORT = process.env.PORT || 8000;
