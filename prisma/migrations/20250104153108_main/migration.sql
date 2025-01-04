@@ -25,6 +25,8 @@ CREATE TABLE "Driver" (
     "photo_license" JSONB NOT NULL DEFAULT '[]',
     "photo_confidence_passport" JSONB NOT NULL DEFAULT '[]',
     "photo_driver_license" JSONB NOT NULL DEFAULT '[]',
+    "long" DOUBLE PRECISION DEFAULT 0,
+    "lat" DOUBLE PRECISION DEFAULT 0,
     "merchant_id" INTEGER,
     "region_id" INTEGER NOT NULL,
     "structure_id" INTEGER NOT NULL,
@@ -42,6 +44,8 @@ CREATE TABLE "Client" (
     "legal" BOOLEAN NOT NULL DEFAULT false,
     "email" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
+    "long" DOUBLE PRECISION DEFAULT 0,
+    "lat" DOUBLE PRECISION DEFAULT 0,
     "region_id" INTEGER NOT NULL,
     "structure_id" INTEGER NOT NULL,
     "created_at" INTEGER NOT NULL DEFAULT 0,
@@ -149,7 +153,11 @@ CREATE TABLE "Order" (
     "client_id" INTEGER NOT NULL,
     "driver_id" INTEGER NOT NULL,
     "machine_id" INTEGER,
+    "amount" INTEGER NOT NULL DEFAULT 0,
     "status" INTEGER NOT NULL DEFAULT 1,
+    "long" DOUBLE PRECISION DEFAULT 0,
+    "lat" DOUBLE PRECISION DEFAULT 0,
+    "structure_id" INTEGER NOT NULL DEFAULT 0,
     "created_at" INTEGER NOT NULL DEFAULT 0,
     "updated_at" INTEGER NOT NULL DEFAULT 0,
     "order_params" JSONB NOT NULL DEFAULT '[]',
@@ -194,10 +202,10 @@ CREATE UNIQUE INDEX "Merchant_phone_key" ON "Merchant"("phone");
 ALTER TABLE "Driver" ADD CONSTRAINT "Driver_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Driver" ADD CONSTRAINT "Driver_structure_id_fkey" FOREIGN KEY ("structure_id") REFERENCES "Structure"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Driver" ADD CONSTRAINT "Driver_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "Region"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Driver" ADD CONSTRAINT "Driver_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "Region"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Driver" ADD CONSTRAINT "Driver_structure_id_fkey" FOREIGN KEY ("structure_id") REFERENCES "Structure"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Client" ADD CONSTRAINT "Client_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "Region"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import driverController from '../controllers/drivers/driver.controller.js';
+import driverController from '../controllers/v1/driver.controller.js';
 
 const router = Router();
 

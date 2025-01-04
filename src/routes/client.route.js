@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import clientController from '../controllers/clients/client.controller.js';
+import clientController from '../controllers/v1/client.controller.js';
 import { authentication } from '../middlewares/auth.middleware.js';
 
 const router = Router();
@@ -14,7 +14,5 @@ router.post('/create', clientController.create);
 router.put('/update/:id', clientController.update);
 
 router.delete('/delete/:id', clientController.distroy);
-
-// router.get('/static', );
 
 export default router;

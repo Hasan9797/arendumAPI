@@ -6,7 +6,7 @@ import {
 } from '../middlewares/auth.middleware.js';
 
 import UserRole from '../enums/user/user-role.enum.js';
-import paramsFiltersController from '../controllers/admin/params-filters.controller.js';
+import paramsFiltersController from '../controllers/v1/params-filters.controller.js';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import structureController from '../controllers/admin/structure.controller.js';
+import structureController from '../controllers/v1/structure.controller.js';
 import {
   authentication,
   authorization,

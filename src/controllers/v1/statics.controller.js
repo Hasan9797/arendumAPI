@@ -1,11 +1,9 @@
-import driverStatusEnum from '../../enums/driver/driver-status.enum.js';
-import clientStatusEnum from '../../enums/client/client-status.enum.js';
+import { driverStatusOptions } from '../../enums/driver/driver-status.enum.js';
+import { clientStatusOptions } from '../../enums/client/client-status.enum.js';
 
 const driverOptions = (req, res) => {
   try {
-    res
-      .status(200)
-      .json({ success: true, status: driverStatusEnum.STATUS_OPTIONS });
+    res.status(200).json({ success: true, status: driverStatusOptions });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -15,9 +13,7 @@ const driverOptions = (req, res) => {
 };
 
 const clientOptions = (req, res) => {
-  res
-    .status(200)
-    .json({ success: true, status: clientStatusEnum.STATUS_OPTIONS });
+  res.status(200).json({ success: true, status: clientStatusOptions });
 };
 
 const machineOptions = (req, res) => {};

@@ -10,6 +10,7 @@ import {
   generateAccessToken,
   generateRefreshAccessToken,
 } from '../../helpers/jwt-token.helper.js';
+import userRoleEnum from '../../enums/user/user-role.enum.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
@@ -22,7 +23,7 @@ const login = async (req, res) => {
       .json({ message: 'phoneNumber is required', success: false });
   }
 
-  const user = await prisma.driver.findUnique({
+  const user = await prisma.client.findUnique({
     where: { phone: phoneNumber },
   });
 
@@ -61,7 +62,7 @@ const verifySmsCode = async (req, res) => {
     // Delete the SMS code temporarily
     await deleteSmsCode(phoneNumber);
 
-    const user = await prisma.driver.findUnique({
+    const user = await prisma.client.findUnique({
       where: { phone: phoneNumber },
     });
 
@@ -69,7 +70,9 @@ const verifySmsCode = async (req, res) => {
       id: user.id,
       fullName: user.fullName,
       phone: user.phone,
-      role: user?.role || 10,
+      role: userRoleEnum.CLIENT,
+      regionId: user?.regionId || null,
+      structureId: user?.structureId || null,
     };
 
     const accessToken = generateAccessToken(payload);
