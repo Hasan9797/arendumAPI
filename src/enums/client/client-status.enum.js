@@ -1,22 +1,31 @@
-const STATUSES = {
+// Status enum
+export const ClientStatus = Object.freeze({
   ACTIVE: 1,
-  INACTIVE: 2,
-  CREATED: 3,
+  CREATED: 2,
+  INACTIVE: 3,
+});
+
+const StatusTranslations = {
+  1: 'Активный',
+  2: 'Создан',
+  3: 'Неактивный',
 };
 
-const STATUS_OPTIONS = [
-  { value: STATUSES.ACTIVE, label: 'Active' },
-  { value: STATUSES.INACTIVE, label: 'Inactive' },
+export const clientStatusOptions = [
+  {
+    value: ClientStatus.ACTIVE,
+    label: StatusTranslations[ClientStatus.ACTIVE],
+  },
+  {
+    value: ClientStatus.CREATED,
+    label: StatusTranslations[ClientStatus.CREATED],
+  },
+  {
+    value: ClientStatus.INACTIVE,
+    label: StatusTranslations[ClientStatus.INACTIVE],
+  },
 ];
 
-const STATUS_LABELS = {
-  [STATUSES.ACTIVE]: 'Active',
-  [STATUSES.INACTIVE]: 'Inactive',
-  [STATUSES.CREATED]: 'Created',
-};
-
-export default {
-  STATUSES,
-  STATUS_OPTIONS,
-  STATUS_LABELS,
+export const getStatusText = (statusId) => {
+  return StatusTranslations[statusId] || 'Неизвестный';
 };

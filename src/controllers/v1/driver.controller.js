@@ -1,5 +1,5 @@
 import driverService from '../../services/driver.service.js';
-import driverStatusEnum from '../../enums/driver/driver-status.enum.js';
+import { driverStatusOptions } from '../../enums/driver/driver-status.enum.js';
 
 const getAll = async (req, res) => {
   const query = {
@@ -68,7 +68,6 @@ const update = async (req, res) => {
 };
 
 const distroy = async (req, res) => {};
-
 
 export default {
   getAll,

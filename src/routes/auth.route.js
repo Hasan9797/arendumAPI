@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import driverAuthController from '../controllers/auth/driver.auth.controller.js';
-import clientAuthController from '../controllers/auth/client.auth.controller.js';
+import driverAuthController from '../controllers/auth/driver-auth.controller.js';
+import clientAuthController from '../controllers/auth/client-auth.controller.js';
 
 import authController from '../controllers/auth/auth.controller.js';
 

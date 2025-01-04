@@ -1,32 +1,36 @@
 import redisClient from '../../config/redis.js';
 
 // Redis kalitlari
-const clientsKey = 'clients'; // Mijozlar { clientId: socketId }
-const driversKey = 'drivers'; // Haydovchilar { driverId: socketId }
+const clientsKey = 'clients';
+const driversKey = 'drivers';
 
 export default (io) => {
   const clientNamespace = io.of('/client');
 
-  // clientNamespace.use((socket, next) => {
-  // const { userId, role } = socket.handshake.auth;
+  clientNamespace.use((socket, next) => {
+    const { userId, token, role, orderId } = socket.handshake.auth;
 
-  //   if (!token || token !== 'your-valid-token') {
-  //     return next(new Error('Authentication error'));
-  //   }
+    if (!token || token !== process.env.CLIENT_SOCKET_SECRET_KEY) {
+      return next(new Error('Authentication error'));
+    }
 
-  //   console.log('Token validated');
-  //   next();
-  // });
+    if (orderId) {
+      socket.join(orderId);
+      console.log(`Socket ${socket.id} joined room ${orderId}`);
+    }
+
+    console.log('Token validated');
+    next();
+  });
 
   clientNamespace.on('connection', (socket) => {
     console.log(`Socket connected: ${socket.id}`);
 
-    socket.on('join', async ({ userId, role }) => {});
-
-    socket.on('createOrder', async ({ clientId, region }) => {
-      const driverSocketId = await redisClient.hget(driversKey, driverId);
-      io.of('/driver').to(driverSocketId).emit('newOrder', order);
+    socket.on('join', async ({ userId, role }) => {
+      // Additional join logic
     });
+
+    socket.on('createOrder', async ({ clientId, structureId }) => {});
 
     socket.on('disconnect', async () => {});
   });

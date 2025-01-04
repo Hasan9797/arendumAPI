@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import regionController from '../controllers/admin/region.controller.js';
+import regionController from '../controllers/v1/region.controller.js';
 import {
   authentication,
   authorization,

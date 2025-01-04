@@ -1,23 +1,31 @@
-const STATUSES = {
+// Status enum
+export const DriverStatus = Object.freeze({
   ACTIVE: 1,
-  INACTIVE: 2,
-  CREATED: 3,
+  CREATED: 2,
+  INACTIVE: 3,
+});
+
+const StatusTranslations = {
+  1: 'Активный',
+  2: 'Создан',
+  3: 'Неактивный',
 };
 
-const STATUS_OPTIONS = [
-  { value: STATUSES.ACTIVE, label: 'Active' },
-  { value: STATUSES.INACTIVE, label: 'Inactive' },
-  { value: STATUSES.CREATED, label: 'Created' },
+export const driverStatusOptions = [
+  {
+    value: DriverStatus.ACTIVE,
+    label: StatusTranslations[DriverStatus.ACTIVE],
+  },
+  {
+    value: DriverStatus.CREATED,
+    label: StatusTranslations[DriverStatus.CREATED],
+  },
+  {
+    value: DriverStatus.INACTIVE,
+    label: StatusTranslations[DriverStatus.INACTIVE],
+  },
 ];
 
-const STATUS_LABELS = {
-  [STATUSES.ACTIVE]: 'Active',
-  [STATUSES.INACTIVE]: 'Inactive',
-  [STATUSES.CREATED]: 'Created',
-};
-
-export default {
-  STATUSES,
-  STATUS_OPTIONS,
-  STATUS_LABELS,
+export const getStatusText = (statusId) => {
+  return StatusTranslations[statusId] || 'Неизвестный';
 };

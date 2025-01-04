@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import machinePriceController from '../controllers/admin/machine-price.controller.js';
+import machinePriceController from '../controllers/v1/machine-price.controller.js';
 import {
   authentication,
   authorization,

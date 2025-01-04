@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import staticController from '../controllers/admin/statics.controller.js';
+import staticController from '../controllers/v1/statics.controller.js';
 
 import {
   authentication,

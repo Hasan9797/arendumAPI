@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import machinesController from '../controllers/admin/machines.controller.js';
+import machinesController from '../controllers/v1/machines.controller.js';
 import {
   authentication,
   authorization,
