@@ -66,16 +66,6 @@ const getById = async (id) => {
   });
 };
 
-const deleteById = async (id) => {
-  try {
-    return await prisma.region.delete({
-      where: { id },
-    });
-  } catch (error) {
-    throw error.message;
-  }
-};
-
 const updateById = async (id, machineData) => {
   try {
     const updatedUser = await prisma.region.update({
@@ -89,10 +79,31 @@ const updateById = async (id, machineData) => {
   }
 };
 
+const deleteById = async (id) => {
+  try {
+    return await prisma.region.delete({
+      where: { id },
+    });
+  } catch (error) {
+    throw error.message;
+  }
+};
+
+const getIds = async () => {
+  try {
+    return await prisma.region.findMany({
+      select: { id: true, name: true },
+    });
+  } catch (error) {
+    throw error.message;
+  }
+};
+
 export default {
   getAll,
   getById,
   createRegion,
   updateById,
   deleteById,
+  getIds,
 };

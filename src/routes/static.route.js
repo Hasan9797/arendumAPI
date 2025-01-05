@@ -9,14 +9,15 @@ import {
 
 const router = Router();
 
-router.get('/driver', staticController.driverOptions);
+router.get('/driver/status', staticController.driverStatus);
 
-router.get('/client', staticController.clientOptions);
+router.get('/client/status', staticController.clientStatus);
 
-router.post('/order', staticController.orderOptions);
+router.get('/order/status', staticController.orderStatus);
 
-router.put('/machine', staticController.machineOptions);
+router.put('/machine/status', staticController.machineStatus);
 
-// router.delete('/delete/:id', staticController.distroy);
+router.get('/region/ids', staticController.getRegionIds);
+router.get('/structure/ids', staticController.getStructureIds);
 
 export default router;

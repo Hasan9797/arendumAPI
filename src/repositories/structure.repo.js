@@ -89,10 +89,21 @@ const deleteById = async (id) => {
   }
 };
 
+const getIds = async () => {
+  try {
+    return await prisma.structure.findMany({
+      select: { id: true, name: true },
+    });
+  } catch (error) {
+    throw error.message;
+  }
+};
+
 export default {
   getAll,
   getById,
   create,
   updateById,
   deleteById,
+  getIds,
 };

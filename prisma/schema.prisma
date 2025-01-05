@@ -19,22 +19,25 @@ model User {
 }
 
 model Driver {
-  id                      Int     @id @default(autoincrement())
-  fullName                String  @map("full_name")
-  phone                   String  @unique
-  machineId               Int     @map("machine_id")
-  email                   String? @unique
-  status                  Int     @default(0)
-  photoTexPassport        Json    @default("[]") @map("photo_tex_passport")
-  photoPassport           Json    @default("[]") @map("photo_passport")
-  photoLicense            Json    @default("[]") @map("photo_license")
-  photoConfidencePassport Json    @default("[]") @map("photo_confidence_passport")
-  photoDriverLicense      Json    @default("[]") @map("photo_driver_license")
-  long                    Float?  @default(0)
-  lat                     Float?  @default(0)
-
-  merchantId Int?     @map("merchant_id")
-  machine    Machines @relation("MachineDrivers", fields: [machineId], references: [id])
+  id                      Int      @id @default(autoincrement())
+  fullName                String   @map("full_name")
+  phone                   String   @unique
+  machineId               Int      @map("machine_id")
+  email                   String?  @unique
+  status                  Int      @default(0)
+  photoTexPassport        Json     @default("[]") @map("photo_tex_passport")
+  photoPassport           Json     @default("[]") @map("photo_passport")
+  photoLicense            Json     @default("[]") @map("photo_license")
+  photoConfidencePassport Json     @default("[]") @map("photo_confidence_passport")
+  photoDriverLicense      Json     @default("[]") @map("photo_driver_license")
+  photoCar                Json     @default("[]") @map("photo_car")
+  long                    Decimal? @default(0)
+  lat                     Decimal? @default(0)
+  machineColor            String?
+  machineNumber           String?
+  legal                   Boolean  @default(false)
+  merchantId              Int?     @map("merchant_id")
+  machine                 Machines @relation("MachineDrivers", fields: [machineId], references: [id])
 
   regionId Int    @map("region_id")
   region   Region @relation("DriverRegion", fields: [regionId], references: [id])
@@ -55,8 +58,9 @@ model Client {
   legal       Boolean    @default(false)
   email       String?    @unique
   status      Int        @default(0)
-  long        Float?     @default(0)
-  lat         Float?     @default(0)
+  long        Decimal?   @default(0)
+  lat         Decimal?   @default(0)
+  fcmToken    String?    @map("fcm_token")
   regionId    Int        @map("region_id")
   region      Region     @relation("ClientRegion", fields: [regionId], references: [id])
   structureId Int        @map("structure_id")
@@ -69,7 +73,7 @@ model Client {
 model Machines {
   id                   Int                    @id @default(autoincrement())
   title                String
-  img                  String
+  img                  String?
   machineParams        MachineParams[]
   machineParamsFilters MachineParamsFilters[]
   createdAt            Int                    @default(0) @map("created_at")
@@ -120,7 +124,7 @@ model Merchant {
   id        Int     @id @default(autoincrement())
   fullName  String  @map("full_name")
   phone     String  @unique
-  legal     Boolean @default(false)
+  inn       String?
   createdAt Int     @default(0) @map("created_at")
   updatedAt Int     @default(0) @map("updated_at")
 }
@@ -156,10 +160,11 @@ model Order {
   driver      Driver    @relation("DriverOrder", fields: [driverId], references: [id])
   machineId   Int?      @map("machine_id")
   machine     Machines? @relation(fields: [machineId], references: [id])
-  amount      BigInt    @default(0)
+  amount      Int
   status      Int       @default(1)
-  long        Decimal?  @default(0)
-  lat         Decimal?  @default(0)
+  caunt       Int       @default(1)
+  long        String?
+  lat         String?
   structureId Int       @default(0) @map("structure_id")
   createdAt   Int       @default(0) @map("created_at")
   updatedAt   Int       @default(0) @map("updated_at")
