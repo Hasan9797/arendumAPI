@@ -117,10 +117,23 @@ const deleteById = async (id) => {
   });
 };
 
+const getDriversByStructureIdForNotification = async (structureId) => {
+  return await prisma.driver.findMany({
+    where: { structureId },
+    select: {
+      id: true,
+      lat: true,
+      long: true,
+      fcmToken: true,
+    },
+  });
+};
+
 export default {
   findAll,
   getById,
   create,
   updateById,
   deleteById,
+  getDriversByStructureIdForNotification,
 };

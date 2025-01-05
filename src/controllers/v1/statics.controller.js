@@ -1,9 +1,13 @@
 import { driverStatusOptions } from '../../enums/driver/driver-status.enum.js';
 import { clientStatusOptions } from '../../enums/client/client-status.enum.js';
+import { StatusOptions } from '../../enums/order/order-status.enum.js';
 
-const driverOptions = (req, res) => {
+import regionRepository from '../../repositories/region.repo.js';
+import structureRepository from '../../repositories/structure.repo.js';
+
+const driverStatus = (req, res) => {
   try {
-    res.status(200).json({ success: true, status: driverStatusOptions });
+    res.status(200).json({ success: true, data: driverStatusOptions });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -12,13 +16,39 @@ const driverOptions = (req, res) => {
   }
 };
 
-const clientOptions = (req, res) => {
-  res.status(200).json({ success: true, status: clientStatusOptions });
+const getRegionIds = async (req, res) => {
+  try {
+    const regionIds = await regionRepository.getIds();
+    res.status(200).json({ success: true, data: regionIds });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.getMessage(),
+    });
+  }
 };
 
-const machineOptions = (req, res) => {};
+const getStructureIds = async (req, res) => {
+  try {
+    const structureIds = await structureRepository.getIds();
+    res.status(200).json({ success: true, data: structureIds });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.getMessage(),
+    });
+  }
+};
 
-const orderOptions = (req, res) => {};
+const clientStatus = (req, res) => {
+  res.status(200).json({ success: true, data: clientStatusOptions });
+};
+
+const machineStatus = (req, res) => {};
+
+const orderStatus = (req, res) => {
+  res.status(200).json({ success: true, data: StatusOptions });
+};
 
 const userOptions = (req, res) => {};
 
@@ -29,10 +59,12 @@ const machineModels = (req, res) => {};
 const machineManufactureYears = (req, res) => {};
 
 export default {
-  driverOptions,
-  clientOptions,
-  machineOptions,
-  orderOptions,
+  driverStatus,
+  getRegionIds,
+  getStructureIds,
+  clientStatus,
+  machineStatus,
+  orderStatus,
   userOptions,
   machineManufacturers,
   machineModels,

@@ -1,8 +1,5 @@
-import redisClient from '../../config/redis.js';
-
-// Redis kalitlari
-const clientsKey = 'clients';
-const driversKey = 'drivers';
+import orderRepository from '../../repositories/order.repo.js';
+import driverService from '../../services/driver.service.js';
 
 export default (io) => {
   const clientNamespace = io.of('/client');
@@ -15,7 +12,7 @@ export default (io) => {
     }
 
     if (orderId) {
-      socket.join(orderId);
+      socket.join(`order_room_${orderId}`);
       console.log(`Socket ${socket.id} joined room ${orderId}`);
     }
 
@@ -30,7 +27,11 @@ export default (io) => {
       // Additional join logic
     });
 
-    socket.on('createOrder', async ({ clientId, structureId }) => {});
+    socket.on('createOrder', async ({ orderId, clientId, long, lat }) => {
+      socket.join(`order_room_${orderId}`);
+      await driverService.sendNotificationToDriver(clientId);
+      socket.emit('searchingDriver', { success: true });
+    });
 
     socket.on('disconnect', async () => {});
   });
