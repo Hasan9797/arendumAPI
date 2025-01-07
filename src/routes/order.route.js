@@ -19,12 +19,12 @@ router.get(
   orderController.getAll
 );
 
-router.get('/:id', orderController.getById);
+router.get('/:id', authentication, orderController.getById);
 
-router.post('/create', orderController.create);
+router.post('/create', authentication, orderController.create);
 
-router.put('/update/:id', orderController.update);
+router.put('/update/:id', authentication, orderController.update);
 
-router.delete('/delete/:id', orderController.distroy);
+router.delete('/delete/:id', authentication, orderController.distroy);
 
 export default router;

@@ -71,6 +71,8 @@ const verifySmsCode = async (req, res) => {
       fullName: user.fullName,
       phone: user.phone,
       role: userRoleEnum.DRIVER,
+      structureId: user?.structureId || null,
+      status: user?.status,
     };
 
     const accessToken = generateAccessToken(payload);

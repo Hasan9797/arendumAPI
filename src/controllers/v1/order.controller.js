@@ -1,6 +1,6 @@
-import e from 'cors';
 import orderService from '../../services/order.service.js';
 import userRoleEnum from '../../enums/user/user-role.enum.js';
+import { userStatus } from '../../enums/user/user-status.enum.js';
 
 const getAll = async (req, res) => {
   let query = {
@@ -69,13 +69,17 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
+    if (!req.user.status) {
+      throw new Error('User is inactive');
+    }
+
     const order = await orderService.createOrder(req.body);
     res.status(201).json(order);
   } catch (error) {
     console.error('Error fetching order:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch order',
+      message: error.message || 'Failed to fetch order',
     });
   }
 };

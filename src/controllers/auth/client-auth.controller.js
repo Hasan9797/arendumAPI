@@ -11,6 +11,7 @@ import {
   generateRefreshAccessToken,
 } from '../../helpers/jwt-token.helper.js';
 import userRoleEnum from '../../enums/user/user-role.enum.js';
+import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
@@ -71,8 +72,8 @@ const verifySmsCode = async (req, res) => {
       fullName: user.fullName,
       phone: user.phone,
       role: userRoleEnum.CLIENT,
-      regionId: user?.regionId || null,
       structureId: user?.structureId || null,
+      status: user?.status,
     };
 
     const accessToken = generateAccessToken(payload);

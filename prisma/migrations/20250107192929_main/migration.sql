@@ -6,6 +6,7 @@ CREATE TABLE "User" (
     "role" INTEGER NOT NULL DEFAULT 1,
     "login" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "status" INTEGER NOT NULL DEFAULT 1,
     "created_at" INTEGER NOT NULL DEFAULT 0,
     "updated_at" INTEGER NOT NULL DEFAULT 0,
 
@@ -15,9 +16,9 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Driver" (
     "id" SERIAL NOT NULL,
-    "full_name" TEXT NOT NULL,
+    "full_name" TEXT,
     "phone" TEXT NOT NULL,
-    "machine_id" INTEGER NOT NULL,
+    "machine_id" INTEGER,
     "email" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
     "photo_tex_passport" JSONB NOT NULL DEFAULT '[]',
@@ -32,8 +33,8 @@ CREATE TABLE "Driver" (
     "machineNumber" TEXT,
     "legal" BOOLEAN NOT NULL DEFAULT false,
     "merchant_id" INTEGER,
-    "region_id" INTEGER NOT NULL,
-    "structure_id" INTEGER NOT NULL,
+    "region_id" INTEGER,
+    "structure_id" INTEGER,
     "fcm_token" TEXT,
     "created_at" INTEGER NOT NULL DEFAULT 0,
     "updated_at" INTEGER NOT NULL DEFAULT 0,
@@ -44,7 +45,7 @@ CREATE TABLE "Driver" (
 -- CreateTable
 CREATE TABLE "Client" (
     "id" SERIAL NOT NULL,
-    "full_name" TEXT NOT NULL,
+    "full_name" TEXT,
     "phone" TEXT NOT NULL,
     "legal" BOOLEAN NOT NULL DEFAULT false,
     "email" TEXT,
@@ -52,8 +53,8 @@ CREATE TABLE "Client" (
     "long" DECIMAL(65,30) DEFAULT 0,
     "lat" DECIMAL(65,30) DEFAULT 0,
     "fcm_token" TEXT,
-    "region_id" INTEGER NOT NULL,
-    "structure_id" INTEGER NOT NULL,
+    "region_id" INTEGER,
+    "structure_id" INTEGER,
     "created_at" INTEGER NOT NULL DEFAULT 0,
     "updated_at" INTEGER NOT NULL DEFAULT 0,
 
@@ -214,19 +215,19 @@ CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");
 CREATE UNIQUE INDEX "Merchant_phone_key" ON "Merchant"("phone");
 
 -- AddForeignKey
-ALTER TABLE "Driver" ADD CONSTRAINT "Driver_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Driver" ADD CONSTRAINT "Driver_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Driver" ADD CONSTRAINT "Driver_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "Region"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Driver" ADD CONSTRAINT "Driver_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "Region"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Driver" ADD CONSTRAINT "Driver_structure_id_fkey" FOREIGN KEY ("structure_id") REFERENCES "Structure"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Driver" ADD CONSTRAINT "Driver_structure_id_fkey" FOREIGN KEY ("structure_id") REFERENCES "Structure"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Client" ADD CONSTRAINT "Client_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "Region"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Client" ADD CONSTRAINT "Client_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "Region"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Client" ADD CONSTRAINT "Client_structure_id_fkey" FOREIGN KEY ("structure_id") REFERENCES "Structure"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Client" ADD CONSTRAINT "Client_structure_id_fkey" FOREIGN KEY ("structure_id") REFERENCES "Structure"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MachineParams" ADD CONSTRAINT "MachineParams_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
