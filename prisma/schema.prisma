@@ -72,7 +72,9 @@ model Client {
 
 model Machines {
   id                   Int                    @id @default(autoincrement())
-  title                String
+  name                 String
+  nameUz               String?                @map("name_uz")
+  nameRu               String?                @map("name_ru")
   img                  String?
   machineParams        MachineParams[]
   machineParamsFilters MachineParamsFilters[]
@@ -86,6 +88,8 @@ model Machines {
 model MachineParams {
   id        Int      @id @default(autoincrement())
   name      String
+  nameUz    String?  @map("name_uz")
+  nameRu    String?  @map("name_ru")
   machineId Int      @map("machine_id")
   machines  Machines @relation(fields: [machineId], references: [id])
   params    Json     @default("[]")
@@ -132,6 +136,8 @@ model Merchant {
 model Region {
   id         Int         @id @default(autoincrement())
   name       String      @map("name")
+  nameUz     String?     @map("name_uz")
+  nameRu     String?     @map("name_ru")
   status     Int         @default(1)
   structures Structure[] @relation("RegionStructures")
   createdAt  Int         @default(0) @map("created_at")
@@ -143,6 +149,8 @@ model Region {
 model Structure {
   id        Int      @id @default(autoincrement())
   name      String   @map("name")
+  nameUz    String?  @map("name_uz")
+  nameRu    String?  @map("name_ru")
   status    Int      @default(1)
   regionId  Int      @map("region_id")
   region    Region?  @relation("RegionStructures", fields: [regionId], references: [id])

@@ -27,20 +27,15 @@ const deleteById = async (id) => {
   return await driverRepository.deleteById(id);
 };
 
-const sendNotificationToDriver = async (token, title, body, clientId) => {
+const getDriversInClientStructure = async (clientId) => {
   try {
     const client = await clientRepository.getById(clientId);
 
     if (!client) throw new Error('Client not found');
 
-    const drivers =
-      await driverRepository.getDriversByStructureIdForNotification(
-        client.structureId
-      );
-
-    for (const driver of drivers) {
-      await sendNotification(driver.fcmToken, title, body);
-    }
+    return await driverRepository.getDriversByStructureIdForNotification(
+      client.structureId
+    );
   } catch (error) {
     console.error('Error sending notification:', error);
     throw error;
@@ -53,5 +48,5 @@ export default {
   create,
   updateById,
   deleteById,
-  sendNotificationToDriver,
+  getDriversInClientStructure,
 };

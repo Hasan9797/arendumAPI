@@ -63,7 +63,9 @@ CREATE TABLE "Client" (
 -- CreateTable
 CREATE TABLE "Machines" (
     "id" SERIAL NOT NULL,
-    "title" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "name_uz" TEXT,
+    "name_ru" TEXT,
     "img" TEXT,
     "created_at" INTEGER NOT NULL DEFAULT 0,
     "updated_at" INTEGER NOT NULL DEFAULT 0,
@@ -75,6 +77,8 @@ CREATE TABLE "Machines" (
 CREATE TABLE "MachineParams" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "name_uz" TEXT,
+    "name_ru" TEXT,
     "machine_id" INTEGER NOT NULL,
     "params" JSONB NOT NULL DEFAULT '[]',
     "created_at" INTEGER NOT NULL DEFAULT 0,
@@ -134,6 +138,8 @@ CREATE TABLE "Merchant" (
 CREATE TABLE "Region" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "name_uz" TEXT,
+    "name_ru" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
     "created_at" INTEGER NOT NULL DEFAULT 0,
     "updated_at" INTEGER NOT NULL DEFAULT 0,
@@ -145,6 +151,8 @@ CREATE TABLE "Region" (
 CREATE TABLE "Structure" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "name_uz" TEXT,
+    "name_ru" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
     "region_id" INTEGER NOT NULL,
     "created_at" INTEGER NOT NULL DEFAULT 0,

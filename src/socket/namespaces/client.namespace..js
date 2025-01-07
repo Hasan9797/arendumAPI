@@ -1,19 +1,14 @@
-import orderRepository from '../../repositories/order.repo.js';
+import { sendNotification } from '../../helpers/send-notification.helper.js';
 import driverService from '../../services/driver.service.js';
 
 export default (io) => {
   const clientNamespace = io.of('/client');
 
   clientNamespace.use((socket, next) => {
-    const { userId, token, role, orderId } = socket.handshake.auth;
+    const { userId, token } = socket.handshake.auth;
 
-    if (!token || token !== process.env.CLIENT_SOCKET_SECRET_KEY) {
+    if (!userId || token !== process.env.CLIENT_SOCKET_SECRET_KEY) {
       return next(new Error('Authentication error'));
-    }
-
-    if (orderId) {
-      socket.join(`order_room_${orderId}`);
-      console.log(`Socket ${socket.id} joined room ${orderId}`);
     }
 
     console.log('Token validated');
@@ -22,15 +17,56 @@ export default (io) => {
 
   clientNamespace.on('connection', (socket) => {
     console.log(`Socket connected: ${socket.id}`);
+    socket.role = 'client';
 
-    socket.on('join', async ({ userId, role }) => {
-      // Additional join logic
+    socket.on('joinRoom', (orderId) => {
+      socket.join(`order_room_${orderId}`);
+      console.log(`User joined room: ${orderId}`);
     });
 
-    socket.on('createOrder', async ({ orderId, clientId, long, lat }) => {
+    socket.on('createOrder', async ({ orderId, clientId }) => {
       socket.join(`order_room_${orderId}`);
-      await driverService.sendNotificationToDriver(clientId);
-      socket.emit('searchingDriver', { success: true });
+      const drivers = await driverService.getDriversInClientStructure(clientId);
+
+      if (!drivers.length) {
+        socket.emit('driverNotFound', { success: false });
+        return;
+      }
+
+      const title = 'New Order';
+      const body = {
+        orderId,
+      };
+
+      let driverJoined = false;
+
+      for (const driver of drivers) {
+        if (driverJoined) break; // Agar haydovchi topilgan bo'lsa, for loopni to'xtatish
+
+        await sendNotification(driver.fcmToken, title, body);
+
+        // Har 5 soniyada haydovchi tekshirish
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
+        // `order_room_${orderId}` dagi socketlarni tekshirish
+        const room = io.sockets.adapter.rooms.get(`order_room_${orderId}`);
+        if (room && room.size > 1) {
+          // Agar roomdagi socketlar soni 1 dan katta bo'lsa
+          for (const socketId of room) {
+            const socket = io.sockets.sockets.get(socketId);
+
+            // Haydovchini tekshirish: role "driver" bo'lsa
+            if (socket && socket.role === 'driver') {
+              driverJoined = true;
+              break;
+            }
+          }
+        }
+      }
+
+      if (!driverJoined) {
+        socket.emit('driverNotFound', { success: false });
+      }
     });
 
     socket.on('disconnect', async () => {});
