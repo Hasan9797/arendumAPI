@@ -14,36 +14,37 @@ model User {
   role      Int    @default(1)
   login     String @unique
   password  String
+  status    Int    @default(1)
   createdAt Int    @default(0) @map("created_at")
   updatedAt Int    @default(0) @map("updated_at")
 }
 
 model Driver {
-  id                      Int      @id @default(autoincrement())
-  fullName                String   @map("full_name")
-  phone                   String   @unique
-  machineId               Int      @map("machine_id")
-  email                   String?  @unique
-  status                  Int      @default(0)
-  photoTexPassport        Json     @default("[]") @map("photo_tex_passport")
-  photoPassport           Json     @default("[]") @map("photo_passport")
-  photoLicense            Json     @default("[]") @map("photo_license")
-  photoConfidencePassport Json     @default("[]") @map("photo_confidence_passport")
-  photoDriverLicense      Json     @default("[]") @map("photo_driver_license")
-  photoCar                Json     @default("[]") @map("photo_car")
-  long                    Decimal? @default(0)
-  lat                     Decimal? @default(0)
+  id                      Int       @id @default(autoincrement())
+  fullName                String?   @map("full_name")
+  phone                   String    @unique
+  machineId               Int?      @map("machine_id")
+  email                   String?   @unique
+  status                  Int       @default(0)
+  photoTexPassport        Json      @default("[]") @map("photo_tex_passport")
+  photoPassport           Json      @default("[]") @map("photo_passport")
+  photoLicense            Json      @default("[]") @map("photo_license")
+  photoConfidencePassport Json      @default("[]") @map("photo_confidence_passport")
+  photoDriverLicense      Json      @default("[]") @map("photo_driver_license")
+  photoCar                Json      @default("[]") @map("photo_car")
+  long                    Decimal?  @default(0)
+  lat                     Decimal?  @default(0)
   machineColor            String?
   machineNumber           String?
-  legal                   Boolean  @default(false)
-  merchantId              Int?     @map("merchant_id")
-  machine                 Machines @relation("MachineDrivers", fields: [machineId], references: [id])
+  legal                   Boolean   @default(false)
+  merchantId              Int?      @map("merchant_id")
+  machine                 Machines? @relation("MachineDrivers", fields: [machineId], references: [id])
 
-  regionId Int    @map("region_id")
-  region   Region @relation("DriverRegion", fields: [regionId], references: [id])
+  regionId Int?    @map("region_id")
+  region   Region? @relation("DriverRegion", fields: [regionId], references: [id])
 
-  structureId Int       @map("structure_id")
-  structure   Structure @relation("DriverStructure", fields: [structureId], references: [id])
+  structureId Int?       @map("structure_id")
+  structure   Structure? @relation("DriverStructure", fields: [structureId], references: [id])
 
   fcmToken  String? @map("fcm_token")
   createdAt Int     @default(0) @map("created_at")
@@ -53,7 +54,7 @@ model Driver {
 
 model Client {
   id          Int        @id @default(autoincrement())
-  fullName    String     @map("full_name")
+  fullName    String?    @map("full_name")
   phone       String     @unique
   legal       Boolean    @default(false)
   email       String?    @unique
@@ -61,9 +62,9 @@ model Client {
   long        Decimal?   @default(0)
   lat         Decimal?   @default(0)
   fcmToken    String?    @map("fcm_token")
-  regionId    Int        @map("region_id")
-  region      Region     @relation("ClientRegion", fields: [regionId], references: [id])
-  structureId Int        @map("structure_id")
+  regionId    Int?       @map("region_id")
+  region      Region?    @relation("ClientRegion", fields: [regionId], references: [id])
+  structureId Int?       @map("structure_id")
   structure   Structure? @relation("ClientStructures", fields: [structureId], references: [id])
   createdAt   Int        @default(0) @map("created_at")
   updatedAt   Int        @default(0) @map("updated_at")

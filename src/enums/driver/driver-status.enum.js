@@ -1,14 +1,14 @@
 // Status enum
 export const DriverStatus = Object.freeze({
+  INACTIVE: 0,
   ACTIVE: 1,
   CREATED: 2,
-  INACTIVE: 3,
 });
 
 const StatusTranslations = {
   1: 'Активный',
   2: 'Создан',
-  3: 'Неактивный',
+  0: 'Неактивный',
 };
 
 export const driverStatusOptions = [
