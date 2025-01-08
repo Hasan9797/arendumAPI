@@ -4,16 +4,16 @@ import driverService from '../../services/driver.service.js';
 export default (io) => {
   const clientNamespace = io.of('/client');
 
-  clientNamespace.use((socket, next) => {
-    const { userId, token } = socket.handshake.auth;
+  // clientNamespace.use((socket, next) => {
+  //   const { userId, token } = socket.handshake.auth;
 
-    if (!userId || token !== process.env.CLIENT_SOCKET_SECRET_KEY) {
-      return next(new Error('Authentication error'));
-    }
+  //   if (!userId || token !== process.env.CLIENT_SOCKET_SECRET_KEY) {
+  //     return next(new Error('Authentication error'));
+  //   }
 
-    console.log('Token validated');
-    next();
-  });
+  //   console.log('Token validated');
+  //   next();
+  // });
 
   clientNamespace.on('connection', (socket) => {
     console.log(`Socket connected: ${socket.id}`);
@@ -21,6 +21,7 @@ export default (io) => {
 
     socket.on('joinRoom', (orderId) => {
       socket.join(`order_room_${orderId}`);
+      socket.emit('joinedRoom', { success: true });
       console.log(`User joined room: ${orderId}`);
     });
 
@@ -41,21 +42,18 @@ export default (io) => {
       let driverJoined = false;
 
       for (const driver of drivers) {
-        if (driverJoined) break; // Agar haydovchi topilgan bo'lsa, for loopni to'xtatish
+        if (driverJoined) break;
 
         await sendNotification(driver.fcmToken, title, body);
 
         // Har 5 soniyada haydovchi tekshirish
         await new Promise((resolve) => setTimeout(resolve, 5000));
 
-        // `order_room_${orderId}` dagi socketlarni tekshirish
         const room = io.sockets.adapter.rooms.get(`order_room_${orderId}`);
         if (room && room.size > 1) {
-          // Agar roomdagi socketlar soni 1 dan katta bo'lsa
           for (const socketId of room) {
             const socket = io.sockets.sockets.get(socketId);
 
-            // Haydovchini tekshirish: role "driver" bo'lsa
             if (socket && socket.role === 'driver') {
               driverJoined = true;
               break;

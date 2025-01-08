@@ -1,19 +1,19 @@
 import { OrderStatus } from '../../enums/order/order-status.enum.js';
-import driverService from '../../services/driver.service.js';
+import orderService from '../../services/order.service.js';
 
 export default (io) => {
   const driverNamespace = io.of('/driver');
 
-  driverNamespace.use((socket, next) => {
-    const { userId, token } = socket.handshake.auth;
+  // driverNamespace.use((socket, next) => {
+  //   const { userId, token } = socket.handshake.auth;
 
-    if (!userId || token !== process.env.DRIVER_SOCKET_SECRET_KEY) {
-      return next(new Error('Authentication error'));
-    }
+  //   if (!userId || token !== process.env.DRIVER_SOCKET_SECRET_KEY) {
+  //     return next(new Error('Authentication error'));
+  //   }
 
-    console.log('Token validated');
-    next();
-  });
+  //   console.log('Token validated');
+  //   next();
+  // });
 
   driverNamespace.on('connection', (socket) => {
     console.log(`Socket connected: ${socket.id}`);
@@ -27,8 +27,9 @@ export default (io) => {
     socket.on('acceptOrder', async ({ orderId, driverName, driverPhone }) => {
       socket.join(orderId);
 
-      await driverService.updateById(orderId, {
+      await orderService.updateOrder(orderId, {
         driverId: parseInt(socket.userId),
+        status: OrderStatus.ASSIGNED,
       });
 
       io.of('/client')
@@ -42,9 +43,9 @@ export default (io) => {
         .emit('driverLocation', location);
     });
 
-    socket.on('completeOrder', async ({ orderId }) => {
-      await driverService.updateById(orderId, {
-        status: OrderStatus.COMPLETED,
+    socket.on('icame', async ({ orderId }) => {
+      await orderService.updateOrder(orderId, {
+        status: OrderStatus.ARRIVED,
       });
     });
 
