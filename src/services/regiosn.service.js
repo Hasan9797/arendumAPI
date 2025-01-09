@@ -1,7 +1,7 @@
 import regionRepo from '../repositories/region.repo.js';
 
-const getRegions = async (query) => {
-  return await regionRepo.getAll(query);
+const getRegions = async (lang, query) => {
+  return await regionRepo.getAll(lang, query);
 };
 
 const getById = async (id) => {

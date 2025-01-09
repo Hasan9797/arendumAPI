@@ -42,7 +42,7 @@ export const getAll = async (query) => {
     return {
       data: paramsFilter,
       pagination: {
-        totalUsers: total,
+        total,
         totalPages: Math.ceil(total / limit),
         currentPage: page,
         pageSize: limit,

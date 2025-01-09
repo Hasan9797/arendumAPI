@@ -10,9 +10,39 @@ import {
   generateAccessToken,
   generateRefreshAccessToken,
 } from '../../helpers/jwt-token.helper.js';
+
 import userRoleEnum from '../../enums/user/user-role.enum.js';
+import driverService from '../../services/driver.service.js';
+import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
+import { DriverStatus } from '../../enums/driver/driver-status.enum.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
+
+const register = async (req, res) => {
+  try {
+    const user = await prisma.driver.findUnique({
+      where: { phone: req.body.phone },
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: 'User not found', success: false });
+    }
+
+    await clientService.updateClient(user.id, {
+      status: DriverStatus.INACTIVE,
+      ...req.body,
+    });
+
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to fetch users',
+    });
+  }
+};
 
 const login = async (req, res) => {
   const { phoneNumber } = req.body;
@@ -23,27 +53,36 @@ const login = async (req, res) => {
       .json({ message: 'phoneNumber is required', success: false });
   }
 
-  const user = await prisma.driver.findUnique({
-    where: { phone: phoneNumber },
-  });
+  try {
+    const user = await prisma.driver.findUnique({
+      where: { phone: phoneNumber },
+    });
 
-  if (!user) {
-    return res.status(401).json({ message: 'User not found', success: false });
+    if (!user) {
+      await driverService.create({
+        phone: phoneNumber,
+        status: DriverStatus.CREATED,
+      });
+    }
+    // SMS code generation
+    const smsCode = 777777; // Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + SMS_CODE_EXPIRATION;
+
+    // Save the SMS code temporarily
+    await saveSmsCode(phoneNumber, smsCode, expiresAt);
+
+    // Send SMS code
+    await sendSms(phoneNumber, `Your login code is: ${smsCode}`);
+
+    return res
+      .status(200)
+      .json({ message: 'SMS code sent successfully', success: true });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Failed Driver Create to send SMS code',
+      success: false,
+    });
   }
-
-  // SMS code generation
-  const smsCode = 777777; // Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = Date.now() + SMS_CODE_EXPIRATION;
-
-  // Save the SMS code temporarily
-  await saveSmsCode(phoneNumber, smsCode, expiresAt);
-
-  // Send SMS code
-  await sendSms(phoneNumber, `Your login code is: ${smsCode}`);
-
-  return res
-    .status(200)
-    .json({ message: 'SMS code sent successfully', success: true });
 };
 
 const verifySmsCode = async (req, res) => {
@@ -65,6 +104,18 @@ const verifySmsCode = async (req, res) => {
     const user = await prisma.driver.findUnique({
       where: { phone: phoneNumber },
     });
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: 'User not found', success: false });
+    }
+
+    if (user.status == DriverStatus.CREATED) {
+      return res
+        .status(401)
+        .json({ message: 'User no register', success: false });
+    }
 
     const payload = {
       id: user.id,
@@ -95,4 +146,4 @@ const verifySmsCode = async (req, res) => {
   }
 };
 
-export default { login, verifySmsCode };
+export default { login, verifySmsCode, register };

@@ -1,6 +1,7 @@
 import machinesService from '../../services/machines.service.js';
 
 const getAll = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   const query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
@@ -9,7 +10,7 @@ const getAll = async (req, res) => {
   };
 
   try {
-    const result = await machinesService.getMachines(query);
+    const result = await machinesService.getMachines(lang, query);
     res.status(200).json({
       success: true,
       data: result.data,
@@ -26,6 +27,7 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'uz';
   try {
     const machine = await machinesService.getMachineById(
       parseInt(req.params.id)

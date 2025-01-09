@@ -1,7 +1,7 @@
 import structureRepo from '../repositories/structure.repo.js';
 
-const getStructures = async (query) => {
-  return await structureRepo.getAll(query);
+const getStructures = async (lang, query) => {
+  return await structureRepo.getAll(lang, query);
 };
 
 const getById = async (id) => {

@@ -43,7 +43,7 @@ export const getMachines = async (query) => {
     return {
       data: categories,
       pagination: {
-        totalUsers: total,
+        total,
         totalPages: Math.ceil(total / limit),
         currentPage: page,
         pageSize: limit,

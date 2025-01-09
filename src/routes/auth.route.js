@@ -11,10 +11,12 @@ const router = Router();
 router.post('/login', authController.login);
 
 // Driver Auth
+router.post('/driver/register', driverAuthController.register);
 router.post('/driver/login', driverAuthController.login);
 router.post('/driver/verify-code', driverAuthController.verifySmsCode);
 
 // Client Auth
+router.post('/client/register', clientAuthController.register);
 router.post('/client/login', clientAuthController.login);
 router.post('/client/verify-code', clientAuthController.verifySmsCode);
 

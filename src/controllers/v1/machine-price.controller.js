@@ -42,8 +42,8 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const price = await machinePriceService.createPrice(req.body);
-    res.status(201).json(price);
+    await machinePriceService.createPrice(req.body);
+    res.status(201).json({ saccess: true, data: true });
   } catch (error) {
     console.error('Error fetching price:', error);
     res.status(500).json({

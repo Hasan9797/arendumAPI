@@ -69,7 +69,7 @@ export const findAll = async (query) => {
     return {
       data: sanitizedOrders,
       pagination: {
-        totalUsers: total,
+        total,
         totalPages: Math.ceil(total / limit),
         currentPage: page,
         pageSize: limit,

@@ -1,6 +1,8 @@
 import regionService from '../../services/regiosn.service.js';
 
 const getAll = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
+
   const query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
@@ -9,7 +11,7 @@ const getAll = async (req, res) => {
   };
 
   try {
-    const result = await regionService.getRegions(query);
+    const result = await regionService.getRegions(lang, query);
     res.status(200).json({
       success: true,
       data: result.data,

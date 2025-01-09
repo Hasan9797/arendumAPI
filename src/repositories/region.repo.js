@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-export const getAll = async (query) => {
+export const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (page - 1) * limit;
@@ -30,7 +30,7 @@ export const getAll = async (query) => {
       ? { [sort.column]: sort.value }
       : { id: 'desc' };
 
-    const categories = await prisma.region.findMany({
+    const regions = await prisma.region.findMany({
       where,
       orderBy,
       skip,
@@ -38,11 +38,18 @@ export const getAll = async (query) => {
     });
 
     const total = await prisma.region.count({ where });
+    console.log(lang);
+
+    const data = regions.map((region) => {
+      const { nameRu, nameUz, nameEn, ...rest } = region;
+      rest.name = lang == 'uz' ? nameUz : nameRu;
+      return rest;
+    });
 
     return {
-      data: categories,
+      data,
       pagination: {
-        totalUsers: total,
+        total,
         totalPages: Math.ceil(total / limit),
         currentPage: page,
         pageSize: limit,

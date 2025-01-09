@@ -25,7 +25,7 @@ model Driver {
   phone                   String    @unique
   machineId               Int?      @map("machine_id")
   email                   String?   @unique
-  status                  Int       @default(0)
+  status                  Int       @default(1)
   photoTexPassport        Json      @default("[]") @map("photo_tex_passport")
   photoPassport           Json      @default("[]") @map("photo_passport")
   photoLicense            Json      @default("[]") @map("photo_license")
@@ -58,7 +58,7 @@ model Client {
   phone       String     @unique
   legal       Boolean    @default(false)
   email       String?    @unique
-  status      Int        @default(0)
+  status      Int        @default(1)
   long        Decimal?   @default(0)
   lat         Decimal?   @default(0)
   fcmToken    String?    @map("fcm_token")
@@ -73,9 +73,10 @@ model Client {
 
 model Machines {
   id                   Int                    @id @default(autoincrement())
-  name                 String
-  nameUz               String?                @map("name_uz")
-  nameRu               String?                @map("name_ru")
+  name                 String?                @map("name")
+  nameUz               String                 @map("name_uz")
+  nameRu               String                 @map("name_ru")
+  nameEn               String?                @map("name_en")
   img                  String?
   machineParams        MachineParams[]
   machineParamsFilters MachineParamsFilters[]
@@ -88,9 +89,10 @@ model Machines {
 
 model MachineParams {
   id        Int      @id @default(autoincrement())
-  name      String
-  nameUz    String?  @map("name_uz")
-  nameRu    String?  @map("name_ru")
+  name      String?  @map("name")
+  nameUz    String   @map("name_uz")
+  nameRu    String   @map("name_ru")
+  nameEn    String?  @map("name_en")
   machineId Int      @map("machine_id")
   machines  Machines @relation(fields: [machineId], references: [id])
   params    Json     @default("[]")
@@ -136,9 +138,10 @@ model Merchant {
 
 model Region {
   id         Int         @id @default(autoincrement())
-  name       String      @map("name")
-  nameUz     String?     @map("name_uz")
-  nameRu     String?     @map("name_ru")
+  name       String?     @map("name")
+  nameUz     String      @map("name_uz")
+  nameRu     String      @map("name_ru")
+  nameEn     String?     @map("name_en")
   status     Int         @default(1)
   structures Structure[] @relation("RegionStructures")
   createdAt  Int         @default(0) @map("created_at")
@@ -149,9 +152,10 @@ model Region {
 
 model Structure {
   id        Int      @id @default(autoincrement())
-  name      String   @map("name")
-  nameUz    String?  @map("name_uz")
-  nameRu    String?  @map("name_ru")
+  name      String?  @map("name")
+  nameUz    String   @map("name_uz")
+  nameRu    String   @map("name_ru")
+  nameEn    String?  @map("name_en")
   status    Int      @default(1)
   regionId  Int      @map("region_id")
   region    Region?  @relation("RegionStructures", fields: [regionId], references: [id])
@@ -181,11 +185,16 @@ model Order {
 }
 
 model MachinePrice {
-  id        Int      @id @default(autoincrement())
-  machineId Int      @map("machine_id")
-  machines  Machines @relation(fields: [machineId], references: [id])
-  kmPrice   Int      @map("km_price")
-  hourPrice Int      @map("hour_price")
-  createdAt Int      @default(0) @map("created_at")
-  updatedAt Int      @default(0) @map("updated_at")
+  id            Int      @id @default(autoincrement())
+  machineId     Int      @map("machine_id")
+  machines      Machines @relation(fields: [machineId], references: [id])
+  parameter     String   @map("parameter")
+  parameterName String   @map("parameter_name")
+  unit          String   @map("unit")
+  type          String   @map("type")
+  minAmount     String   @map("min_amount")
+  minHourTime   String   @map("min_hour_time")
+  tariffName    String?  @map("tariff_name")
+  createdAt     Int      @default(0) @map("created_at")
+  updatedAt     Int      @default(0) @map("updated_at")
 }

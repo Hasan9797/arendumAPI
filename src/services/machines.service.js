@@ -1,7 +1,7 @@
 import machinesRepo from '../repositories/machines.repo.js';
 
-const getMachines = async (query) => {
-  return await machinesRepo.getMachines(query);
+const getMachines = async (lang, query) => {
+  return await machinesRepo.getMachines(lang, query);
 };
 
 const getMachineById = async (id) => {
