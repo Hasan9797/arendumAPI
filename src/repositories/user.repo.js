@@ -42,7 +42,7 @@ export const getUsers = async (query) => {
     return {
       data: users,
       pagination: {
-        totalUsers: total,
+        total,
         totalPages: Math.ceil(total / limit),
         currentPage: page,
         pageSize: limit,

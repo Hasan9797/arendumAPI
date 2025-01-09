@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-export const getMachines = async (query) => {
+export const getMachines = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (page - 1) * limit;
@@ -30,7 +30,7 @@ export const getMachines = async (query) => {
       ? { [sort.column]: sort.value }
       : { id: 'desc' };
 
-    const categories = await prisma.machines.findMany({
+    const machines = await prisma.machines.findMany({
       where,
       orderBy,
       skip,
@@ -39,10 +39,16 @@ export const getMachines = async (query) => {
 
     const total = await prisma.machines.count({ where });
 
+    const data = machines.map((machine) => {
+      const { nameRu, nameUz, nameEn, ...rest } = machine;
+      rest.name = lang == 'uz' ? nameUz : nameRu;
+      return rest;
+    });
+
     return {
-      data: categories,
+      data,
       pagination: {
-        totalUsers: total,
+        total,
         totalPages: Math.ceil(total / limit),
         currentPage: page,
         pageSize: limit,

@@ -9,7 +9,21 @@ const getPriceById = async (id) => {
 };
 
 const createPrice = async (data) => {
-  return await machinePriceRepo.createMachinePrice(data);
+  try {
+    const { additionalParameters, ...rest } = data;
+    for (const param of additionalParameters) {
+      await machinePriceRepo.createMachinePrice({
+        parameter: param.parameter,
+        parameterName: param.parameterName,
+        unit: param.unit,
+        type: param.type,
+        ...rest,
+      });
+    }
+    return true;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const updatePrice = async (id, data) => {

@@ -30,7 +30,7 @@ export const getMachinesPrice = async (query) => {
       ? { [sort.column]: sort.value }
       : { id: 'desc' };
 
-    const categories = await prisma.machinePrice.findMany({
+    const machinePrices = await prisma.machinePrice.findMany({
       where,
       orderBy,
       skip,
@@ -43,9 +43,9 @@ export const getMachinesPrice = async (query) => {
     const total = await prisma.machinePrice.count({ where });
 
     return {
-      data: categories,
+      data: machinePrices,
       pagination: {
-        totalUsers: total,
+        total,
         totalPages: Math.ceil(total / limit),
         currentPage: page,
         pageSize: limit,

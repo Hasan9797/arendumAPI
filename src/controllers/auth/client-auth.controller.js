@@ -12,8 +12,37 @@ import {
 } from '../../helpers/jwt-token.helper.js';
 import userRoleEnum from '../../enums/user/user-role.enum.js';
 import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
+import clientService from '../../services/client.service.js';
+import { ClientStatus } from '../../enums/client/client-status.enum.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
+
+const register = async (req, res) => {
+  try {
+    const user = await prisma.client.findUnique({
+      where: { phone: req.body.phone },
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: 'User not found', success: false });
+    }
+
+    await clientService.updateClient(user.id, {
+      status: ClientStatus.ACTIVE,
+      ...req.body,
+    });
+
+    res.status(201).json(user);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to fetch users',
+    });
+  }
+};
 
 const login = async (req, res) => {
   const { phoneNumber } = req.body;
@@ -29,7 +58,10 @@ const login = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(401).json({ message: 'User not found', success: false });
+    await clientService.createClient({
+      phone: phoneNumber,
+      status: ClientStatus.INACTIVE,
+    });
   }
 
   // SMS code generation
@@ -69,7 +101,7 @@ const verifySmsCode = async (req, res) => {
 
     const payload = {
       id: user.id,
-      fullName: user.fullName,
+      fullName: user.fullName || null,
       phone: user.phone,
       role: userRoleEnum.CLIENT,
       structureId: user?.structureId || null,
@@ -96,4 +128,4 @@ const verifySmsCode = async (req, res) => {
   }
 };
 
-export default { login, verifySmsCode };
+export default { login, verifySmsCode, register };
