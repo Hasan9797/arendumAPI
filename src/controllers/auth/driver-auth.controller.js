@@ -14,28 +14,27 @@ import {
 import userRoleEnum from '../../enums/user/user-role.enum.js';
 import driverService from '../../services/driver.service.js';
 import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
-import { DriverStatus } from '../../enums/driver/driver-status.enum.js';
+import {
+  DriverStatus,
+  getStatusText,
+} from '../../enums/driver/driver-status.enum.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
 const register = async (req, res) => {
   try {
-    const user = await prisma.driver.findUnique({
-      where: { phone: req.body.phone },
-    });
-
-    if (!user) {
+    if (!req.user) {
       return res
         .status(400)
-        .json({ message: 'User not found', success: false });
+        .json({ message: 'Driver not found for Register', success: false });
     }
 
-    await clientService.updateClient(user.id, {
+    await driverService.updateById(req.user.id, {
       status: DriverStatus.INACTIVE,
       ...req.body,
     });
 
-    res.status(201).json(user);
+    res.status(201).json({ success: true, message: 'Driver registered' });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -111,18 +110,10 @@ const verifySmsCode = async (req, res) => {
         .json({ message: 'User not found', success: false });
     }
 
-    if (user.status == DriverStatus.CREATED) {
-      return res
-        .status(401)
-        .json({ message: 'User no register', success: false });
-    }
-
     const payload = {
       id: user.id,
-      fullName: user.fullName,
       phone: user.phone,
       role: userRoleEnum.DRIVER,
-      structureId: user?.structureId || null,
       status: user?.status,
     };
 
@@ -138,9 +129,12 @@ const verifySmsCode = async (req, res) => {
 
     await updateOrCreateUserToken(userToken);
 
-    return res
-      .status(200)
-      .json({ message: 'Verification successful', accessToken, refreshToken });
+    return res.status(200).json({
+      saccess: true,
+      accessToken,
+      refreshToken,
+      status: getStatusText(user?.status),
+    });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

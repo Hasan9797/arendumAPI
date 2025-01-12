@@ -6,7 +6,7 @@ export const DriverStatus = Object.freeze({
 });
 
 const StatusTranslations = {
-  0: 'Создан',
+  0: 'Созданный',
   1: 'Неактивный',
   2: 'Активный',
 };
