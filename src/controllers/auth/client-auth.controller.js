@@ -122,15 +122,11 @@ const verifySmsCode = async (req, res) => {
 
     await updateOrCreateUserToken(userToken);
 
-    const data = {
+    return res.status(200).json({
       accessToken,
       refreshToken,
       status: { key: user?.status, value: getStatusText(user.status) },
-    };
-
-    return res
-      .status(200)
-      .json(responseSuccess(data, 'Verification successful'));
+    });
   } catch (error) {
     return res.status(400).json(responseError(error.message, error.code));
   }

@@ -2,7 +2,6 @@ export const responseSuccess = (data = {}, message = 'process success') => {
   return {
     message,
     success: true,
-    error: false,
     data,
   };
 };
