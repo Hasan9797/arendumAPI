@@ -13,7 +13,12 @@ const createClient = async (data) => {
 };
 
 const updateClient = async (id, data) => {
-  return await clientRepository.updateClientById(id, data);
+  try {
+    return await clientRepository.updateClientById(id, data);
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw error;
+  }
 };
 
 const deleteClient = async (id) => {

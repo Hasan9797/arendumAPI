@@ -19,22 +19,18 @@ const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
 const register = async (req, res) => {
   try {
-    const user = await prisma.client.findUnique({
-      where: { phone: req.body.phone },
-    });
-
-    if (!user) {
+    if (!req.user) {
       return res
         .status(400)
-        .json({ message: 'User not found', success: false });
+        .json({ message: 'Client not found for Register', success: false });
     }
 
-    await clientService.updateClient(user.id, {
+    await clientService.updateClient(req.user.id, {
       status: ClientStatus.ACTIVE,
       ...req.body,
     });
 
-    res.status(201).json(user);
+    res.status(201).json({ success: true, message: 'Client registered' });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({
@@ -101,10 +97,8 @@ const verifySmsCode = async (req, res) => {
 
     const payload = {
       id: user.id,
-      fullName: user.fullName || null,
       phone: user.phone,
       role: userRoleEnum.CLIENT,
-      structureId: user?.structureId || null,
       status: user?.status,
     };
 

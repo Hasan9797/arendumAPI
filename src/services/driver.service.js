@@ -20,7 +20,12 @@ const create = async (data) => {
 };
 
 const updateById = async (id, data) => {
-  return await driverRepository.updateById(id, data);
+  try {
+    return await driverRepository.updateById(id, data);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
 };
 
 const deleteById = async (id) => {
