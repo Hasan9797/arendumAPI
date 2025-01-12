@@ -1,6 +1,5 @@
-export const responseSuccess = (data = {}, message = 'process success') => {
+export const responseSuccess = (data = {}) => {
   return {
-    message,
     success: true,
     data,
   };
