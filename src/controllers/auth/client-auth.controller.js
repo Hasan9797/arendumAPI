@@ -10,13 +10,20 @@ import {
   generateAccessToken,
   generateRefreshAccessToken,
 } from '../../helpers/jwt-token.helper.js';
+
 import userRoleEnum from '../../enums/user/user-role.enum.js';
 import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
 import clientService from '../../services/client.service.js';
+
 import {
   ClientStatus,
   getStatusText,
 } from '../../enums/client/client-status.enum.js';
+
+import {
+  responseSuccess,
+  responseError,
+} from '../../helpers/response.helper.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
@@ -32,14 +39,10 @@ const register = async (req, res) => {
       status: ClientStatus.ACTIVE,
       ...req.body,
     });
-
-    res.status(201).json({ success: true, message: 'Client registered' });
+    res.status(201).json(responseSuccess());
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json({
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -74,11 +77,9 @@ const login = async (req, res) => {
     // Send SMS code
     await sendSms(phoneNumber, `Your login code is: ${smsCode}`);
 
-    return res
-      .status(200)
-      .json({ message: 'SMS code sent successfully', success: true });
+    return res.status(200).json(responseSuccess({}, 'SMS code sent'));
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -88,11 +89,11 @@ const verifySmsCode = async (req, res) => {
     const savedCode = await getSmsCode(phoneNumber);
 
     if (!savedCode) {
-      throw new Error('SMS code not found or expired');
+      throw new Error('SMS code not found or expired', 400);
     }
 
     if (savedCode != code) {
-      throw new Error('Invalid SMS code');
+      throw new Error('Invalid SMS code', 400);
     }
 
     // Delete the SMS code temporarily
@@ -121,14 +122,17 @@ const verifySmsCode = async (req, res) => {
 
     await updateOrCreateUserToken(userToken);
 
-    return res.status(200).json({
-      message: 'Verification successful',
+    const data = {
       accessToken,
       refreshToken,
       status: { key: user?.status, value: getStatusText(user.status) },
-    });
+    };
+
+    return res
+      .status(200)
+      .json(responseSuccess(data, 'Verification successful'));
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json(responseError(error.message, error.code));
   }
 };
 
