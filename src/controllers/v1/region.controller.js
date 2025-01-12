@@ -21,8 +21,10 @@ const getAll = async (req, res) => {
     console.error('Error fetching region:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch region',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -30,13 +32,19 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const region = await regionService.getById(parseInt(req.params.id));
-    res.status(200).json(region);
+    res.status(200).json({
+      success: true,
+      error: false,
+      data: region,
+    });
   } catch (error) {
     console.error('Error fetching region:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch region',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -44,13 +52,18 @@ const getById = async (req, res) => {
 const create = async (req, res) => {
   try {
     const region = await regionService.createRegion(req.body);
-    res.status(201).json(region);
+    res.status(201).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
     console.error('Error fetching region:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch region',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -61,27 +74,37 @@ const update = async (req, res) => {
       parseInt(req.params.id),
       req.body
     );
-    res.status(200).json(region);
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
     console.error('Error fetching region:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch region',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const distroy = async (req, res) => {
   try {
-    const region = await regionService.deleteRegion(parseInt(req.params.id));
-    res.status(200).json(region);
+    await regionService.deleteRegion(parseInt(req.params.id));
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
     console.error('Error fetching region:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch region',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };

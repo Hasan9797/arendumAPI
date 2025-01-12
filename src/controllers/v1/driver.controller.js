@@ -1,5 +1,4 @@
 import driverService from '../../services/driver.service.js';
-import { driverStatusOptions } from '../../enums/driver/driver-status.enum.js';
 
 const getAll = async (req, res) => {
   const query = {
@@ -9,8 +8,10 @@ const getAll = async (req, res) => {
     sort: req.body.sort || { column: 'id', value: 'desc' },
   };
 
+  const lang = req.headers['accept-language'] || 'ru';
+
   try {
-    const result = await driverService.getAll(query);
+    const result = await driverService.getAll(lang, query);
     res.status(200).json({
       success: true,
       data: result.data,
@@ -20,7 +21,10 @@ const getAll = async (req, res) => {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -28,25 +32,39 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const driver = await driverService.getById(parseInt(req.params.id));
-    res.status(200).json(driver);
+    res.status(201).json({
+      success: true,
+      error: false,
+      data: driver,
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const create = async (req, res) => {
   try {
-    const user = await driverService.create(req.body);
-    res.status(201).json(user);
+    await driverService.create(req.body);
+    res.status(201).json({
+      success: true,
+      error: false,
+      data: {},
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -57,12 +75,19 @@ const update = async (req, res) => {
       parseInt(req.params.id),
       req.body
     );
-    res.status(200).json(user);
+    res.status(200).json({
+      success: true,
+      error: false,
+      data: {},
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };

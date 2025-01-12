@@ -20,67 +20,85 @@ const getAll = async (req, res) => {
     console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch structure',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const getById = async (req, res) => {
   try {
-    const machine = await structureService.getById(parseInt(req.params.id));
-    res.status(200).json(machine);
+    const structure = await structureService.getById(parseInt(req.params.id));
+    res.status(200).json({
+      success: true,
+      error: false,
+      data: structure,
+    });
   } catch (error) {
-    console.error('Error fetching machine:', error);
+    console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch machine',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const create = async (req, res) => {
   try {
-    const machine = await structureService.createStructure(req.body);
-    res.status(201).json(machine);
+    await structureService.createStructure(req.body);
+    res.status(201).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
-    console.error('Error fetching machine:', error);
+    console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
       message:
-        error instanceof Error ? error.message : 'Failed to fetch machine',
+        error instanceof Error ? error.message : 'Failed to fetch structure',
     });
   }
 };
 
 const update = async (req, res) => {
   try {
-    const machine = await structureService.updateById(
-      parseInt(req.params.id),
-      req.body
-    );
-    res.status(200).json(machine);
+    await structureService.updateById(parseInt(req.params.id), req.body);
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
-    console.error('Error fetching machine:', error);
+    console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch machine',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const distroy = async (req, res) => {
   try {
-    const machine = await structureService.deleteById(parseInt(req.params.id));
-    res.status(200).json(machine);
+    await structureService.deleteById(parseInt(req.params.id));
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
-    console.error('Error fetching machine:', error);
+    console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch machine',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };

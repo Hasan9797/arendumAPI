@@ -19,7 +19,10 @@ const getUsers = async (req, res) => {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -27,41 +30,57 @@ const getUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const user = await userService.getUserById(parseInt(req.params.id));
-    res.status(200).json(user);
+    res.status(200).json({
+      success: true,
+      error: false,
+      data: user,
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const createUser = async (req, res) => {
   try {
-    const user = await userService.createUser(req.body);
-    res.status(201).json(user);
+    await userService.createUser(req.body);
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const updateUser = async (req, res) => {
   try {
-    const user = await userService.updateUser(
-      parseInt(req.params.id),
-      req.body
-    );
-    res.status(200).json(user);
+    await userService.updateUser(parseInt(req.params.id), req.body);
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };

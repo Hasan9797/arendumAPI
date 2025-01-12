@@ -20,8 +20,10 @@ const getAll = async (req, res) => {
     console.error('Error fetching machines:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch machines',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -32,13 +34,19 @@ const getById = async (req, res) => {
     const machine = await machinesService.getMachineById(
       parseInt(req.params.id)
     );
-    res.status(200).json(machine);
+    res.status(200).json({
+      success: true,
+      error: false,
+      data: machine,
+    });
   } catch (error) {
     console.error('Error fetching machine:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch machine',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -46,13 +54,19 @@ const getById = async (req, res) => {
 const create = async (req, res) => {
   try {
     const machine = await machinesService.createMachine(req.body);
-    res.status(201).json(machine);
+    res.status(201).json({
+      success: true,
+      error: false,
+      data: {},
+    });
   } catch (error) {
     console.error('Error fetching machine:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch machine',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -63,29 +77,39 @@ const update = async (req, res) => {
       parseInt(req.params.id),
       req.body
     );
-    res.status(200).json(machine);
+    res.status(200).json({
+      success: true,
+      error: false,
+      data: {},
+    });
   } catch (error) {
     console.error('Error fetching machine:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch machine',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const distroy = async (req, res) => {
   try {
-    const machine = await machinesService.deleteMachine(
-      parseInt(req.params.id)
-    );
-    res.status(200).json(machine);
+    await machinesService.deleteMachine(parseInt(req.params.id));
+    res.status(200).json({
+      success: true,
+      error: false,
+      data: {},
+    });
   } catch (error) {
     console.error('Error fetching machine:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch machine',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
