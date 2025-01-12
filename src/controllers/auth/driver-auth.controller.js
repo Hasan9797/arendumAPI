@@ -133,7 +133,7 @@ const verifySmsCode = async (req, res) => {
       saccess: true,
       accessToken,
       refreshToken,
-      status: getStatusText(user?.status),
+      status: { key: user?.status, value: getStatusText(user.status) },
     });
   } catch (error) {
     return res.status(400).json({ message: error.message });

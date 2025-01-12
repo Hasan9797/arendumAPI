@@ -13,7 +13,10 @@ import {
 import userRoleEnum from '../../enums/user/user-role.enum.js';
 import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
 import clientService from '../../services/client.service.js';
-import { ClientStatus } from '../../enums/client/client-status.enum.js';
+import {
+  ClientStatus,
+  getStatusText,
+} from '../../enums/client/client-status.enum.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
@@ -118,9 +121,12 @@ const verifySmsCode = async (req, res) => {
 
     await updateOrCreateUserToken(userToken);
 
-    return res
-      .status(200)
-      .json({ message: 'Verification successful', accessToken, refreshToken });
+    return res.status(200).json({
+      message: 'Verification successful',
+      accessToken,
+      refreshToken,
+      status: { key: user?.status, value: getStatusText(user.status) },
+    });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
