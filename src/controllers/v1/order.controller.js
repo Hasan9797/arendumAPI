@@ -30,26 +30,10 @@ const getAll = async (req, res) => {
     console.error('Error fetching orders:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch orders',
-    });
-  }
-};
-
-const getOrdersByUserId = async (req, res) => {
-  try {
-    const result = await orderService.getOrders(query);
-    res.status(200).json({
-      success: true,
-      data: result.data,
-      pagination: result.pagination,
-    });
-  } catch (error) {
-    console.error('Error fetching orders:', error);
-    res.status(500).json({
-      success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch orders',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -57,58 +41,81 @@ const getOrdersByUserId = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const order = await orderService.getOrderById(parseInt(req.params.id));
-    res.status(200).json(order);
+    res.status(200).json({
+      success: true,
+      error: false,
+      data: order,
+    });
   } catch (error) {
     console.error('Error fetching order:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch order',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const create = async (req, res) => {
   try {
-    if (!req.user.status) {
+    if (!req.user.status !== userStatus.ACTIVE) {
       throw new Error('User is inactive');
     }
 
     const order = await orderService.createOrder(req.body);
-    res.status(201).json(order);
+    res.status(201).json({
+      success: true,
+      error: false,
+      data: order,
+    });
   } catch (error) {
     console.error('Error fetching order:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to fetch order',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const update = async (req, res) => {
   try {
-    const order = await orderService.updateOrder(
-      parseInt(req.params.id),
-      req.body
-    );
-    res.status(200).json(order);
+    await orderService.updateOrder(parseInt(req.params.id), req.body);
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
     console.error('Error fetching order:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch order',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
 
 const distroy = async (req, res) => {
   try {
-    const order = await orderService.deleteOrder(parseInt(req.params.id));
-    res.status(200).json(order);
+    await orderService.deleteOrder(parseInt(req.params.id));
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
   } catch (error) {
     console.error('Error fetching order:', error);
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch order',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };

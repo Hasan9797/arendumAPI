@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-export const findAll = async (query) => {
+export const findAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (page - 1) * limit;
@@ -40,6 +40,8 @@ export const findAll = async (query) => {
           select: {
             id: true,
             name: true,
+            nameUz: true,
+            nameRu: true,
             status: true,
           },
         },
@@ -47,13 +49,17 @@ export const findAll = async (query) => {
           select: {
             id: true,
             name: true,
+            nameUz: true,
+            nameRu: true,
             status: true,
           },
         },
         machine: {
           select: {
             id: true,
-            title: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
             img: true,
           },
         },
@@ -66,8 +72,28 @@ export const findAll = async (query) => {
       ({ regionId, structureId, machineId, ...rest }) => rest
     );
 
+    const data = sanitizedDrivers.map((driver) => {
+      const { region, structure, machine, ...rest } = driver;
+
+      // Adjust name field based on the language
+      const adjustName = (obj) => {
+        const { nameRu, nameUz, ...rest } = obj;
+        return {
+          ...rest,
+          name: lang === 'ru' ? nameRu : nameUz,
+        };
+      };
+
+      return {
+        ...rest,
+        region: region ? adjustName(region) : null,
+        structure: structure ? adjustName(structure) : null,
+        machine: machine ? adjustName(machine) : null,
+      };
+    });
+
     return {
-      data: sanitizedDrivers,
+      data,
       pagination: {
         total,
         totalPages: Math.ceil(total / limit),

@@ -2,8 +2,13 @@ import driverRepository from '../repositories/driver.repo.js';
 import { sendNotification } from '../helpers/send-notification.helper.js';
 import clientRepository from '../repositories/client.repo.js';
 
-const getAll = async (query) => {
-  return await driverRepository.findAll(query);
+const getAll = async (lang, query) => {
+  try {
+    return await driverRepository.findAll(lang, query);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
 };
 
 const getById = async (id) => {
