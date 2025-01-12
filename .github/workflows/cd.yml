@@ -30,6 +30,8 @@ jobs:
           port: 22
           script: |
             cd ~/arendumAPI  # Loyiha papkasiga o'tish
+            # Git remote URL-ni token bilan yangilash
+            git remote set-url origin https://github.com/${{ secrets.GH_USERNAME }}:${{ secrets.GH_TOKEN }}@github.com/Hasan9797/arendumAPI.git
             git pull origin main  # Git repozitoriyasidan so'nggi o'zgarishlarni olish
             pnpm install  # Kerakli paketlarni o'rnatish
             npx prisma migrate deploy  # Prisma migratsiyasini bajarish

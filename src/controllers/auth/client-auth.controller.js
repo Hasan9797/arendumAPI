@@ -41,38 +41,42 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { phoneNumber } = req.body;
+  try {
+    const { phoneNumber } = req.body;
 
-  if (!phoneNumber) {
-    return res
-      .status(400)
-      .json({ message: 'phoneNumber is required', success: false });
-  }
+    if (!phoneNumber) {
+      return res
+        .status(400)
+        .json({ message: 'phoneNumber is required', success: false });
+    }
 
-  const user = await prisma.client.findUnique({
-    where: { phone: phoneNumber },
-  });
-
-  if (!user) {
-    await clientService.createClient({
-      phone: phoneNumber,
-      status: ClientStatus.INACTIVE,
+    const user = await prisma.client.findUnique({
+      where: { phone: phoneNumber },
     });
+
+    if (!user) {
+      await clientService.createClient({
+        phone: phoneNumber,
+        status: ClientStatus.INACTIVE,
+      });
+    }
+
+    // SMS code generation
+    const smsCode = 777777; // Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + SMS_CODE_EXPIRATION;
+
+    // Save the SMS code temporarily
+    await saveSmsCode(phoneNumber, smsCode, expiresAt);
+
+    // Send SMS code
+    await sendSms(phoneNumber, `Your login code is: ${smsCode}`);
+
+    return res
+      .status(200)
+      .json({ message: 'SMS code sent successfully', success: true });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
-
-  // SMS code generation
-  const smsCode = 777777; // Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = Date.now() + SMS_CODE_EXPIRATION;
-
-  // Save the SMS code temporarily
-  await saveSmsCode(phoneNumber, smsCode, expiresAt);
-
-  // Send SMS code
-  await sendSms(phoneNumber, `Your login code is: ${smsCode}`);
-
-  return res
-    .status(200)
-    .json({ message: 'SMS code sent successfully', success: true });
 };
 
 const verifySmsCode = async (req, res) => {
