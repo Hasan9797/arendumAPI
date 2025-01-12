@@ -1,4 +1,8 @@
 import driverService from '../../services/driver.service.js';
+import {
+  responseSuccess,
+  responseError,
+} from '../../helpers/response.helper.js';
 
 const getAll = async (req, res) => {
   const query = {
@@ -19,53 +23,27 @@ const getAll = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json({
-      success: false,
-      error: {
-        message: error.message,
-        code: 500,
-      },
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
 const getById = async (req, res) => {
   try {
     const driver = await driverService.getById(parseInt(req.params.id));
-    res.status(201).json({
-      success: true,
-      error: false,
-      data: driver,
-    });
+    res.status(201).json(responseSuccess(driver));
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json({
-      success: false,
-      error: {
-        message: error.message,
-        code: 500,
-      },
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
 const create = async (req, res) => {
   try {
     await driverService.create(req.body);
-    res.status(201).json({
-      success: true,
-      error: false,
-      data: {},
-    });
+    res.status(201).json(responseSuccess());
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json({
-      success: false,
-      error: {
-        message: error.message,
-        code: 500,
-      },
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -75,20 +53,10 @@ const update = async (req, res) => {
       parseInt(req.params.id),
       req.body
     );
-    res.status(200).json({
-      success: true,
-      error: false,
-      data: {},
-    });
+    res.status(200).json(responseSuccess());
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json({
-      success: false,
-      error: {
-        message: error.message,
-        code: 500,
-      },
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 

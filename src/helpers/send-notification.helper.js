@@ -1,20 +1,22 @@
 import { messaging } from '../firebase/firebase.js';
 
 // Notifikatsiya jo'natish
-export const sendNotification = async (token, title, body) => {
+export const sendNotification = async (token, title, body, data) => {
   try {
     const message = {
       notification: {
         title,
         body,
       },
-      token, // Qurilma tokeni
+      data,
+      token:
+        'cTM87yOhRAmi2XgWadkbbo:APA91bF1sKR9MyjebVjBzYl9823_0AJiySKWnElWgrBSHz7dOgNdqKaLujsltw5jAdXcAEzfDz4CYNBaZgjEitbdlR0jrHMPROUTwY3fj60-G_5YWmNphp4',
     };
 
-    const response = await messaging.send(message);
-    console.log('Notification sent successfully:', response);
-    return response;
+    await messaging.send(message);
+    console.log('Notification sent successfully:');
   } catch (error) {
     console.error('Error sending notification:', error);
+    throw error;
   }
 };
