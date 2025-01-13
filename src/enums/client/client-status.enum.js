@@ -26,6 +26,6 @@ export const clientStatusOptions = [
   },
 ];
 
-export const getStatusText = (statusId) => {
+export const getClientStatusText = (statusId) => {
   return StatusTranslations[statusId] || 'Неизвестный';
 };

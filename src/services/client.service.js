@@ -4,8 +4,8 @@ const getClients = async (lang, query) => {
   return await clientRepository.findAll(lang, query);
 };
 
-const getClientById = async (id) => {
-  return await clientRepository.getById(id);
+const getClientById = async (lang, id) => {
+  return await clientRepository.getById(lang, id);
 };
 
 const createClient = async (data) => {

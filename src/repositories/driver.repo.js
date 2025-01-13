@@ -1,4 +1,5 @@
 import prisma from '../config/prisma.js';
+import { getDriverStatusText } from '../enums/driver/driver-status.enum.js';
 
 export const findAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
@@ -77,15 +78,16 @@ export const findAll = async (lang, query) => {
 
       // Adjust name field based on the language
       const adjustName = (obj) => {
-        const { nameRu, nameUz, ...rest } = obj;
+        const { nameRu, nameUz, status, ...relationRest } = obj;
         return {
-          ...rest,
+          ...relationRest,
           name: lang === 'ru' ? nameRu : nameUz,
         };
       };
 
       return {
         ...rest,
+        status: { key: rest.status, value: getDriverStatusText(rest.status) },
         region: region ? adjustName(region) : null,
         structure: structure ? adjustName(structure) : null,
         machine: machine ? adjustName(machine) : null,

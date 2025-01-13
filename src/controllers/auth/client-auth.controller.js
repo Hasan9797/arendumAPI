@@ -17,7 +17,7 @@ import clientService from '../../services/client.service.js';
 
 import {
   ClientStatus,
-  getStatusText,
+  getClientStatusText,
 } from '../../enums/client/client-status.enum.js';
 
 import {
@@ -85,7 +85,7 @@ const login = async (req, res) => {
 
 const verifySmsCode = async (req, res) => {
   try {
-    const { phoneNumber, code } = req.body;
+    const { phoneNumber, code, fcmToken } = req.body;
     const savedCode = await getSmsCode(phoneNumber);
 
     if (!savedCode) {
@@ -101,6 +101,15 @@ const verifySmsCode = async (req, res) => {
 
     const user = await prisma.client.findUnique({
       where: { phone: phoneNumber },
+    });
+
+    if (!user) {
+      throw new Error('User not found', 400);
+    }
+
+    await prisma.client.update({
+      where: { id: user.id },
+      data: { fcmToken: fcmToken },
     });
 
     const payload = {
@@ -125,7 +134,7 @@ const verifySmsCode = async (req, res) => {
     return res.status(200).json({
       accessToken,
       refreshToken,
-      status: { key: user?.status, value: getStatusText(user.status) },
+      status: { key: user?.status, value: getClientStatusText(user.status) },
     });
   } catch (error) {
     return res.status(400).json(responseError(error.message, error.code));

@@ -43,7 +43,6 @@ const getById = async (req, res) => {
     const order = await orderService.getOrderById(parseInt(req.params.id));
     res.status(200).json({
       success: true,
-      error: false,
       data: order,
     });
   } catch (error) {
@@ -67,7 +66,6 @@ const create = async (req, res) => {
     const order = await orderService.createOrder(req.body);
     res.status(201).json({
       success: true,
-      error: false,
       data: order,
     });
   } catch (error) {
@@ -87,7 +85,6 @@ const update = async (req, res) => {
     await orderService.updateOrder(parseInt(req.params.id), req.body);
     res.status(200).json({
       success: true,
-      error: false,
     });
   } catch (error) {
     console.error('Error fetching order:', error);
@@ -106,7 +103,6 @@ const distroy = async (req, res) => {
     await orderService.deleteOrder(parseInt(req.params.id));
     res.status(200).json({
       success: true,
-      error: false,
     });
   } catch (error) {
     console.error('Error fetching order:', error);

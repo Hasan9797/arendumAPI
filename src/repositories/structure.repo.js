@@ -1,30 +1,35 @@
 import prisma from '../config/prisma.js';
+import { getStructureStatusText } from '../enums/structure/structure-status.enum.js';
 
 export const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
-  const skip = (page - 1) * limit;
+  const currentPage = page ? parseInt(page, 10) : 1;
+  const pageSize = limit ? parseInt(limit, 10) : 10;
+  const skip = (currentPage - 1) * pageSize;
 
   try {
     const where = {};
 
-    filters.forEach((filter) => {
-      const { column, operator, value } = filter;
+    if (Array.isArray(filters) && filters.length > 0) {
+      filters.forEach((filter) => {
+        const { column, operator, value } = filter;
 
-      if (operator === 'between' && column === 'created_at') {
-        const [startDate, endDate] = value.split('_');
-        where[column] = {
-          gte: startDate,
-          lte: endDate,
-        };
-      } else {
-        if (operator === 'contains') {
+        if (operator === 'between' && column === 'created_at') {
+          const [startDate, endDate] = value.split('_');
+          if (startDate && endDate) {
+            where[column] = {
+              gte: new Date(startDate),
+              lte: new Date(endDate),
+            };
+          }
+        } else if (operator === 'contains') {
           where[column] = { contains: value, mode: 'insensitive' };
         } else if (operator === 'equals') {
           where[column] = value;
         }
-      }
-    });
+      });
+    }
 
     const orderBy = sort?.column
       ? { [sort.column]: sort.value }
@@ -34,29 +39,35 @@ export const getAll = async (lang, query) => {
       where,
       orderBy,
       skip,
-      take: limit,
+      take: pageSize,
+      include: { region: true },
     });
 
     const total = await prisma.structure.count({ where });
 
-    const data = structures.map((structure) => {
-      const { nameRu, nameUz, nameEn, ...rest } = structure;
-      rest.name = lang == 'uz' ? nameUz : nameRu;
-      return rest;
-    });
+    const regionNameKey = lang === 'uz' ? 'nameUz' : 'nameRu';
+
+    const data = structures.map(
+      ({ nameRu, nameUz, nameEn, regionId, region, ...rest }) => ({
+        ...rest,
+        name: lang === 'ru' ? nameRu : nameUz,
+        region: region[regionNameKey],
+        status: getStructureStatusText(rest.status),
+      })
+    );
 
     return {
       data,
       pagination: {
         total,
-        totalPages: Math.ceil(total / limit),
-        currentPage: page,
-        pageSize: limit,
+        totalPages: Math.ceil(total / pageSize),
+        currentPage,
+        pageSize,
       },
     };
   } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users');
+    console.error('Error fetching structures:', error);
+    throw new Error('An error occurred while fetching structures.');
   }
 };
 

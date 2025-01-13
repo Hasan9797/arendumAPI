@@ -1,4 +1,5 @@
 import prisma from '../config/prisma.js';
+import { getClientStatusText } from '../enums/client/client-status.enum.js';
 
 export const findAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
@@ -68,15 +69,16 @@ export const findAll = async (lang, query) => {
 
       // Adjust name field based on the language
       const adjustName = (obj) => {
-        const { nameRu, nameUz, ...rest } = obj;
+        const { nameRu, nameUz, status, ...relationRest } = obj;
         return {
-          ...rest,
+          ...relationRest,
           name: lang === 'ru' ? nameRu : nameUz,
         };
       };
 
       return {
         ...rest,
+        status: { key: rest.status, value: getClientStatusText(rest.status) },
         region: region ? adjustName(region) : null,
         structure: structure ? adjustName(structure) : null,
       };
@@ -97,21 +99,52 @@ export const findAll = async (lang, query) => {
   }
 };
 
+const getById = async (lang, id) => {
+  const client = await prisma.client.findUnique({
+    where: { id },
+    include: {
+      region: {
+        select: {
+          id: true,
+          name: true,
+          nameUz: true,
+          nameRu: true,
+        },
+      },
+      structure: {
+        select: {
+          id: true,
+          name: true,
+          nameUz: true,
+          nameRu: true,
+        },
+      },
+    },
+  });
+
+  const adjustName = (obj) => {
+    const { nameRu, nameUz, ...relationRest } = obj;
+    return {
+      ...relationRest,
+      name: lang === 'ru' ? nameRu : nameUz,
+    };
+  };
+
+  if (client) {
+    return {
+      ...client,
+      region: client.region ? adjustName(client.region) : null,
+      structure: client.structure ? adjustName(client.structure) : null,
+      status: { key: client.status, value: getClientStatusText(client.status) },
+    };
+  }
+
+  return null;
+};
+
 const createClient = async (newClient) => {
   return await prisma.client.create({
     data: newClient,
-  });
-};
-
-const getById = async (id) => {
-  return await prisma.client.findUnique({
-    where: { id },
-  });
-};
-
-const deleteClientById = async (id) => {
-  return await prisma.client.delete({
-    where: { id },
   });
 };
 
@@ -126,6 +159,12 @@ const updateClientById = async (id, userData) => {
     console.error('Error updating user:', error);
     return null;
   }
+};
+
+const deleteClientById = async (id) => {
+  return await prisma.client.delete({
+    where: { id },
+  });
 };
 
 export default {
