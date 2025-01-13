@@ -28,8 +28,12 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
-    const client = await clientService.getClientById(parseInt(req.params.id));
+    const client = await clientService.getClientById(
+      lang,
+      parseInt(req.params.id)
+    );
     res.status(200).json(responseSuccess(client));
   } catch (error) {
     console.error('Error fetching client:', error);

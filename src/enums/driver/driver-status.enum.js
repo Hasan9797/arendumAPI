@@ -26,6 +26,6 @@ export const driverStatusOptions = [
   },
 ];
 
-export const getStatusText = (statusId) => {
+export const getDriverStatusText = (statusId) => {
   return StatusTranslations[statusId] || 'Неизвестный';
 };

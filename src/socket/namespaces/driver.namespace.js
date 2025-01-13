@@ -4,16 +4,29 @@ import orderService from '../../services/order.service.js';
 export default (io) => {
   const driverNamespace = io.of('/driver');
 
-  // driverNamespace.use((socket, next) => {
-  //   const { userId, token } = socket.handshake.auth;
+  driverNamespace.use((socket, next) => {
+    try {
+      const { token } = socket.handshake.auth;
 
-  //   if (!userId || token !== process.env.DRIVER_SOCKET_SECRET_KEY) {
-  //     return next(new Error('Authentication error'));
-  //   }
+      if (!token) {
+        return next(new Error('Access denied, no token provided'));
+      }
 
-  //   console.log('Token validated');
-  //   next();
-  // });
+      const user = verifyToken(token);
+
+      if (!user) {
+        return next(new Error('User error'));
+      }
+
+      socket.userId = user.id;
+      socket.role = user.role;
+
+      next();
+    } catch (error) {
+      console.log(error);
+      socket.emit('error', { message: error.message });
+    }
+  });
 
   driverNamespace.on('connection', (socket) => {
     console.log(`Socket connected: ${socket.id}`);

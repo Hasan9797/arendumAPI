@@ -16,7 +16,7 @@ import driverService from '../../services/driver.service.js';
 import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
 import {
   DriverStatus,
-  getStatusText,
+  getDriverStatusText,
 } from '../../enums/driver/driver-status.enum.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
@@ -84,9 +84,10 @@ const login = async (req, res) => {
   }
 };
 
+// SMS code verification and response token
 const verifySmsCode = async (req, res) => {
   try {
-    const { phoneNumber, code } = req.body;
+    const { phoneNumber, code, fcmToken } = req.body;
     const savedCode = await getSmsCode(phoneNumber);
 
     if (!savedCode) {
@@ -105,10 +106,13 @@ const verifySmsCode = async (req, res) => {
     });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ message: 'User not found', success: false });
+      throw new Error('User not found', 400);
     }
+
+    await prisma.driver.update({
+      where: { id: user.id },
+      data: { fcmToken },
+    });
 
     const payload = {
       id: user.id,
@@ -133,7 +137,7 @@ const verifySmsCode = async (req, res) => {
       saccess: true,
       accessToken,
       refreshToken,
-      status: { key: user?.status, value: getStatusText(user.status) },
+      status: { key: user?.status, value: getDriverStatusText(user.status) },
     });
   } catch (error) {
     return res.status(400).json({ message: error.message });
