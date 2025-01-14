@@ -1,4 +1,5 @@
-import paramsSettingsService from '../../services/params-settings.service.js';
+import { responseError, responseSuccess } from '../../helpers/response.helper.js';
+import paramsSettingsService from '../../services/params-filters.service.js';
 
 const getAll = async (req, res) => {
   const query = {
@@ -16,11 +17,7 @@ const getAll = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch category',
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -32,29 +29,20 @@ const getById = async (req, res) => {
     res.status(200).json(machineParams);
   } catch (error) {
     console.error('Error fetching machine params:', error);
-    res.status(500).json({
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Failed to fetch machine params',
-    });
+   res.status(500).json(responseError(error.message, 500));
   }
 };
 
 const create = async (req, res) => {
   try {
-    const params = await paramsSettingsService.createParamsFilter(req.body);
-    res.status(201).json(params);
+    const params = await paramsSettingsService.createParamsFilter({
+      filterParams: req.body.params,
+      machineId: req.body.machineId,
+    });
+    res.status(201).json(responseSuccess());
   } catch (error) {
     console.error('Error fetching machin params:', error);
-    res.status(500).json({
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Failed to fetch machin params',
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -66,13 +54,7 @@ const update = async (req, res) => {
     );
     res.status(200).json(updateMachineParams);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Failed to fetch update machine params',
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -83,13 +65,7 @@ const distroy = async (req, res) => {
     );
     res.status(200).json(machineParams);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Failed to fetch machine params',
-    });
+   res.status(500).json(responseError(error.message, 500));
   }
 };
 
