@@ -39,7 +39,7 @@ export default (io) => {
 
       socket.on('joinRoom', (orderId) => {
         socket.join(`order_room_${orderId}`);
-        socket.emit('joinedRoom', { success: true });
+        socket.emit('orderStatus', { status: true, orderId });
       });
 
       socket.on('createOrder', async ({ orderId }) => {

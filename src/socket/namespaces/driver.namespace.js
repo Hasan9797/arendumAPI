@@ -34,7 +34,7 @@ export default (io) => {
 
     socket.on('joinRoom', (orderId) => {
       socket.join(`order_room_${orderId}`);
-      console.log(`User joined room: ${orderId}`);
+      socket.emit('orderStatus', { status: true, orderId });
     });
 
     socket.on('acceptOrder', async ({ orderId, driverName, driverPhone }) => {

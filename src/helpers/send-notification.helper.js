@@ -1,7 +1,7 @@
 import { messaging } from '../firebase/firebase.js';
 
 // Notifikatsiya jo'natish
-export const sendNotification = async (token, title, body, data) => {
+export const sendNotification = async (fcmToken, title, body, data) => {
   try {
     const message = {
       notification: {
@@ -9,8 +9,7 @@ export const sendNotification = async (token, title, body, data) => {
         body,
       },
       data,
-      token:
-        'cTM87yOhRAmi2XgWadkbbo:APA91bF1sKR9MyjebVjBzYl9823_0AJiySKWnElWgrBSHz7dOgNdqKaLujsltw5jAdXcAEzfDz4CYNBaZgjEitbdlR0jrHMPROUTwY3fj60-G_5YWmNphp4',
+      token: fcmToken ?? 'cTM87yOhRAmi2XgWadkbbo:APA91bF1sKR9MyjebVjBzYl9823_0AJiySKWnElWgrBSHz7dOgNdqKaLujsltw5jAdXcAEzfDz4CYNBaZgjEitbdlR0jrHMPROUTwY3fj60-G_5YWmNphp4',
     };
 
     await messaging.send(message);
