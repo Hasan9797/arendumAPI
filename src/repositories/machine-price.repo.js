@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-export const getMachinesPrice = async (query) => {
+export const getMachinesPrice = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (page - 1) * limit;
@@ -36,14 +36,47 @@ export const getMachinesPrice = async (query) => {
       skip,
       take: limit,
       include: {
-        machines: true,
+        machinePriceParams: {
+          select: {
+            id: true,
+            parameter: true,
+            parameterName: true,
+            unit: true,
+            type: true
+          }
+        },
+        machines: {
+          select: {
+            id: true,
+            name: true,
+            nameRu: true,
+            nameUz: true,
+          }
+        }
       },
+    });
+
+    const data = machinePrices.map((machinePrice) => {
+      const { machines, ...rest } = machinePrice;
+
+      const adjustName = (obj) => {
+        const { nameRu, nameUz, ...relationRest } = obj;
+        return {
+          ...relationRest,
+          name: lang === 'ru' ? nameRu : nameUz,
+        };
+      };
+
+      return {
+        ...rest,
+        machine: machines ? adjustName(machines) : null,
+      };
     });
 
     const total = await prisma.machinePrice.count({ where });
 
     return {
-      data: machinePrices,
+      data,
       pagination: {
         total,
         totalPages: Math.ceil(total / limit),
@@ -57,15 +90,16 @@ export const getMachinesPrice = async (query) => {
   }
 };
 
-const createMachinePrice = async (newUser) => {
-  return await prisma.machinePrice.create({
-    data: newUser,
+const getMachinePriceById = async (lang, id) => {
+  return await prisma.machinePrice.findUnique({
+    where: { id },
   });
 };
 
-const getMachinePriceById = async (id) => {
-  return await prisma.machinePrice.findUnique({
-    where: { id },
+
+const createMachinePrice = async (newUser) => {
+  return await prisma.machinePrice.create({
+    data: newUser,
   });
 };
 

@@ -8,8 +8,10 @@ const getAll = async (req, res) => {
     sort: req.body.sort || { column: 'id', value: 'desc' },
   };
 
+  const lang = req.headers['accept-language'] || 'ru';
+  
   try {
-    const result = await machinePriceService.getPrices(query);
+    const result = await machinePriceService.getPrices(lang, query);
     res.status(200).json({
       success: true,
       data: result.data,
@@ -26,8 +28,9 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
-    const price = await machinePriceService.getPriceById(
+    const price = await machinePriceService.getPriceById(lang,
       parseInt(req.params.id)
     );
     res.status(200).json(price);

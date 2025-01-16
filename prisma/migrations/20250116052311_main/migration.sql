@@ -189,10 +189,6 @@ CREATE TABLE "Order" (
 CREATE TABLE "MachinePrice" (
     "id" SERIAL NOT NULL,
     "machine_id" INTEGER NOT NULL,
-    "parameter" TEXT NOT NULL,
-    "parameter_name" TEXT NOT NULL,
-    "unit" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
     "min_amount" TEXT NOT NULL,
     "min_hour_time" TEXT NOT NULL,
     "tariff_name" TEXT,
@@ -200,6 +196,20 @@ CREATE TABLE "MachinePrice" (
     "updated_at" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "MachinePrice_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "MachinePriceParams" (
+    "id" SERIAL NOT NULL,
+    "parameter" TEXT NOT NULL,
+    "parameter_name" TEXT NOT NULL,
+    "unit" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "machine_price_id" INTEGER NOT NULL,
+    "created_at" INTEGER NOT NULL DEFAULT 0,
+    "updated_at" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "MachinePriceParams_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -258,3 +268,6 @@ ALTER TABLE "Order" ADD CONSTRAINT "Order_machine_id_fkey" FOREIGN KEY ("machine
 
 -- AddForeignKey
 ALTER TABLE "MachinePrice" ADD CONSTRAINT "MachinePrice_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MachinePriceParams" ADD CONSTRAINT "MachinePriceParams_machine_price_id_fkey" FOREIGN KEY ("machine_price_id") REFERENCES "MachinePrice"("id") ON DELETE CASCADE ON UPDATE CASCADE;

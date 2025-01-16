@@ -1,28 +1,45 @@
 import machinePriceRepo from '../repositories/machine-price.repo.js';
+import prisma from '../config/prisma.js';
 
-const getPrices = async (query) => {
-  return await machinePriceRepo.getMachinesPrice(query);
+const getPrices = async (lang, query) => {
+  return await machinePriceRepo.getMachinesPrice(lang, query);
 };
 
-const getPriceById = async (id) => {
-  return await machinePriceRepo.getMachinePriceById(id);
+const getPriceById = async (lang, id) => {
+  return await machinePriceRepo.getMachinePriceById(lang, id);
 };
 
 const createPrice = async (data) => {
   try {
-    const { additionalParameters, ...rest } = data;
-    for (const param of additionalParameters) {
-      await machinePriceRepo.createMachinePrice({
-        parameter: param.parameter,
-        parameterName: param.parameterName,
-        unit: param.unit,
-        type: param.type,
-        ...rest,
+    return await prisma.$transaction(async (tx) => {
+      const { additionalParameters, ...rest } = data;
+
+      const machinePrice = await tx.machinePrice.create({
+        data: rest,
       });
-    }
-    return true;
+
+      const paramsPromises = additionalParameters.map((param) =>
+        tx.machinePriceParams.create({
+          data: {
+            parameter: param.parameter,
+            parameterName: param.parameterName,
+            unit: param.unit,
+            type: param.type,
+            machinePriceId: machinePrice.id,
+          },
+        })
+      );
+
+      await Promise.all(paramsPromises);
+
+      return true;
+    });
+
   } catch (error) {
+    console.error('Transaction failed:', error);
     throw error;
+  } finally {
+    await prisma.$disconnect(); // Ulanishni yopish
   }
 };
 
