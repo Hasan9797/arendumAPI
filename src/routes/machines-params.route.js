@@ -18,6 +18,8 @@ router.post('/create', authentication, machinParamsController.create);
 
 router.put('/update/:id', machinParamsController.update);
 
+router.post('/options', machinParamsController.getSelectParams);
+
 router.delete('/delete/:id', machinParamsController.distroy);
 
 export default router;

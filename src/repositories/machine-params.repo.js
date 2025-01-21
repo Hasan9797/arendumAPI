@@ -54,21 +54,15 @@ export const getAll = async (query) => {
   }
 };
 
-const create = async (newUser) => {
-  return await prisma.machineParams.create({
-    data: newUser,
-  });
-};
-
 const getById = async (id) => {
   return await prisma.machineParams.findUnique({
     where: { id },
   });
 };
 
-const distroy = async (id) => {
-  return await prisma.machineParams.delete({
-    where: { id },
+const create = async (newUser) => {
+  return await prisma.machineParams.create({
+    data: newUser,
   });
 };
 
@@ -85,10 +79,39 @@ const updateById = async (id, machineParamsData) => {
   }
 };
 
+const getSelectList = async (machineId) => {
+  const params = await prisma.machineParams.findMany({
+    where: {
+      machineId,
+    },
+    select: {
+      nameEn: true,
+      params: true,
+    },
+  });
+
+  const result = params.reduce((acc, { nameEn, params }) => {
+    const parsedParams = params ? params : [];
+    acc[nameEn ?? 'unknown'] = Array.isArray(parsedParams)
+      ? parsedParams.map((param) => param.name)
+      : [];
+    return acc;
+  }, {});
+
+  return result;
+};
+
+const distroy = async (id) => {
+  return await prisma.machineParams.delete({
+    where: { id },
+  });
+};
+
 export default {
   getAll,
   create,
   getById,
   distroy,
   updateById,
+  getSelectList,
 };

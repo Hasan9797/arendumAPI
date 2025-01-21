@@ -32,6 +32,7 @@ const getById = async (req, res) => {
   const lang = req.headers['accept-language'] || 'uz';
   try {
     const machine = await machinesService.getMachineById(
+      lang,
       parseInt(req.params.id)
     );
     res.status(200).json({

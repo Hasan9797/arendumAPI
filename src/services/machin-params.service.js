@@ -20,8 +20,13 @@ const deleteCategory = async (id) => {
   return await machineParamsRepo.distroy(id);
 };
 
-const filtersMachineParams = async (machinId) => {
-  return [];
+const selectMachineParams = async (machinId) => {
+  try {
+    return await machineParamsRepo.getSelectList(machinId);
+  } catch (error) {
+    console.error('Error fetching machine params:', error);
+    throw error;
+  }
 };
 
 export default {
@@ -30,5 +35,5 @@ export default {
   createCategory,
   updateCategory,
   deleteCategory,
-  filtersMachineParams,
+  selectMachineParams,
 };

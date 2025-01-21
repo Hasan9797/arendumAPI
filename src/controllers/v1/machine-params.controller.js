@@ -64,10 +64,22 @@ const distroy = async (req, res) => {
   }
 };
 
+const getSelectParams = async (req, res) => {
+  try {
+    const params = await machinParamsService.selectMachineParams(
+      parseInt(req.body.machineId)
+    );
+    res.status(200).json(responseSuccess(params));
+  } catch (error) {
+    res.status(500).json(responseError(error.message, error?.code));
+  }
+};
+
 export default {
   getAll,
   getById,
   create,
   update,
   distroy,
+  getSelectParams,
 };
