@@ -32,6 +32,7 @@ model Driver {
   photoConfidencePassport Json      @default("[]") @map("photo_confidence_passport")
   photoDriverLicense      Json      @default("[]") @map("photo_driver_license")
   photoCar                Json      @default("[]") @map("photo_car")
+  params                  Json      @default("{}") @map("params")
   long                    Decimal?  @default(0)
   lat                     Decimal?  @default(0)
   machineColor            String?
@@ -78,8 +79,8 @@ model Machines {
   nameRu               String                 @map("name_ru")
   nameEn               String?                @map("name_en")
   img                  String?
-  machineParams        MachineParams[]
-  machineParamsFilters MachineParamsFilters[]
+  machineParams        MachineParams[]        @relation("MachineParams")
+  machineParamsFilters MachineParamsFilters[] @relation("MachineParamsFilters")
   createdAt            Int                    @default(0) @map("created_at")
   updatedAt            Int                    @default(0) @map("updated_at")
   drivers              Driver[]               @relation("MachineDrivers")
@@ -94,7 +95,7 @@ model MachineParams {
   nameRu    String   @map("name_ru")
   nameEn    String?  @map("name_en")
   machineId Int      @map("machine_id")
-  machines  Machines @relation(fields: [machineId], references: [id])
+  machines  Machines @relation("MachineParams", fields: [machineId], references: [id])
   params    Json     @default("[]")
   createdAt Int      @default(0) @map("created_at")
   updatedAt Int      @default(0) @map("updated_at")
@@ -103,7 +104,7 @@ model MachineParams {
 model MachineParamsFilters {
   id           Int      @id @default(autoincrement())
   machineId    Int      @map("machine_id")
-  machines     Machines @relation(fields: [machineId], references: [id])
+  machines     Machines @relation("MachineParamsFilters", fields: [machineId], references: [id])
   filterParams Json     @default("[]") @map("filter_params")
   createdAt    Int      @default(0) @map("created_at")
   updatedAt    Int      @default(0) @map("updated_at")
