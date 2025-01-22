@@ -54,22 +54,42 @@ export const getAll = async (query) => {
   }
 };
 
-const create = async (newUser) => {
-  return await prisma.machineParamsFilters.create({
-    data: newUser,
-  });
-};
-
 const getById = async (id) => {
   return await prisma.machineParamsFilters.findUnique({
     where: { id },
   });
 };
 
-const distroy = async (id) => {
-  return await prisma.machineParamsFilters.delete({
-    where: { id },
+const getParamsFilterByMachineId = async (machineId) => {
+  try {
+    return await prisma.machineParamsFilters.findFirst({
+      where: { machineId },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const create = async (newUser) => {
+  return await prisma.machineParamsFilters.create({
+    data: newUser,
   });
+};
+
+const distroy = async (id) => {
+  try {
+    const deletedRow = await prisma.machineParamsFilters.delete({
+      where: { id },
+    });
+
+    return deletedRow;
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return false;
+    } else {
+      throw error; // Boshqa xatolarni qayta ko'taramiz
+    }
+  }
 };
 
 const updateById = async (id, paramsFilterData) => {
@@ -81,14 +101,15 @@ const updateById = async (id, paramsFilterData) => {
     return updatedUser;
   } catch (error) {
     console.error('Error updating user:', error);
-    return null;
+    throw error;
   }
 };
 
 export default {
   getAll,
-  create,
   getById,
+  getParamsFilterByMachineId,
+  create,
   distroy,
   updateById,
 };

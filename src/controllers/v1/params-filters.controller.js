@@ -1,4 +1,7 @@
-import { responseError, responseSuccess } from '../../helpers/response.helper.js';
+import {
+  responseError,
+  responseSuccess,
+} from '../../helpers/response.helper.js';
 import paramsSettingsService from '../../services/params-filters.service.js';
 
 const getAll = async (req, res) => {
@@ -26,10 +29,22 @@ const getById = async (req, res) => {
     const machineParams = await paramsSettingsService.getById(
       parseInt(req.params.id)
     );
+    res.status(200).json(responseSuccess(machineParams));
+  } catch (error) {
+    console.error('Error fetching machine params:', error);
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
+
+const getByMachineId = async (req, res) => {
+  try {
+    const machineParams = await paramsSettingsService.getByMachineId(
+      parseInt(req.params.id)
+    );
     res.status(200).json(machineParams);
   } catch (error) {
     console.error('Error fetching machine params:', error);
-   res.status(500).json(responseError(error.message, 500));
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -60,18 +75,17 @@ const update = async (req, res) => {
 
 const distroy = async (req, res) => {
   try {
-    const machineParams = await paramsSettingsService.deleteParamsFilter(
-      parseInt(req.params.id)
-    );
-    res.status(200).json(machineParams);
+    await paramsSettingsService.deleteParamsFilter(parseInt(req.params.id));
+    res.status(200).json(responseSuccess());
   } catch (error) {
-   res.status(500).json(responseError(error.message, 500));
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
 export default {
   getAll,
   getById,
+  getByMachineId,
   create,
   update,
   distroy,

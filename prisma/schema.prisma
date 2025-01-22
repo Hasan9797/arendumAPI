@@ -181,7 +181,9 @@ model Order {
   machineId   Int?      @map("machine_id")
   machine     Machines? @relation(fields: [machineId], references: [id])
   amount      Int
+  amountType  Int       @default(1) @map("amount_type")
   status      Int       @default(1)
+  params      Json
   caunt       Int       @default(1)
   long        String?
   lat         String?
