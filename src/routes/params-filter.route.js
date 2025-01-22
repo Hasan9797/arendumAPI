@@ -14,6 +14,8 @@ router.get('/', paramsFiltersController.getAll);
 
 router.get('/:id', paramsFiltersController.getById);
 
+router.get('/by-machine/:id', paramsFiltersController.getByMachineId);
+
 router.post('/create', paramsFiltersController.create);
 
 router.put('/update/:id', paramsFiltersController.update);

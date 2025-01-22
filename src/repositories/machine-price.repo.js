@@ -42,8 +42,8 @@ export const getMachinesPrice = async (lang, query) => {
             parameter: true,
             parameterName: true,
             unit: true,
-            type: true
-          }
+            type: true,
+          },
         },
         machines: {
           select: {
@@ -51,8 +51,8 @@ export const getMachinesPrice = async (lang, query) => {
             name: true,
             nameRu: true,
             nameUz: true,
-          }
-        }
+          },
+        },
       },
     });
 
@@ -96,6 +96,11 @@ const getMachinePriceById = async (lang, id) => {
   });
 };
 
+const getPriceByMachineId = async (id) => {
+  return await prisma.machinePrice.findFirst({
+    where: { machineId: id },
+  });
+};
 
 const createMachinePrice = async (newUser) => {
   return await prisma.machinePrice.create({
@@ -132,4 +137,5 @@ export default {
   createMachinePrice,
   updateMachinePriceById,
   deleteMachinePriceById,
+  getPriceByMachineId,
 };

@@ -25,13 +25,14 @@ model Driver {
   phone                   String    @unique
   machineId               Int?      @map("machine_id")
   email                   String?   @unique
-  status                  Int       @default(1)
+  status                  Int       @default(0)
   photoTexPassport        Json      @default("[]") @map("photo_tex_passport")
   photoPassport           Json      @default("[]") @map("photo_passport")
   photoLicense            Json      @default("[]") @map("photo_license")
   photoConfidencePassport Json      @default("[]") @map("photo_confidence_passport")
   photoDriverLicense      Json      @default("[]") @map("photo_driver_license")
   photoCar                Json      @default("[]") @map("photo_car")
+  params                  Json      @default("{}") @map("params")
   long                    Decimal?  @default(0)
   lat                     Decimal?  @default(0)
   machineColor            String?
@@ -58,7 +59,7 @@ model Client {
   phone       String     @unique
   legal       Boolean    @default(false)
   email       String?    @unique
-  status      Int        @default(1)
+  status      Int        @default(0)
   long        Decimal?   @default(0)
   lat         Decimal?   @default(0)
   fcmToken    String?    @map("fcm_token")
@@ -78,8 +79,9 @@ model Machines {
   nameRu               String                 @map("name_ru")
   nameEn               String?                @map("name_en")
   img                  String?
-  machineParams        MachineParams[]
-  machineParamsFilters MachineParamsFilters[]
+  status               Int                    @default(0)
+  machineParams        MachineParams[]        @relation("MachineParams")
+  machineParamsFilters MachineParamsFilters[] @relation("MachineParamsFilters")
   createdAt            Int                    @default(0) @map("created_at")
   updatedAt            Int                    @default(0) @map("updated_at")
   drivers              Driver[]               @relation("MachineDrivers")
@@ -94,7 +96,8 @@ model MachineParams {
   nameRu    String   @map("name_ru")
   nameEn    String?  @map("name_en")
   machineId Int      @map("machine_id")
-  machines  Machines @relation(fields: [machineId], references: [id])
+  status    Int      @default(0)
+  machines  Machines @relation("MachineParams", fields: [machineId], references: [id])
   params    Json     @default("[]")
   createdAt Int      @default(0) @map("created_at")
   updatedAt Int      @default(0) @map("updated_at")
@@ -103,8 +106,9 @@ model MachineParams {
 model MachineParamsFilters {
   id           Int      @id @default(autoincrement())
   machineId    Int      @map("machine_id")
-  machines     Machines @relation(fields: [machineId], references: [id])
+  machines     Machines @relation("MachineParamsFilters", fields: [machineId], references: [id])
   filterParams Json     @default("[]") @map("filter_params")
+  status       Int      @default(0)
   createdAt    Int      @default(0) @map("created_at")
   updatedAt    Int      @default(0) @map("updated_at")
 }
@@ -114,6 +118,7 @@ model BankCard {
   name      String
   expire    String
   userId    Int    @map("user_id")
+  status    Int    @default(0)
   createdAt Int    @default(0) @map("created_at")
   updatedAt Int    @default(0) @map("updated_at")
 }
@@ -123,6 +128,7 @@ model UserToken {
   token     String
   expire    String
   userId    Int    @map("user_id")
+  status    Int    @default(0)
   createdAt Int    @default(0) @map("created_at")
   updatedAt Int    @default(0) @map("updated_at")
 }
@@ -132,6 +138,7 @@ model Merchant {
   fullName  String  @map("full_name")
   phone     String  @unique
   inn       String?
+  status    Int     @default(0)
   createdAt Int     @default(0) @map("created_at")
   updatedAt Int     @default(0) @map("updated_at")
 }
@@ -174,7 +181,9 @@ model Order {
   machineId   Int?      @map("machine_id")
   machine     Machines? @relation(fields: [machineId], references: [id])
   amount      Int
+  amountType  Int       @default(1) @map("amount_type")
   status      Int       @default(1)
+  params      Json
   caunt       Int       @default(1)
   long        String?
   lat         String?
@@ -191,6 +200,7 @@ model MachinePrice {
   minAmount          String               @map("min_amount")
   minHourTime        String               @map("min_hour_time")
   tariffName         String?              @map("tariff_name")
+  status             Int                  @default(0)
   createdAt          Int                  @default(0) @map("created_at")
   updatedAt          Int                  @default(0) @map("updated_at")
   machinePriceParams MachinePriceParams[] @relation("MachinePriceParams")
@@ -203,6 +213,7 @@ model MachinePriceParams {
   unit           String       @map("unit")
   type           String       @map("type")
   machinePriceId Int          @map("machine_price_id")
+  status         Int          @default(0)
   machinePrice   MachinePrice @relation("MachinePriceParams", fields: [machinePriceId], references: [id], onDelete: Cascade)
   createdAt      Int          @default(0) @map("created_at")
   updatedAt      Int          @default(0) @map("updated_at")

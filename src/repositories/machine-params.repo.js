@@ -54,21 +54,38 @@ export const getAll = async (query) => {
   }
 };
 
-const create = async (newUser) => {
-  return await prisma.machineParams.create({
-    data: newUser,
-  });
-};
-
 const getById = async (id) => {
   return await prisma.machineParams.findUnique({
     where: { id },
   });
 };
 
-const distroy = async (id) => {
-  return await prisma.machineParams.delete({
-    where: { id },
+const getByMachineId = async (lang, machineId) => {
+  try {
+    const params = await prisma.machineParams.findMany({
+      where: { machineId },
+    });
+
+    const adjustName = (obj) => {
+      const { nameRu, nameUz, nameEn, ...relationRest } = obj;
+      return {
+        ...relationRest,
+        name: lang === 'ru' ? nameRu : nameUz,
+      };
+    };
+
+    const result = params.map((param) => adjustName(param));
+
+    return result;
+  } catch (error) {
+    console.error('Error fetching machine params:', error);
+    throw error;
+  }
+};
+
+const create = async (newUser) => {
+  return await prisma.machineParams.create({
+    data: newUser,
   });
 };
 
@@ -85,10 +102,50 @@ const updateById = async (id, machineParamsData) => {
   }
 };
 
+const getSelectList = async (machineId) => {
+  return await prisma.machineParams.findMany({
+    where: {
+      machineId,
+    },
+    select: {
+      nameEn: true,
+      params: true,
+    },
+  });
+};
+
+const distroy = async (id) => {
+  return await prisma.machineParams.delete({
+    where: { id },
+  });
+};
+
+const getParamsOption = async (machineId = 0) => {
+  try {
+    return await prisma.machineParams.findMany({
+      where: {
+        machineId,
+      },
+      select: {
+        nameUz: true,
+        nameRu: true,
+        nameEn: true,
+        params: true,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching machine params:', error);
+    throw error;
+  }
+};
+
 export default {
   getAll,
   create,
   getById,
+  getByMachineId,
   distroy,
   updateById,
+  getSelectList,
+  getParamsOption,
 };

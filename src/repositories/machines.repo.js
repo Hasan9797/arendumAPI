@@ -66,10 +66,20 @@ const createMachine = async (newUser) => {
   });
 };
 
-const getMachineById = async (id) => {
-  return await prisma.machines.findUnique({
+const getMachineById = async (lang, id) => {
+  const machine = await prisma.machines.findUnique({
     where: { id },
   });
+
+  const adjustName = (obj) => {
+    const { nameRu, nameUz, nameEn, ...relationRest } = obj;
+    return {
+      ...relationRest,
+      name: lang === 'ru' ? nameRu : nameUz,
+    };
+  };
+
+  return adjustName(machine);
 };
 
 const deleteMachineById = async (id) => {

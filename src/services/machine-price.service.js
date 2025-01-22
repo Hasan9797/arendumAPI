@@ -9,6 +9,14 @@ const getPriceById = async (lang, id) => {
   return await machinePriceRepo.getMachinePriceById(lang, id);
 };
 
+const getPriceByMachineId = async (id) => {
+  try {
+    return await machinePriceRepo.getPriceByMachineId(id);
+  } catch (error) {
+    throw error;
+  }
+};
+
 const createPrice = async (data) => {
   try {
     return await prisma.$transaction(async (tx) => {
@@ -34,7 +42,6 @@ const createPrice = async (data) => {
 
       return true;
     });
-
   } catch (error) {
     console.error('Transaction failed:', error);
     throw error;
@@ -57,4 +64,5 @@ export default {
   createPrice,
   updatePrice,
   deletePrice,
+  getPriceByMachineId,
 };

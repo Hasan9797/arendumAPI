@@ -12,7 +12,7 @@ const getAll = async (req, res) => {
     sort: req.body.sort || { column: 'id', value: 'desc' },
   };
   try {
-    const result = await machinParamsService.getCategories(query);
+    const result = await machinParamsService.getMachineParams(query);
     res.status(200).json({
       success: true,
       data: result.data,
@@ -26,7 +26,7 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const machineParams = await machinParamsService.getCategoryById(
+    const machineParams = await machinParamsService.getMachineParamById(
       parseInt(req.params.id)
     );
     res.status(200).json(responseSuccess(machineParams));
@@ -38,7 +38,7 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const params = await machinParamsService.createCategory(req.body);
+    const params = await machinParamsService.createMachineParam(req.body);
     res.status(201).json(responseSuccess());
   } catch (error) {
     console.error('Error fetching machin params:', error);
@@ -48,7 +48,10 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    await machinParamsService.updateCategory(parseInt(req.params.id), req.body);
+    await machinParamsService.updateMachineParam(
+      parseInt(req.params.id),
+      req.body
+    );
     res.status(200).json(responseSuccess());
   } catch (error) {
     res.status(500).json(responseError(error.message, error?.code));
@@ -57,8 +60,45 @@ const update = async (req, res) => {
 
 const distroy = async (req, res) => {
   try {
-    await machinParamsService.deleteCategory(parseInt(req.params.id));
+    await machinParamsService.deleteMachineParam(parseInt(req.params.id));
     res.status(200).json(responseSuccess());
+  } catch (error) {
+    res.status(500).json(responseError(error.message, error?.code));
+  }
+};
+
+const getSelectParams = async (req, res) => {
+  try {
+    const params = await machinParamsService.selectMachineParams(
+      parseInt(req.body.machineId)
+    );
+    res.status(200).json(responseSuccess(params));
+  } catch (error) {
+    res.status(500).json(responseError(error.message, error?.code));
+  }
+};
+
+const getMachineParamsByMachineId = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
+  try {
+    const params = await machinParamsService.getParamsByMachineId(
+      lang,
+      parseInt(req.body.machineId)
+    );
+    res.status(200).json(responseSuccess(params));
+  } catch (error) {
+    res.status(500).json(responseError(error.message, error?.code));
+  }
+};
+
+const getMachineOprions = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
+  try {
+    const params = await machinParamsService.getParamsOptions(
+      lang,
+      req.body.machineId
+    );
+    res.status(200).json(responseSuccess(params));
   } catch (error) {
     res.status(500).json(responseError(error.message, error?.code));
   }
@@ -70,4 +110,7 @@ export default {
   create,
   update,
   distroy,
+  getSelectParams,
+  getMachineParamsByMachineId,
+  getMachineOprions,
 };

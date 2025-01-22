@@ -60,7 +60,6 @@ const login = async (req, res) => {
     if (!user) {
       await driverService.create({
         phone: phoneNumber,
-        status: DriverStatus.CREATED,
       });
     }
     // SMS code generation

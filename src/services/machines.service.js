@@ -4,8 +4,8 @@ const getMachines = async (lang, query) => {
   return await machinesRepo.getMachines(lang, query);
 };
 
-const getMachineById = async (id) => {
-  return await machinesRepo.getMachineById(id);
+const getMachineById = async (lang, id) => {
+  return await machinesRepo.getMachineById(lang, id);
 };
 
 const createMachine = async (data) => {

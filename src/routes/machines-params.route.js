@@ -14,9 +14,15 @@ router.get('/', authentication, machinParamsController.getAll);
 
 router.get('/:id', machinParamsController.getById);
 
+router.post('/by-machine', machinParamsController.getMachineParamsByMachineId);
+
 router.post('/create', authentication, machinParamsController.create);
 
 router.put('/update/:id', machinParamsController.update);
+
+router.post('/select-options', machinParamsController.getSelectParams);
+
+router.post('/filter-options', machinParamsController.getMachineOprions);
 
 router.delete('/delete/:id', machinParamsController.distroy);
 
