@@ -67,7 +67,7 @@ const getByMachineId = async (lang, machineId) => {
     });
 
     const adjustName = (obj) => {
-      const { nameRu, nameUz, nameEn, ...relationRest } = obj;
+      const { nameRu, nameUz, ...relationRest } = obj;
       return {
         ...relationRest,
         name: lang === 'ru' ? nameRu : nameUz,
