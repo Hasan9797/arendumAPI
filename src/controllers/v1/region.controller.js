@@ -18,7 +18,6 @@ const getAll = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Error fetching region:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -30,8 +29,9 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
-    const region = await regionService.getById(parseInt(req.params.id));
+    const region = await regionService.getById(lang, parseInt(req.params.id));
     res.status(200).json({
       success: true,
       error: false,

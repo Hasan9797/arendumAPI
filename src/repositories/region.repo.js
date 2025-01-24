@@ -35,15 +35,30 @@ export const getAll = async (lang, query) => {
       orderBy,
       skip,
       take: limit,
+      include: { structures: true },
     });
 
     const total = await prisma.region.count({ where });
-    console.log(lang);
 
-    const data = regions.map((region) => {
-      const { nameRu, nameUz, nameEn, ...rest } = region;
-      rest.name = lang == 'uz' ? nameUz : nameRu;
-      return rest;
+    const data = regions.map((driver) => {
+      const { nameRu, nameUz, nameEn, structures, ...rest } = driver;
+
+      const adjustName = (obj) => {
+        const { nameRu, nameUz, nameEn, status, ...relationRest } = obj;
+        return {
+          ...relationRest,
+          name: lang === 'ru' ? nameRu : nameUz,
+        };
+      };
+
+      return {
+        ...rest,
+        name: lang === 'ru' ? nameRu : nameUz,
+        // status: { key: rest.status, value: getRegionStatusText(rest.status) },
+        structure: structures
+          ? structures.map((structure) => adjustName(structure))
+          : [],
+      };
     });
 
     return {
@@ -61,15 +76,43 @@ export const getAll = async (lang, query) => {
   }
 };
 
+const getById = async (lang, id) => {
+  const region = await prisma.region.findUnique({
+    where: { id },
+    include: {
+      structures: {
+        select: {
+          id: true,
+          name: true,
+          nameRu: true,
+          nameUz: true,
+          nameEn: true,
+        },
+      },
+    },
+  });
+
+  const adjustName = (obj) => {
+    if (!obj) return {};
+
+    const { nameRu, nameUz, nameEn, ...res } = obj;
+    return {
+      ...res,
+      name: lang === 'ru' ? nameRu : nameUz,
+    };
+  };
+
+  let serialazied = region ? adjustName(region) : {};
+  serialazied.structures = serialazied.structures.map((structure) =>
+    adjustName(structure)
+  );
+
+  return serialazied;
+};
+
 const createRegion = async (newUser) => {
   return await prisma.region.create({
     data: newUser,
-  });
-};
-
-const getById = async (id) => {
-  return await prisma.region.findUnique({
-    where: { id },
   });
 };
 
