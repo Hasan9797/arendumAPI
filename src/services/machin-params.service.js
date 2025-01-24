@@ -82,8 +82,9 @@ const optionAmount = async (machineId) => {
 
 const getParamsOptions = async (lang, machineId) => {
   try {
-    const machinePrice = await machinePriceService.getPriceByMachineId(machineId);
-    
+    const machinePrice =
+      await machinePriceService.getPriceByMachineId(machineId);
+
     const params = await optionSelect(lang, machineId);
 
     const paramsFilters = await paramsFiltersService.getByMachineId(machineId);
@@ -91,7 +92,7 @@ const getParamsOptions = async (lang, machineId) => {
     const amount = await optionAmount(machineId);
 
     return {
-      fullAmount: machinePrice.minAmount ?? 0,
+      fullAmount: machinePrice?.minAmount ?? 0,
       params,
       filters: paramsFilters.filterParams,
       amount,
@@ -110,4 +111,5 @@ export default {
   selectMachineParams,
   getParamsByMachineId,
   getParamsOptions,
+  optionSelect,
 };
