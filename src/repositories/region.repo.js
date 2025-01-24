@@ -54,7 +54,7 @@ export const getAll = async (lang, query) => {
       const { nameRu, nameUz, nameEn, structures, ...rest } = driver;
 
       const adjustName = (obj) => {
-        const { nameRu, nameUz, status, ...relationRest } = obj;
+        const { nameRu, nameUz, ...relationRest } = obj;
         return {
           ...relationRest,
           name: lang === 'ru' ? nameRu : nameUz,
