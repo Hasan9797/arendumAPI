@@ -4,8 +4,8 @@ const getRegions = async (lang, query) => {
   return await regionRepo.getAll(lang, query);
 };
 
-const getById = async (id) => {
-  return await regionRepo.getById(id);
+const getById = async (lang, id) => {
+  return await regionRepo.getById(lang, id);
 };
 
 const createRegion = async (data) => {
