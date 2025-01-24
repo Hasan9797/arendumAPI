@@ -35,7 +35,17 @@ export const getAll = async (lang, query) => {
       orderBy,
       skip,
       take: limit,
-      include: { structures: true },
+      include: {
+        structures: {
+          select: {
+            id: true,
+            name: true,
+            nameRu: true,
+            nameUz: true,
+            status: true,
+          },
+        },
+      },
     });
 
     const total = await prisma.region.count({ where });
@@ -44,7 +54,7 @@ export const getAll = async (lang, query) => {
       const { nameRu, nameUz, nameEn, structures, ...rest } = driver;
 
       const adjustName = (obj) => {
-        const { nameRu, nameUz, nameEn, status, ...relationRest } = obj;
+        const { nameRu, nameUz, status, ...relationRest } = obj;
         return {
           ...relationRest,
           name: lang === 'ru' ? nameRu : nameUz,
@@ -87,6 +97,7 @@ const getById = async (lang, id) => {
           nameRu: true,
           nameUz: true,
           nameEn: true,
+          status: true,
         },
       },
     },
