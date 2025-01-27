@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  fullName  String @map("full_name")
-  phone     String @unique
-  role      Int    @default(1)
-  login     String @unique
+  id        Int       @id @default(autoincrement())
+  fullName  String    @map("full_name")
+  phone     String    @unique
+  role      Int       @default(1)
+  login     String    @unique
   password  String
-  status    Int    @default(1)
-  createdAt BigInt @default(0) @map("created_at")
-  updatedAt BigInt @default(0) @map("updated_at")
+  status    Int       @default(1)
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
 }
 
 model Driver {
@@ -47,10 +47,10 @@ model Driver {
   structureId Int?       @map("structure_id")
   structure   Structure? @relation("DriverStructure", fields: [structureId], references: [id])
 
-  fcmToken  String? @map("fcm_token")
-  createdAt BigInt  @default(0) @map("created_at")
-  updatedAt BigInt  @default(0) @map("updated_at")
-  Order     Order[] @relation("DriverOrder")
+  fcmToken  String?   @map("fcm_token")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
+  Order     Order[]   @relation("DriverOrder")
 }
 
 model Client {
@@ -67,8 +67,8 @@ model Client {
   region      Region?    @relation("ClientRegion", fields: [regionId], references: [id])
   structureId Int?       @map("structure_id")
   structure   Structure? @relation("ClientStructures", fields: [structureId], references: [id])
-  createdAt   BigInt     @default(0) @map("created_at")
-  updatedAt   BigInt     @default(0) @map("updated_at")
+  createdAt   DateTime?  @default(now()) @map("created_at")
+  updatedAt   DateTime?  @default(now()) @map("updated_at")
   Order       Order[]    @relation("ClientOrder")
 }
 
@@ -82,65 +82,65 @@ model Machines {
   status               Int                    @default(0)
   machineParams        MachineParams[]        @relation("MachineParams")
   machineParamsFilters MachineParamsFilters[] @relation("MachineParamsFilters")
-  createdAt            BigInt                 @default(0) @map("created_at")
-  updatedAt            BigInt                 @default(0) @map("updated_at")
+  createdAt            DateTime?              @default(now()) @map("created_at")
+  updatedAt            DateTime?              @default(now()) @map("updated_at")
   drivers              Driver[]               @relation("MachineDrivers")
   Order                Order[]
   MachinePrice         MachinePrice[]
 }
 
 model MachineParams {
-  id        Int      @id @default(autoincrement())
-  name      String?  @map("name")
-  nameUz    String   @map("name_uz")
-  nameRu    String   @map("name_ru")
-  nameEn    String?  @map("name_en")
-  machineId Int      @map("machine_id")
-  status    Int      @default(0)
-  machines  Machines @relation("MachineParams", fields: [machineId], references: [id])
-  params    Json     @default("[]")
-  createdAt BigInt   @default(0) @map("created_at")
-  updatedAt BigInt   @default(0) @map("updated_at")
+  id        Int       @id @default(autoincrement())
+  name      String?   @map("name")
+  nameUz    String    @map("name_uz")
+  nameRu    String    @map("name_ru")
+  nameEn    String?   @map("name_en")
+  machineId Int       @map("machine_id")
+  status    Int       @default(0)
+  machines  Machines  @relation("MachineParams", fields: [machineId], references: [id])
+  params    Json      @default("[]")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
 }
 
 model MachineParamsFilters {
-  id           Int      @id @default(autoincrement())
-  machineId    Int      @map("machine_id")
-  machines     Machines @relation("MachineParamsFilters", fields: [machineId], references: [id])
-  filterParams Json     @default("[]") @map("filter_params")
-  status       Int      @default(0)
-  createdAt    BigInt   @default(0) @map("created_at")
-  updatedAt    BigInt   @default(0) @map("updated_at")
+  id           Int       @id @default(autoincrement())
+  machineId    Int       @map("machine_id")
+  machines     Machines  @relation("MachineParamsFilters", fields: [machineId], references: [id])
+  filterParams Json      @default("[]") @map("filter_params")
+  status       Int       @default(0)
+  createdAt    DateTime? @default(now()) @map("created_at")
+  updatedAt    DateTime? @default(now()) @map("updated_at")
 }
 
 model BankCard {
-  id        Int    @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
   expire    String
-  userId    Int    @map("user_id")
-  status    Int    @default(0)
-  createdAt BigInt @default(0) @map("created_at")
-  updatedAt BigInt @default(0) @map("updated_at")
+  userId    Int       @map("user_id")
+  status    Int       @default(0)
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
 }
 
 model UserToken {
-  id        Int    @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   token     String
   expire    String
-  userId    Int    @map("user_id")
-  status    Int    @default(0)
-  createdAt BigInt @default(0) @map("created_at")
-  updatedAt BigInt @default(0) @map("updated_at")
+  userId    Int       @map("user_id")
+  status    Int       @default(0)
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
 }
 
 model Merchant {
-  id        Int     @id @default(autoincrement())
-  fullName  String  @map("full_name")
-  phone     String  @unique
+  id        Int       @id @default(autoincrement())
+  fullName  String    @map("full_name")
+  phone     String    @unique
   inn       String?
-  status    Int     @default(0)
-  createdAt BigInt  @default(0) @map("created_at")
-  updatedAt BigInt  @default(0) @map("updated_at")
+  status    Int       @default(0)
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
 }
 
 model Region {
@@ -151,25 +151,25 @@ model Region {
   nameEn     String?     @map("name_en")
   status     Int         @default(1)
   structures Structure[] @relation("RegionStructures")
-  createdAt  BigInt      @default(0) @map("created_at")
-  updatedAt  BigInt      @default(0) @map("updated_at")
+  createdAt  DateTime?   @default(now()) @map("created_at")
+  updatedAt  DateTime?   @default(now()) @map("updated_at")
   Driver     Driver[]    @relation("DriverRegion")
   Client     Client[]    @relation("ClientRegion")
 }
 
 model Structure {
-  id        Int      @id @default(autoincrement())
-  name      String?  @map("name")
-  nameUz    String   @map("name_uz")
-  nameRu    String   @map("name_ru")
-  nameEn    String?  @map("name_en")
-  status    Int      @default(1)
-  regionId  Int      @map("region_id")
-  region    Region?  @relation("RegionStructures", fields: [regionId], references: [id])
-  createdAt BigInt   @default(0) @map("created_at")
-  updatedAt BigInt   @default(0) @map("updated_at")
-  Client    Client[] @relation("ClientStructures")
-  Driver    Driver[] @relation("DriverStructure")
+  id        Int       @id @default(autoincrement())
+  name      String?   @map("name")
+  nameUz    String    @map("name_uz")
+  nameRu    String    @map("name_ru")
+  nameEn    String?   @map("name_en")
+  status    Int       @default(1)
+  regionId  Int       @map("region_id")
+  region    Region?   @relation("RegionStructures", fields: [regionId], references: [id])
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
+  Client    Client[]  @relation("ClientStructures")
+  Driver    Driver[]  @relation("DriverStructure")
 }
 
 model Order {
@@ -188,8 +188,8 @@ model Order {
   long        String?
   lat         String?
   structureId Int       @default(0) @map("structure_id")
-  createdAt   BigInt    @default(0) @map("created_at")
-  updatedAt   BigInt    @default(0) @map("updated_at")
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @default(now()) @map("updated_at")
   orderParams Json      @default("[]") @map("order_params")
 }
 
@@ -201,8 +201,8 @@ model MachinePrice {
   minHourTime        String               @map("min_hour_time")
   tariffName         String?              @map("tariff_name")
   status             Int                  @default(0)
-  createdAt          BigInt               @default(0) @map("created_at")
-  updatedAt          BigInt               @default(0) @map("updated_at")
+  createdAt          DateTime?            @default(now()) @map("created_at")
+  updatedAt          DateTime?            @default(now()) @map("updated_at")
   machinePriceParams MachinePriceParams[] @relation("MachinePriceParams")
 }
 
@@ -215,6 +215,6 @@ model MachinePriceParams {
   machinePriceId Int          @map("machine_price_id")
   status         Int          @default(0)
   machinePrice   MachinePrice @relation("MachinePriceParams", fields: [machinePriceId], references: [id], onDelete: Cascade)
-  createdAt      BigInt       @default(0) @map("created_at")
-  updatedAt      BigInt       @default(0) @map("updated_at")
+  createdAt      DateTime?    @default(now()) @map("created_at")
+  updatedAt      DateTime?    @default(now()) @map("updated_at")
 }

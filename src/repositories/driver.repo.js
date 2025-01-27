@@ -15,12 +15,9 @@ export const findAll = async (lang, query) => {
       if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
 
-        const startUnixTimestamp = Math.floor(Date.parse(startDate) / 1000);
-        const endUnixTimestamp = Math.floor(Date.parse(endDate) / 1000);
-
         where[column] = {
-          gte: startUnixTimestamp,
-          lte: endUnixTimestamp,
+          gte: new Date(startDate),
+          lte: new Date(endDate),
         };
       } else {
         if (operator === 'contains') {
@@ -149,7 +146,10 @@ const deleteById = async (id) => {
   });
 };
 
-const getDriversByStructureIdForNotification = async (structureId, orderParams) => {
+const getDriversByStructureIdForNotification = async (
+  structureId,
+  orderParams
+) => {
   return await prisma.driver.findMany({
     where: { structureId },
     select: {
