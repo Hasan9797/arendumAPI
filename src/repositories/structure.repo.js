@@ -15,14 +15,20 @@ export const getAll = async (lang, query) => {
       filters.forEach((filter) => {
         const { column, operator, value } = filter;
 
-        if (operator === 'between' && column === 'created_at') {
+        if (operator === 'between' && column === 'createdAt') {
           const [startDate, endDate] = value.split('_');
-          if (startDate && endDate) {
-            where[column] = {
-              gte: new Date(startDate),
-              lte: new Date(endDate),
-            };
+
+          if (!startDate || !endDate) {
+            return;
           }
+
+          const startUnixTimestamp = Math.floor(Date.parse(startDate) / 1000);
+          const endUnixTimestamp = Math.floor(Date.parse(endDate) / 1000);
+
+          where[column] = {
+            gte: startUnixTimestamp,
+            lte: endUnixTimestamp,
+          };
         } else if (operator === 'contains') {
           where[column] = { contains: value, mode: 'insensitive' };
         } else if (operator === 'equals') {

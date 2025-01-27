@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-export const getAll = async (query) => {
+export const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (page - 1) * limit;
@@ -11,11 +11,19 @@ export const getAll = async (query) => {
     filters.forEach((filter) => {
       const { column, operator, value } = filter;
 
-      if (operator === 'between' && column === 'created_at') {
+      if (column === 'name' && (lang === 'uz' || lang === 'ru')) {
+        column += lang.toUpperCase();
+      }
+
+      if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
+
+        const startUnixTimestamp = Math.floor(Date.parse(startDate) / 1000);
+        const endUnixTimestamp = Math.floor(Date.parse(endDate) / 1000);
+
         where[column] = {
-          gte: startDate,
-          lte: endDate,
+          gte: startUnixTimestamp,
+          lte: endUnixTimestamp,
         };
       } else {
         if (operator === 'contains') {
@@ -30,17 +38,54 @@ export const getAll = async (query) => {
       ? { [sort.column]: sort.value }
       : { id: 'desc' };
 
-    const categories = await prisma.machineParams.findMany({
+    const allMachines = await prisma.machineParams.findMany({
       where,
       orderBy,
       skip,
       take: limit,
+      include: {
+        machines: {
+          select: {
+            nameRu: true,
+            nameUz: true,
+            nameEn: true,
+            status: true,
+            img: true,
+          },
+        },
+      },
     });
 
     const total = await prisma.machineParams.count({ where });
 
+    const sanitizedMachines = allMachines.map(
+      ({ nameUz, nameRu, machineId, ...rest }) => ({
+        ...rest,
+        name: lang === 'ru' ? nameRu : nameUz,
+      })
+    );
+
+    const data = sanitizedMachines.map(
+      ({ createdAt, updatedAt, machines, ...rest }) => {
+        const adjustName = (obj) => {
+          const { nameRu, nameUz, nameEn, ...relationRest } = obj;
+          return {
+            ...relationRest,
+            name: lang === 'ru' ? nameRu : nameUz,
+          };
+        };
+
+        return {
+          ...rest,
+          machine: machines ? adjustName(machines) : null,
+          createdAt,
+          updatedAt,
+        };
+      }
+    );
+
     return {
-      data: categories,
+      data,
       pagination: {
         total,
         totalPages: Math.ceil(total / limit),
@@ -50,14 +95,48 @@ export const getAll = async (query) => {
     };
   } catch (error) {
     console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users');
+    throw error;
   }
 };
 
-const getById = async (id) => {
-  return await prisma.machineParams.findUnique({
-    where: { id },
-  });
+const getById = async (lang, id) => {
+  try {
+    const machine = await prisma.machineParams.findUnique({
+      where: { id },
+      include: {
+        machines: {
+          select: {
+            nameRu: true,
+            nameUz: true,
+            status: true,
+            img: true,
+          },
+        },
+      },
+    });
+
+    const adjustName = (obj) => {
+      const { nameRu, nameUz, nameEn, machineId, machines, ...rest } = obj;
+
+      const machine = {
+        ...machines,
+        name: lang === 'ru' ? machines.nameRu : machines.nameUz,
+      };
+
+      delete machine.nameRu;
+      delete machine.nameUz;
+
+      return {
+        ...rest,
+        name: lang === 'ru' ? nameRu : nameUz,
+        machine,
+      };
+    };
+
+    return adjustName(machine);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getByMachineId = async (lang, machineId) => {

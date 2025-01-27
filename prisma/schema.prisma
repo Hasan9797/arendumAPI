@@ -99,8 +99,8 @@ model MachineParams {
   status    Int      @default(0)
   machines  Machines @relation("MachineParams", fields: [machineId], references: [id])
   params    Json     @default("[]")
-  createdAt Int      @default(0) @map("created_at")
-  updatedAt Int      @default(0) @map("updated_at")
+  createdAt BigInt   @default(0) @map("created_at")
+  updatedAt BigInt   @default(0) @map("updated_at")
 }
 
 model MachineParamsFilters {
@@ -109,8 +109,8 @@ model MachineParamsFilters {
   machines     Machines @relation("MachineParamsFilters", fields: [machineId], references: [id])
   filterParams Json     @default("[]") @map("filter_params")
   status       Int      @default(0)
-  createdAt    Int      @default(0) @map("created_at")
-  updatedAt    Int      @default(0) @map("updated_at")
+  createdAt    BigInt   @default(0) @map("created_at")
+  updatedAt    BigInt   @default(0) @map("updated_at")
 }
 
 model BankCard {
@@ -119,8 +119,8 @@ model BankCard {
   expire    String
   userId    Int    @map("user_id")
   status    Int    @default(0)
-  createdAt Int    @default(0) @map("created_at")
-  updatedAt Int    @default(0) @map("updated_at")
+  createdAt BigInt @default(0) @map("created_at")
+  updatedAt BigInt @default(0) @map("updated_at")
 }
 
 model UserToken {
@@ -129,8 +129,8 @@ model UserToken {
   expire    String
   userId    Int    @map("user_id")
   status    Int    @default(0)
-  createdAt Int    @default(0) @map("created_at")
-  updatedAt Int    @default(0) @map("updated_at")
+  createdAt BigInt @default(0) @map("created_at")
+  updatedAt BigInt @default(0) @map("updated_at")
 }
 
 model Merchant {
@@ -139,8 +139,8 @@ model Merchant {
   phone     String  @unique
   inn       String?
   status    Int     @default(0)
-  createdAt Int     @default(0) @map("created_at")
-  updatedAt Int     @default(0) @map("updated_at")
+  createdAt BigInt  @default(0) @map("created_at")
+  updatedAt BigInt  @default(0) @map("updated_at")
 }
 
 model Region {
@@ -151,8 +151,8 @@ model Region {
   nameEn     String?     @map("name_en")
   status     Int         @default(1)
   structures Structure[] @relation("RegionStructures")
-  createdAt  Int         @default(0) @map("created_at")
-  updatedAt  Int         @default(0) @map("updated_at")
+  createdAt  BigInt      @default(0) @map("created_at")
+  updatedAt  BigInt      @default(0) @map("updated_at")
   Driver     Driver[]    @relation("DriverRegion")
   Client     Client[]    @relation("ClientRegion")
 }
@@ -166,8 +166,8 @@ model Structure {
   status    Int      @default(1)
   regionId  Int      @map("region_id")
   region    Region?  @relation("RegionStructures", fields: [regionId], references: [id])
-  createdAt Int      @default(0) @map("created_at")
-  updatedAt Int      @default(0) @map("updated_at")
+  createdAt BigInt   @default(0) @map("created_at")
+  updatedAt BigInt   @default(0) @map("updated_at")
   Client    Client[] @relation("ClientStructures")
   Driver    Driver[] @relation("DriverStructure")
 }
@@ -188,8 +188,8 @@ model Order {
   long        String?
   lat         String?
   structureId Int       @default(0) @map("structure_id")
-  createdAt   Int       @default(0) @map("created_at")
-  updatedAt   Int       @default(0) @map("updated_at")
+  createdAt   BigInt    @default(0) @map("created_at")
+  updatedAt   BigInt    @default(0) @map("updated_at")
   orderParams Json      @default("[]") @map("order_params")
 }
 
@@ -201,8 +201,8 @@ model MachinePrice {
   minHourTime        String               @map("min_hour_time")
   tariffName         String?              @map("tariff_name")
   status             Int                  @default(0)
-  createdAt          Int                  @default(0) @map("created_at")
-  updatedAt          Int                  @default(0) @map("updated_at")
+  createdAt          BigInt               @default(0) @map("created_at")
+  updatedAt          BigInt               @default(0) @map("updated_at")
   machinePriceParams MachinePriceParams[] @relation("MachinePriceParams")
 }
 
@@ -215,6 +215,6 @@ model MachinePriceParams {
   machinePriceId Int          @map("machine_price_id")
   status         Int          @default(0)
   machinePrice   MachinePrice @relation("MachinePriceParams", fields: [machinePriceId], references: [id], onDelete: Cascade)
-  createdAt      Int          @default(0) @map("created_at")
-  updatedAt      Int          @default(0) @map("updated_at")
+  createdAt      BigInt       @default(0) @map("created_at")
+  updatedAt      BigInt       @default(0) @map("updated_at")
 }
