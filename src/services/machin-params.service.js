@@ -2,12 +2,16 @@ import machineParamsRepo from '../repositories/machine-params.repo.js';
 import machinePriceService from './machine-price.service.js';
 import paramsFiltersService from './params-filters.service.js';
 
-const getMachineParams = async (query) => {
-  return await machineParamsRepo.getAll(query);
+const getMachineParams = async (lang, query) => {
+  try {
+    return await machineParamsRepo.getAll(lang, query);
+  } catch (error) {
+    throw error;
+  }
 };
 
-const getMachineParamById = async (id) => {
-  return await machineParamsRepo.getById(id);
+const getMachineParamById = async (lang, id) => {
+  return await machineParamsRepo.getById(lang, id);
 };
 
 const getParamsByMachineId = async (lang, machineId) => {

@@ -12,11 +12,15 @@ export const findAll = async (lang, query) => {
     filters.forEach((filter) => {
       const { column, operator, value } = filter;
 
-      if (operator === 'between' && column === 'created_at') {
+      if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
+
+        const startUnixTimestamp = Math.floor(Date.parse(startDate) / 1000);
+        const endUnixTimestamp = Math.floor(Date.parse(endDate) / 1000);
+
         where[column] = {
-          gte: startDate,
-          lte: endDate,
+          gte: startUnixTimestamp,
+          lte: endUnixTimestamp,
         };
       } else {
         if (operator === 'contains') {
@@ -100,46 +104,63 @@ export const findAll = async (lang, query) => {
 };
 
 const getById = async (lang, id) => {
+  try {
+    const client = await prisma.client.findUnique({
+      where: { id },
+      include: {
+        region: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+          },
+        },
+        structure: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+          },
+        },
+      },
+    });
+
+    const adjustName = (obj) => {
+      const { nameRu, nameUz, ...relationRest } = obj;
+      return {
+        ...relationRest,
+        name: lang === 'ru' ? nameRu : nameUz,
+      };
+    };
+
+    if (client) {
+      const { createdAt, updatedAt, regionId, structureId, ...rest } = client;
+
+      return {
+        ...rest,
+        region: rest.region ? adjustName(rest.region) : null,
+        structure: rest.structure ? adjustName(rest.structure) : null,
+        status: { key: rest.status, value: getClientStatusText(rest.status) },
+        createdAt,
+        updatedAt,
+      };
+    }
+
+    return client;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getClientStructureId = async (clientId) => {
   const client = await prisma.client.findUnique({
-    where: { id },
-    include: {
-      region: {
-        select: {
-          id: true,
-          name: true,
-          nameUz: true,
-          nameRu: true,
-        },
-      },
-      structure: {
-        select: {
-          id: true,
-          name: true,
-          nameUz: true,
-          nameRu: true,
-        },
-      },
-    },
+    where: { id: clientId },
+    select: { structureId: true },
   });
 
-  const adjustName = (obj) => {
-    const { nameRu, nameUz, ...relationRest } = obj;
-    return {
-      ...relationRest,
-      name: lang === 'ru' ? nameRu : nameUz,
-    };
-  };
-
-  if (client) {
-    return {
-      ...client,
-      region: client.region ? adjustName(client.region) : null,
-      structure: client.structure ? adjustName(client.structure) : null,
-      status: { key: client.status, value: getClientStatusText(client.status) },
-    };
-  }
-
-  return null;
+  return client.structureId;
 };
 
 const createClient = async (newClient) => {
@@ -173,4 +194,5 @@ export default {
   createClient,
   updateClientById,
   deleteClientById,
+  getClientStructureId,
 };

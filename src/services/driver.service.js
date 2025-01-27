@@ -37,17 +37,17 @@ const deleteById = async (id) => {
   return await driverRepository.deleteById(id);
 };
 
-const getDriversInClientStructure = async (clientId) => {
+const getDriversInClientStructure = async (clientId, orderParams) => {
   try {
-    const client = await clientRepository.getById(clientId);
+    const structureId = await clientRepository.getClientStructureId(clientId);
 
-    if (!client) throw new Error('Client not found');
+    if (!structureId) throw new Error('Client not found');
 
     return await driverRepository.getDriversByStructureIdForNotification(
-      client.structureId
+      structureId,
+      orderParams
     );
   } catch (error) {
-    console.error('Error sending notification:', error);
     throw error;
   }
 };

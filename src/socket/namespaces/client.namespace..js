@@ -32,21 +32,17 @@ export default (io) => {
 
   clientNamespace.on('connection', (socket) => {
     try {
-      console.log(`Socket connected: ${socket.id}`);
-
-      console.log('Socket role:', socket.role);
-      console.log('Socket userId:', socket.userId);
-
       socket.on('joinRoom', (orderId) => {
         socket.join(`order_room_${orderId}`);
         socket.emit('orderStatus', { status: true, orderId });
       });
 
-      socket.on('createOrder', async ({ orderId }) => {
+      socket.on('createOrder', async ({ orderId, params }) => {
         socket.join(`order_room_${orderId}`);
 
         const drivers = await driverService.getDriversInClientStructure(
-          socket.userId
+          socket.userId,
+          params
         );
 
         if (drivers.length <= 0) {

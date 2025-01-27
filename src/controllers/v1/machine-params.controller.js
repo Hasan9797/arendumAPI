@@ -5,14 +5,22 @@ import {
 } from '../../helpers/response.helper.js';
 
 const getAll = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
+
   const query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
-    filters: req.body.filters || [],
-    sort: req.body.sort || { column: 'id', value: 'desc' },
+    filters: req.query.filters ? JSON.parse(req.query.filters) : [],
+    sort: req.query.sort
+      ? JSON.parse(req.query.sort)
+      : {
+          column: 'id',
+          value: 'desc',
+        },
   };
+
   try {
-    const result = await machinParamsService.getMachineParams(query);
+    const result = await machinParamsService.getMachineParams(lang, query);
     res.status(200).json({
       success: true,
       data: result.data,
@@ -25,8 +33,10 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
     const machineParams = await machinParamsService.getMachineParamById(
+      lang,
       parseInt(req.params.id)
     );
     res.status(200).json(responseSuccess(machineParams));
