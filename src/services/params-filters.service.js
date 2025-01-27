@@ -1,7 +1,13 @@
 import machineParamsFilterRepo from '../repositories/params-filter.repo.js';
+import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getParamsFilters = async (query) => {
-  return await machineParamsFilterRepo.getAll(query);
+  try {
+    const result = await machineParamsFilterRepo.getAll(query);
+    return formatResponseDates(result);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getById = async (id) => {
@@ -12,7 +18,7 @@ const getById = async (id) => {
       return {};
     }
 
-    return result;
+    return formatResponseDates(result);
   } catch (error) {
     throw error;
   }
@@ -23,7 +29,7 @@ const getByMachineId = async (machineId) => {
     const result =
       await machineParamsFilterRepo.getParamsFilterByMachineId(machineId);
 
-    return result ?? {};
+    return formatResponseDates(result) ?? {};
   } catch (error) {
     throw error;
   }

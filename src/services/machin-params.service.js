@@ -1,21 +1,33 @@
 import machineParamsRepo from '../repositories/machine-params.repo.js';
 import machinePriceService from './machine-price.service.js';
 import paramsFiltersService from './params-filters.service.js';
+import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getMachineParams = async (lang, query) => {
   try {
-    return await machineParamsRepo.getAll(lang, query);
+    const result = await machineParamsRepo.getAll(lang, query);
+    return formatResponseDates(result);
   } catch (error) {
     throw error;
   }
 };
 
 const getMachineParamById = async (lang, id) => {
-  return await machineParamsRepo.getById(lang, id);
+  try {
+    const result = await machineParamsRepo.getById(lang, id);
+    return formatResponseDates(result);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getParamsByMachineId = async (lang, machineId) => {
-  return await machineParamsRepo.getByMachineId(lang, machineId);
+  try {
+    const result = await machineParamsRepo.getByMachineId(lang, machineId);
+    return formatResponseDates(result);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const createMachineParam = async (data) => {

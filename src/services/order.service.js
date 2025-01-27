@@ -1,11 +1,14 @@
 import orderRepo from '../repositories/order.repo.js';
+import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getOrders = async (query) => {
-  return await orderRepo.findAll(query);
+  const orders = await orderRepo.findAll(query);
+  return formatResponseDates(orders);
 };
 
 const getOrderById = async (id) => {
-  return await orderRepo.getById(id);
+  const order = await orderRepo.getById(id);
+  return formatResponseDates(order);
 };
 
 const createOrder = async (data) => {

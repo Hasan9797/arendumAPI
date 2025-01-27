@@ -52,7 +52,15 @@ export const getAll = async (lang, query) => {
     const total = await prisma.region.count({ where });
 
     const data = regions.map((driver) => {
-      const { nameRu, nameUz, nameEn, structures, ...rest } = driver;
+      const {
+        nameRu,
+        nameUz,
+        nameEn,
+        structures,
+        createdAt,
+        updatedAt,
+        ...rest
+      } = driver;
 
       const adjustName = (obj) => {
         const { nameRu, nameUz, ...relationRest } = obj;
@@ -69,6 +77,8 @@ export const getAll = async (lang, query) => {
         structure: structures
           ? structures.map((structure) => adjustName(structure))
           : [],
+        createdAt,
+        updatedAt,
       };
     });
 

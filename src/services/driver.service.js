@@ -1,10 +1,12 @@
 import driverRepository from '../repositories/driver.repo.js';
 import { sendNotification } from '../helpers/send-notification.helper.js';
 import clientRepository from '../repositories/client.repo.js';
+import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getAll = async (lang, query) => {
   try {
-    return await driverRepository.findAll(lang, query);
+    const drivers = await driverRepository.findAll(lang, query);
+    return formatResponseDates(drivers);
   } catch (error) {
     console.error('Error fetching users:', error);
     throw error;
@@ -12,7 +14,8 @@ const getAll = async (lang, query) => {
 };
 
 const getById = async (id) => {
-  return await driverRepository.getById(id);
+  const driver = await driverRepository.getById(id);
+  return formatResponseDates(driver);
 };
 
 const create = async (data) => {
