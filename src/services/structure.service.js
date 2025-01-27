@@ -1,11 +1,14 @@
 import structureRepo from '../repositories/structure.repo.js';
+import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getStructures = async (lang, query) => {
-  return await structureRepo.getAll(lang, query);
+  const result = await structureRepo.getAll(lang, query);
+  return formatResponseDates(result);
 };
 
 const getById = async (id) => {
-  return await structureRepo.getById(id);
+  const structure = await structureRepo.getById(id);
+  return formatResponseDates(structure);
 };
 
 const createStructure = async (data) => {

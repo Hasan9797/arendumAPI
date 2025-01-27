@@ -1,11 +1,18 @@
 import machinesRepo from '../repositories/machines.repo.js';
+import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getMachines = async (lang, query) => {
-  return await machinesRepo.getMachines(lang, query);
+  try {
+    const result = await machinesRepo.getMachines(lang, query);
+    return formatResponseDates(result);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getMachineById = async (lang, id) => {
-  return await machinesRepo.getMachineById(lang, id);
+  const result = await machinesRepo.getMachineById(lang, id);
+  return formatResponseDates(result);
 };
 
 const createMachine = async (data) => {

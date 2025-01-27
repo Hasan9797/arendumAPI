@@ -1,8 +1,14 @@
 import machinePriceRepo from '../repositories/machine-price.repo.js';
 import prisma from '../config/prisma.js';
+import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getPrices = async (lang, query) => {
-  return await machinePriceRepo.getMachinesPrice(lang, query);
+  try {
+    const result = await machinePriceRepo.getMachinesPrice(lang, query);
+    return formatResponseDates(result);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getPriceById = async (lang, id) => {
@@ -11,7 +17,8 @@ const getPriceById = async (lang, id) => {
 
 const getPriceByMachineId = async (id) => {
   try {
-    return await machinePriceRepo.getPriceByMachineId(id);
+    const result = await machinePriceRepo.getPriceByMachineId(id);
+    return formatResponseDates(result);
   } catch (error) {
     throw error;
   }
