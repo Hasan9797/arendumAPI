@@ -5,8 +5,11 @@ const getAll = async (req, res) => {
   const query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
-    filters: req.body.filters || [],
-    sort: req.body.sort || { column: 'id', value: 'desc' },
+    filters: (req.query.filters && JSON.parse(req.query.filters)) || [],
+    sort: (req.query.sort && JSON.parse(req.query.sort)) || {
+      column: 'id',
+      value: 'desc',
+    },
   };
 
   try {
