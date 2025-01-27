@@ -15,8 +15,8 @@ model User {
   login     String @unique
   password  String
   status    Int    @default(1)
-  createdAt Int    @default(0) @map("created_at")
-  updatedAt Int    @default(0) @map("updated_at")
+  createdAt BigInt @default(0) @map("created_at")
+  updatedAt BigInt @default(0) @map("updated_at")
 }
 
 model Driver {
@@ -48,8 +48,8 @@ model Driver {
   structure   Structure? @relation("DriverStructure", fields: [structureId], references: [id])
 
   fcmToken  String? @map("fcm_token")
-  createdAt Int     @default(0) @map("created_at")
-  updatedAt Int     @default(0) @map("updated_at")
+  createdAt BigInt  @default(0) @map("created_at")
+  updatedAt BigInt  @default(0) @map("updated_at")
   Order     Order[] @relation("DriverOrder")
 }
 
@@ -67,8 +67,8 @@ model Client {
   region      Region?    @relation("ClientRegion", fields: [regionId], references: [id])
   structureId Int?       @map("structure_id")
   structure   Structure? @relation("ClientStructures", fields: [structureId], references: [id])
-  createdAt   Int        @default(0) @map("created_at")
-  updatedAt   Int        @default(0) @map("updated_at")
+  createdAt   BigInt     @default(0) @map("created_at")
+  updatedAt   BigInt     @default(0) @map("updated_at")
   Order       Order[]    @relation("ClientOrder")
 }
 
@@ -82,8 +82,8 @@ model Machines {
   status               Int                    @default(0)
   machineParams        MachineParams[]        @relation("MachineParams")
   machineParamsFilters MachineParamsFilters[] @relation("MachineParamsFilters")
-  createdAt            Int                    @default(0) @map("created_at")
-  updatedAt            Int                    @default(0) @map("updated_at")
+  createdAt            BigInt                 @default(0) @map("created_at")
+  updatedAt            BigInt                 @default(0) @map("updated_at")
   drivers              Driver[]               @relation("MachineDrivers")
   Order                Order[]
   MachinePrice         MachinePrice[]
