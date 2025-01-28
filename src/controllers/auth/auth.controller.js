@@ -37,8 +37,6 @@ const login = async (req, res) => {
 
     const payload = {
       id: user.id,
-      fullName: user.fullName,
-      phone: user.phone,
       role: user.role,
     };
 
