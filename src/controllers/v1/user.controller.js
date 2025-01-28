@@ -34,6 +34,7 @@ const getUserById = async (req, res) => {
   try {
     const userId = parseInt(req.user.id) || parseInt(req.params.id);
     const user = await userService.getUserById(userId);
+
     res.status(200).json({
       success: true,
       error: false,

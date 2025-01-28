@@ -9,7 +9,8 @@ const getUsers = async (query) => {
 
 const getUserById = async (userId) => {
   const user = await userRepository.getUser(userId);
-  return formatResponseDates(user);
+  const { password, ...rest } = user;
+  return formatResponseDates(rest);
 };
 
 const createUser = async (data) => {
