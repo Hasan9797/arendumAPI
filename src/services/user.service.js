@@ -7,8 +7,8 @@ const getUsers = async (query) => {
   return formatResponseDates(users);
 };
 
-const getUserById = async (id) => {
-  const user = await userRepository.getUser(id);
+const getUserById = async (userId) => {
+  const user = await userRepository.getUser(userId);
   return formatResponseDates(user);
 };
 

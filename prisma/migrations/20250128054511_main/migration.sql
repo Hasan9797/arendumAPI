@@ -6,6 +6,7 @@ CREATE TABLE "User" (
     "role" INTEGER NOT NULL DEFAULT 1,
     "login" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "img" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
