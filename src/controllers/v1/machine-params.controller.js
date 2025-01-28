@@ -6,7 +6,7 @@ import {
 
 const getAll = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
-
+  
   const query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
@@ -25,7 +25,6 @@ const getAll = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Error fetching category:', error);
     res.status(500).json(responseError(error.message, error?.code));
   }
 };

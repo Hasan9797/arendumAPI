@@ -8,16 +8,26 @@ const getUsers = async (query) => {
 };
 
 const getUserById = async (userId) => {
-  const user = await userRepository.getUser(userId);
-  const { password, ...rest } = user;
-  return formatResponseDates(rest);
+  try {
+    if (!userId) throw new Error('User id is required');
+
+    const user = await userRepository.getUser(userId);
+    const { password, ...rest } = user;
+    return formatResponseDates(rest);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const createUser = async (data) => {
+ try {
   const passwordHash = bcrypt.hashSync(data.password, 10);
 
   const newUser = { ...data, password: passwordHash };
   return await userRepository.createUser(newUser);
+ } catch (error) {
+  throw error;
+ }
 };
 
 const updateUser = async (id, data) => {

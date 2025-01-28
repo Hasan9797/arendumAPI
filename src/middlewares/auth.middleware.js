@@ -3,12 +3,12 @@ import { responseError } from '../helpers/response.helper.js';
 
 export const authentication = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
-
-  if (!token) {
-    throw new Error('Access denied, no token provided', 403);
-  }
-
+  
   try {
+    if (!token) {
+      throw new Error('Access denied, no token provided', 403);
+    }
+
     req.user = verifyToken(token);
     next();
   } catch (error) {

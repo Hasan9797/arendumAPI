@@ -36,6 +36,17 @@ export const getUsers = async (query) => {
       orderBy,
       skip,
       take: limit,
+      select: {
+        id: true,
+        fullName: true,
+        phone: true,
+        role: true,
+        login: true,
+        img: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true
+      }
     });
 
     const total = await prisma.user.count({ where });
@@ -62,9 +73,13 @@ const createUser = async (newUser) => {
 };
 
 const getUser = async (id) => {
-  return await prisma.user.findUnique({
-    where: { id },
-  });
+  try {
+    return await prisma.user.findUnique({
+      where: { id },
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 const deleteUserById = async (id) => {
