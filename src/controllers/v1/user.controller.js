@@ -32,8 +32,8 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const userId = parseInt(req.user.id) || parseInt(req.params.id);
-    const user = await userService.getUserById(userId);
+    const user = await userService.getUserById(parseInt(req.params.id));
+
     res.status(200).json({
       success: true,
       error: false,
@@ -89,7 +89,43 @@ const updateUser = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => { };
+const getMe = async (req, res) => {
+  try {    
+    const user = await userService.getUserById(parseInt(req.user.id));
+    res.status(200).json({
+      success: true,
+      error: false,
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+}
+
+const deleteUser = async (req, res) => {
+  try {
+    await userService.deleteUser(parseInt(req.params.id));
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+};
 
 export default {
   getUsers,
@@ -97,4 +133,5 @@ export default {
   createUser,
   updateUser,
   deleteUser,
+  getMe
 };
