@@ -40,6 +40,17 @@ const getById = async (req, res) => {
   }
 };
 
+
+const getMe = async (req, res) => {
+  try {
+    const driver = await driverService.getById(parseInt(req.user.id));
+    res.status(201).json(responseSuccess(driver));
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
+
 const create = async (req, res) => {
   try {
     await driverService.create(req.body);
@@ -79,4 +90,5 @@ export default {
   create,
   update,
   distroy,
+  getMe
 };

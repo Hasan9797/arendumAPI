@@ -44,6 +44,20 @@ const getById = async (req, res) => {
   }
 };
 
+const getMe = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
+  try {
+    const client = await clientService.getClientById(
+      lang,
+      parseInt(req.user.id)
+    );
+    res.status(200).json(responseSuccess(client));
+  } catch (error) {
+    console.error('Error fetching client:', error);
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
+
 const create = async (req, res) => {
   try {
     await clientService.createClient(req.body);
@@ -75,4 +89,5 @@ export default {
   create,
   update,
   distroy,
+  getMe
 };
