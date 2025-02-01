@@ -7,6 +7,8 @@ const router = Router();
 
 router.get('/', clientController.getAll);
 
+router.get('/me', authentication, clientController.getMe);
+
 router.get('/:id', clientController.getById);
 
 router.post('/create', clientController.create);
