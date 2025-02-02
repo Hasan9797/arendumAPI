@@ -2,8 +2,15 @@ import orderRepo from '../repositories/order.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getOrders = async (query) => {
-  const orders = await orderRepo.findAll(query);
-  return formatResponseDates(orders);
+  try {
+    const orders = await orderRepo.findAll(query);
+    return {
+      data: formatResponseDates(orders.data),
+      pagination: orders.pagination,
+    };
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getOrderById = async (id) => {

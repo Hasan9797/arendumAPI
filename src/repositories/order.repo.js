@@ -77,8 +77,7 @@ export const findAll = async (query) => {
       },
     };
   } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users');
+    throw error;
   }
 };
 
@@ -88,7 +87,6 @@ const create = async (newOrder) => {
       data: newOrder,
     });
   } catch (error) {
-    console.error('Error creating user:', error);
     throw error;
   }
 };
@@ -107,15 +105,18 @@ const updateById = async (id, orderData) => {
     });
     return updatedOrder;
   } catch (error) {
-    console.error('Error updating user:', error);
-    return null;
+    throw error;
   }
 };
 
 const deleteById = async (id) => {
-  return await prisma.order.delete({
-    where: { id },
-  });
+  try {
+    return await prisma.order.delete({
+      where: { id },
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 export default {

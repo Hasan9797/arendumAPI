@@ -31,7 +31,6 @@ const getAll = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Error fetching orders:', error);
     res.status(500).json({
       success: false,
       error: {

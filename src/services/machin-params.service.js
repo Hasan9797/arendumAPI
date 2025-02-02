@@ -31,7 +31,11 @@ const getParamsByMachineId = async (lang, machineId) => {
 };
 
 const createMachineParam = async (data) => {
-  return await machineParamsRepo.create(data);
+  try {
+    return await machineParamsRepo.create(data);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const updateMachineParam = async (id, data) => {
