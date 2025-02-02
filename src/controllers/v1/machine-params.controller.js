@@ -48,7 +48,6 @@ const create = async (req, res) => {
     const params = await machinParamsService.createMachineParam(req.body);
     res.status(201).json(responseSuccess());
   } catch (error) {
-    console.error('Error fetching machin params:', error);
     res.status(500).json(responseError(error.message, error?.code));
   }
 };

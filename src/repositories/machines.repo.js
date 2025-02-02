@@ -36,6 +36,15 @@ export const getMachines = async (lang, query) => {
       orderBy,
       skip,
       take: limit,
+      include: {
+        MachinePrice: {
+          select: {
+            id: true,
+            minAmount: true,
+            minHourTime: true,
+          },
+        },
+      },
     });
 
     const total = await prisma.machines.count({ where });
@@ -56,20 +65,32 @@ export const getMachines = async (lang, query) => {
       },
     };
   } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users');
+    throw error;
   }
 };
 
 const createMachine = async (newUser) => {
-  return await prisma.machines.create({
-    data: newUser,
-  });
+  try {
+    return await prisma.machines.create({
+      data: newUser,
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getMachineById = async (lang, id) => {
   const machine = await prisma.machines.findUnique({
     where: { id },
+    include: {
+      MachinePrice: {
+        select: {
+          id: true,
+          minAmount: true,
+          minHourTime: true,
+        },
+      },
+    },
   });
 
   const adjustName = (obj) => {
@@ -89,7 +110,7 @@ const deleteMachineById = async (id) => {
       where: { id },
     });
   } catch (error) {
-    throw error.message;
+    throw error;
   }
 };
 
@@ -101,8 +122,7 @@ const updateMachineById = async (id, machineData) => {
     });
     return updatedUser;
   } catch (error) {
-    console.error('Error updating user:', error);
-    return null;
+    throw error;
   }
 };
 

@@ -160,9 +160,13 @@ const getByMachineId = async (lang, machineId) => {
 };
 
 const create = async (newUser) => {
-  return await prisma.machineParams.create({
-    data: newUser,
-  });
+  try {
+    return await prisma.machineParams.create({
+      data: newUser,
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 const updateById = async (id, machineParamsData) => {
