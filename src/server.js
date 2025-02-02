@@ -8,6 +8,7 @@ import socketHandler from './socket/index.js';
 import { Server } from 'socket.io';
 
 dotenv.config();
+process.env.TZ;
 
 const app = express();
 app.use(cors());
