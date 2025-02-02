@@ -96,6 +96,7 @@ model MachineParams {
   nameUz    String    @map("name_uz")
   nameRu    String    @map("name_ru")
   nameEn    String?   @map("name_en")
+  prefix    String?
   machineId Int       @map("machine_id")
   status    Int       @default(0)
   machines  Machines  @relation("MachineParams", fields: [machineId], references: [id])

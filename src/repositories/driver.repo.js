@@ -141,9 +141,13 @@ const updateById = async (id, driverData) => {
 };
 
 const deleteById = async (id) => {
-  return await prisma.driver.delete({
-    where: { id },
-  });
+  try {
+    return await prisma.driver.delete({
+      where: { id },
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getDriversByStructureIdForNotification = async (

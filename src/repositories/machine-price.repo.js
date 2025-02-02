@@ -97,9 +97,12 @@ const getMachinePriceById = async (lang, id) => {
   });
 };
 
-const getPriceByMachineId = async (id) => {
+const getPriceByMachineId = async (machineId) => {
   return await prisma.machinePrice.findFirst({
-    where: { machineId: id },
+    where: { machineId },
+    include: {
+      machinePriceParams: true,
+    },
   });
 };
 

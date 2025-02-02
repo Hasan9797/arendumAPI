@@ -14,6 +14,8 @@ router.get('/', machinePriceController.getAll);
 
 router.get('/:id', machinePriceController.getById);
 
+router.get('/by-machine/:id', machinePriceController.getByMachineId);
+
 router.post('/create', machinePriceController.create);
 
 router.put('/update/:id', machinePriceController.update);

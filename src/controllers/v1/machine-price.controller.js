@@ -1,3 +1,4 @@
+import { responseError } from '../../helpers/response.helper.js';
 import machinePriceService from '../../services/machine-price.service.js';
 
 const getAll = async (req, res) => {
@@ -39,11 +40,18 @@ const getById = async (req, res) => {
     );
     res.status(200).json(price);
   } catch (error) {
-    console.error('Error fetching price:', error);
-    res.status(500).json({
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch price',
-    });
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
+
+const getByMachineId = async (req, res) => {
+  try {
+    const price = await machinePriceService.getPriceByMachineId(
+      parseInt(req.params.id)
+    );
+    res.status(200).json(price);
+  } catch (error) {
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -52,11 +60,7 @@ const create = async (req, res) => {
     await machinePriceService.createPrice(req.body);
     res.status(201).json({ saccess: true, data: true });
   } catch (error) {
-    console.error('Error fetching price:', error);
-    res.status(500).json({
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch price',
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -68,11 +72,7 @@ const update = async (req, res) => {
     );
     res.status(200).json(price);
   } catch (error) {
-    console.error('Error fetching price:', error);
-    res.status(500).json({
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch price',
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -83,11 +83,7 @@ const distroy = async (req, res) => {
     );
     res.status(200).json(price);
   } catch (error) {
-    console.error('Error fetching price:', error);
-    res.status(500).json({
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch price',
-    });
+    res.status(500).json(responseError(error.message, 500));
   }
 };
 
@@ -97,4 +93,5 @@ export default {
   create,
   update,
   distroy,
+  getByMachineId,
 };
