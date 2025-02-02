@@ -85,6 +85,7 @@ CREATE TABLE "MachineParams" (
     "name_uz" TEXT NOT NULL,
     "name_ru" TEXT NOT NULL,
     "name_en" TEXT,
+    "prefix" TEXT,
     "machine_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
     "params" JSONB NOT NULL DEFAULT '[]',

@@ -4,7 +4,7 @@ import { formatResponseDates } from '../helpers/format-date.helper.js';
 const getMachines = async (lang, query) => {
   try {
     const result = await machinesRepo.getMachines(lang, query);
-    return formatResponseDates(result);
+    return formatResponseDates(result.data);
   } catch (error) {
     throw error;
   }

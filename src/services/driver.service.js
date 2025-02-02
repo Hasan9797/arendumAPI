@@ -37,7 +37,11 @@ const updateById = async (id, data) => {
 };
 
 const deleteById = async (id) => {
-  return await driverRepository.deleteById(id);
+  try {
+    return await driverRepository.deleteById(id);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getDriversInClientStructure = async (clientId, orderParams) => {

@@ -25,7 +25,6 @@ const getAll = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
@@ -35,7 +34,6 @@ const getById = async (req, res) => {
     const driver = await driverService.getById(parseInt(req.params.id));
     res.status(201).json(responseSuccess(driver));
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
@@ -46,7 +44,6 @@ const getMe = async (req, res) => {
     const driver = await driverService.getById(parseInt(req.user.id));
     res.status(201).json(responseSuccess(driver));
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
@@ -56,7 +53,6 @@ const create = async (req, res) => {
     await driverService.create(req.body);
     res.status(201).json(responseSuccess());
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
@@ -69,7 +65,6 @@ const update = async (req, res) => {
     );
     res.status(200).json(responseSuccess());
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
@@ -79,7 +74,6 @@ const distroy = async (req, res) => {
     await driverService.deleteById(parseInt(req.params.id));
     res.status(200).json(responseSuccess());
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
