@@ -1,10 +1,8 @@
-import moment from 'moment-timezone';
-
 export const formatResponseDates = (data) => {
   try {
     const formatDate = (date) =>
       date instanceof Date
-        ? moment(date).tz('UTC').format('YYYY-MM-DD HH:mm:ss') // UTC vaqt formatlash
+        ? date.toISOString().slice(0, 19).replace('T', ' ') // YYYY-MM-DD HH:mm:ss
         : date;
 
     const formatObjectDates = (obj) => {
