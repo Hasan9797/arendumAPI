@@ -8,8 +8,8 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "img" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -39,8 +39,8 @@ CREATE TABLE "Driver" (
     "region_id" INTEGER,
     "structure_id" INTEGER,
     "fcm_token" TEXT,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Driver_pkey" PRIMARY KEY ("id")
 );
@@ -58,8 +58,8 @@ CREATE TABLE "Client" (
     "fcm_token" TEXT,
     "region_id" INTEGER,
     "structure_id" INTEGER,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Client_pkey" PRIMARY KEY ("id")
 );
@@ -73,8 +73,8 @@ CREATE TABLE "Machines" (
     "name_en" TEXT,
     "img" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Machines_pkey" PRIMARY KEY ("id")
 );
@@ -90,8 +90,8 @@ CREATE TABLE "MachineParams" (
     "machine_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
     "params" JSONB NOT NULL DEFAULT '[]',
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "MachineParams_pkey" PRIMARY KEY ("id")
 );
@@ -102,8 +102,8 @@ CREATE TABLE "MachineParamsFilters" (
     "machine_id" INTEGER NOT NULL,
     "filter_params" JSONB NOT NULL DEFAULT '[]',
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "MachineParamsFilters_pkey" PRIMARY KEY ("id")
 );
@@ -115,8 +115,8 @@ CREATE TABLE "BankCard" (
     "expire" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "BankCard_pkey" PRIMARY KEY ("id")
 );
@@ -128,8 +128,8 @@ CREATE TABLE "UserToken" (
     "expire" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "UserToken_pkey" PRIMARY KEY ("id")
 );
@@ -141,8 +141,8 @@ CREATE TABLE "Merchant" (
     "phone" TEXT NOT NULL,
     "inn" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Merchant_pkey" PRIMARY KEY ("id")
 );
@@ -155,8 +155,8 @@ CREATE TABLE "Region" (
     "name_ru" TEXT NOT NULL,
     "name_en" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Region_pkey" PRIMARY KEY ("id")
 );
@@ -170,8 +170,8 @@ CREATE TABLE "Structure" (
     "name_en" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
     "region_id" INTEGER NOT NULL,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Structure_pkey" PRIMARY KEY ("id")
 );
@@ -190,8 +190,8 @@ CREATE TABLE "Order" (
     "long" TEXT,
     "lat" TEXT,
     "structure_id" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );
@@ -204,8 +204,8 @@ CREATE TABLE "MachinePrice" (
     "min_hour_time" TEXT NOT NULL,
     "tariff_name" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "MachinePrice_pkey" PRIMARY KEY ("id")
 );
@@ -219,8 +219,8 @@ CREATE TABLE "MachinePriceParams" (
     "type" TEXT NOT NULL,
     "machine_price_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "MachinePriceParams_pkey" PRIMARY KEY ("id")
 );
