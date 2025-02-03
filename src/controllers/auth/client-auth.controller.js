@@ -41,7 +41,6 @@ const register = async (req, res) => {
     });
     res.status(201).json(responseSuccess());
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
@@ -116,7 +115,6 @@ const verifySmsCode = async (req, res) => {
       id: user.id,
       phone: user.phone,
       role: userRoleEnum.CLIENT,
-      status: user?.status,
     };
 
     const accessToken = generateAccessToken(payload);

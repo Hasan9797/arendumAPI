@@ -72,9 +72,13 @@ const getParamsFilterByMachineId = async (machineId) => {
 };
 
 const create = async (newUser) => {
-  return await prisma.machineParamsFilters.create({
-    data: newUser,
-  });
+  try {
+    return await prisma.machineParamsFilters.create({
+      data: newUser,
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 const distroy = async (id) => {
