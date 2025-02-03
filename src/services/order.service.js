@@ -19,7 +19,11 @@ const getOrderById = async (id) => {
 };
 
 const createOrder = async (data) => {
-  return await orderRepo.create(data);
+  try {
+    return await orderRepo.create(data);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const updateOrder = async (id, data) => {

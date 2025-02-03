@@ -1,6 +1,7 @@
 import orderService from '../../services/order.service.js';
 import userRoleEnum from '../../enums/user/user-role.enum.js';
 import { userStatus } from '../../enums/user/user-status.enum.js';
+import clientService from '../../services/client.service.js';
 
 const getAll = async (req, res) => {
 
@@ -62,8 +63,9 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    if (!req.user.status !== userStatus.ACTIVE) {
-      throw new Error('User is inactive');
+    const client = await clientService.getUserById(req.user.id);
+    if (!client.status !== userStatus.ACTIVE) {
+      throw new Error('User is inactive or User is not Client');
     }
 
     const order = await orderService.createOrder(req.body);
