@@ -9,11 +9,11 @@ export const getAll = async (lang, query) => {
   const skip = (currentPage - 1) * pageSize;
 
   try {
-    const where = {};
+    let where = {};
 
     if (Array.isArray(filters) && filters.length > 0) {
       filters.forEach((filter) => {
-        const { column, operator, value } = filter;
+        let { column, operator, value } = filter;
 
         if (operator === 'between' && column === 'createdAt') {
           const [startDate, endDate] = value.split('_');

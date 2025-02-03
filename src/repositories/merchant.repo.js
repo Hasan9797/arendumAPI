@@ -7,10 +7,10 @@ export const getMachines = async (query) => {
   const skip = (page - 1) * limit;
 
   try {
-    const where = { role: UserRole.MERCHANT };
+    let where = { role: UserRole.MERCHANT };
 
     filters.forEach((filter) => {
-      const { column, operator, value } = filter;
+      let { column, operator, value } = filter;
 
       if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');

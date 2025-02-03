@@ -6,10 +6,10 @@ export const findAll = async (query) => {
   const skip = (page - 1) * limit;
 
   try {
-    const where = role; // { driverId: 1 } or { clientId: 1 } or {};
+    let where = role; // { driverId: 1 } or { clientId: 1 } or {};
 
     filters.forEach((filter) => {
-      const { column, operator, value } = filter;
+      let { column, operator, value } = filter;
 
       if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
