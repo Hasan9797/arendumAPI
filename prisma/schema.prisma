@@ -38,6 +38,7 @@ model Driver {
   lat                     Decimal?  @default(0)
   machineColor            String?
   machineNumber           String?
+  companyName             String?   @map("company_name")
   legal                   Boolean   @default(false)
   merchantId              Int?      @map("merchant_id")
   machine                 Machines? @relation("MachineDrivers", fields: [machineId], references: [id])
@@ -178,8 +179,8 @@ model Order {
   id          Int       @id @default(autoincrement())
   clientId    Int       @map("client_id")
   client      Client    @relation("ClientOrder", fields: [clientId], references: [id])
-  driverId    Int       @map("driver_id")
-  driver      Driver    @relation("DriverOrder", fields: [driverId], references: [id])
+  driverId    Int?      @map("driver_id")
+  driver      Driver?   @relation("DriverOrder", fields: [driverId], references: [id])
   machineId   Int?      @map("machine_id")
   machine     Machines? @relation(fields: [machineId], references: [id])
   amount      Int
