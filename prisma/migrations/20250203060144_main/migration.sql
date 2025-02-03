@@ -186,7 +186,7 @@ CREATE TABLE "Order" (
     "amount_type" INTEGER NOT NULL DEFAULT 1,
     "status" INTEGER NOT NULL DEFAULT 1,
     "caunt" INTEGER NOT NULL DEFAULT 1,
-    "order_params" JSONB NOT NULL DEFAULT '[]',
+    "params" JSONB NOT NULL DEFAULT '{}',
     "long" TEXT,
     "lat" TEXT,
     "structure_id" INTEGER NOT NULL DEFAULT 0,

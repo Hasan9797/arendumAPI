@@ -187,7 +187,7 @@ model Order {
   amountType  Int       @default(1) @map("amount_type")
   status      Int       @default(1)
   caunt       Int       @default(1)
-  orderParams Json      @default("[]") @map("order_params")
+  params Json      @default("{}") @map("params")
   long        String?
   lat         String?
   structureId Int       @default(0) @map("structure_id")
