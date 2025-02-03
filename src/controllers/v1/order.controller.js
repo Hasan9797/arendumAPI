@@ -63,7 +63,7 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const client = await clientService.getUserById(req.user.id);
+    const client = await clientService.getClientById(req.user.id);
     if (!client.status !== userStatus.ACTIVE) {
       throw new Error('User is inactive or User is not Client');
     }
