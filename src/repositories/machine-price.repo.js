@@ -6,10 +6,10 @@ export const getMachinesPrice = async (lang, query) => {
   const skip = (page - 1) * limit;
 
   try {
-    const where = {};
+    let where = {};
 
     filters.forEach((filter) => {
-      const { column, operator, value } = filter;
+      let { column, operator, value } = filter;
 
       if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
