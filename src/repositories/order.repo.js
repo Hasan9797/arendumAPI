@@ -40,7 +40,9 @@ export const findAll = async (query) => {
         machine: {
           select: {
             id: true,
-            title: true,
+            name: true,
+            nameRu: true,
+            nameUz: true,
             img: true,
           },
         },
