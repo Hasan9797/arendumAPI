@@ -1,14 +1,14 @@
 // Status enum
 export const userStatus = Object.freeze({
-  INACTIVE: 0,
-  ACTIVE: 1,
-  CREATED: 2,
+  CREATED: 0,
+  ACTIVE: 2,
+  INACTIVE: 1,
 });
 
 const StatusTranslations = {
-  1: 'Активный',
-  2: 'Создан',
-  0: 'Неактивный',
+  0: 'Создан',
+  1: 'Неактивный',
+  2: 'Активный',
 };
 
 export const userStatusOptions = [
