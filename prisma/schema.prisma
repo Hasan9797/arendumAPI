@@ -52,7 +52,7 @@ model Driver {
   fcmToken  String?  @map("fcm_token")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  Order     Order[]  @relation("DriverOrder")
+  Order     Order[]
 }
 
 model Client {
@@ -180,7 +180,7 @@ model Order {
   clientId    Int       @map("client_id")
   client      Client    @relation("ClientOrder", fields: [clientId], references: [id])
   driverId    Int?      @map("driver_id")
-  driver      Driver?   @relation("DriverOrder", fields: [driverId], references: [id])
+  driver      Driver?   @relation(fields: [driverId], references: [id])
   machineId   Int?      @map("machine_id")
   machine     Machines? @relation(fields: [machineId], references: [id])
   amount      Int
