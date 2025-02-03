@@ -33,13 +33,14 @@ CREATE TABLE "Driver" (
     "lat" DECIMAL(65,30) DEFAULT 0,
     "machineColor" TEXT,
     "machineNumber" TEXT,
+    "company_name" TEXT,
     "legal" BOOLEAN NOT NULL DEFAULT false,
     "merchant_id" INTEGER,
     "region_id" INTEGER,
     "structure_id" INTEGER,
     "fcm_token" TEXT,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "Driver_pkey" PRIMARY KEY ("id")
 );
@@ -57,8 +58,8 @@ CREATE TABLE "Client" (
     "fcm_token" TEXT,
     "region_id" INTEGER,
     "structure_id" INTEGER,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "Client_pkey" PRIMARY KEY ("id")
 );
@@ -72,8 +73,8 @@ CREATE TABLE "Machines" (
     "name_en" TEXT,
     "img" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "Machines_pkey" PRIMARY KEY ("id")
 );
@@ -89,8 +90,8 @@ CREATE TABLE "MachineParams" (
     "machine_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
     "params" JSONB NOT NULL DEFAULT '[]',
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "MachineParams_pkey" PRIMARY KEY ("id")
 );
@@ -101,8 +102,8 @@ CREATE TABLE "MachineParamsFilters" (
     "machine_id" INTEGER NOT NULL,
     "filter_params" JSONB NOT NULL DEFAULT '[]',
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "MachineParamsFilters_pkey" PRIMARY KEY ("id")
 );
@@ -114,8 +115,8 @@ CREATE TABLE "BankCard" (
     "expire" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "BankCard_pkey" PRIMARY KEY ("id")
 );
@@ -127,8 +128,8 @@ CREATE TABLE "UserToken" (
     "expire" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "UserToken_pkey" PRIMARY KEY ("id")
 );
@@ -140,8 +141,8 @@ CREATE TABLE "Merchant" (
     "phone" TEXT NOT NULL,
     "inn" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "Merchant_pkey" PRIMARY KEY ("id")
 );
@@ -154,8 +155,8 @@ CREATE TABLE "Region" (
     "name_ru" TEXT NOT NULL,
     "name_en" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "Region_pkey" PRIMARY KEY ("id")
 );
@@ -169,8 +170,8 @@ CREATE TABLE "Structure" (
     "name_en" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
     "region_id" INTEGER NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "Structure_pkey" PRIMARY KEY ("id")
 );
@@ -179,19 +180,18 @@ CREATE TABLE "Structure" (
 CREATE TABLE "Order" (
     "id" SERIAL NOT NULL,
     "client_id" INTEGER NOT NULL,
-    "driver_id" INTEGER NOT NULL,
+    "driver_id" INTEGER,
     "machine_id" INTEGER,
     "amount" INTEGER NOT NULL,
     "amount_type" INTEGER NOT NULL DEFAULT 1,
     "status" INTEGER NOT NULL DEFAULT 1,
-    "params" JSONB NOT NULL,
     "caunt" INTEGER NOT NULL DEFAULT 1,
+    "order_params" JSONB NOT NULL DEFAULT '[]',
     "long" TEXT,
     "lat" TEXT,
     "structure_id" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "order_params" JSONB NOT NULL DEFAULT '[]',
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );
@@ -204,8 +204,8 @@ CREATE TABLE "MachinePrice" (
     "min_hour_time" TEXT NOT NULL,
     "tariff_name" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "MachinePrice_pkey" PRIMARY KEY ("id")
 );
@@ -219,8 +219,8 @@ CREATE TABLE "MachinePriceParams" (
     "type" TEXT NOT NULL,
     "machine_price_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "MachinePriceParams_pkey" PRIMARY KEY ("id")
 );
@@ -274,7 +274,7 @@ ALTER TABLE "Structure" ADD CONSTRAINT "Structure_region_id_fkey" FOREIGN KEY ("
 ALTER TABLE "Order" ADD CONSTRAINT "Order_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "Client"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Order" ADD CONSTRAINT "Order_driver_id_fkey" FOREIGN KEY ("driver_id") REFERENCES "Driver"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Order" ADD CONSTRAINT "Order_driver_id_fkey" FOREIGN KEY ("driver_id") REFERENCES "Driver"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE SET NULL ON UPDATE CASCADE;
