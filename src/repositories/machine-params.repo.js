@@ -1,35 +1,13 @@
 import prisma from '../config/prisma.js';
+import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
 export const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
-  const skip = (page - 1) * limit;
+  const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
 
   try {
-    let where = {};
-
-    filters.forEach((filter) => {
-      let { column, operator, value } = filter;
-
-      if (column === 'name' && (lang === 'uz' || lang === 'ru')) {
-        column += (lang) => lang[0].toUpperCase() + lang.slice(1);
-      }
-
-      if (operator === 'between' && column === 'createdAt') {
-        const [startDate, endDate] = value.split('_');
-
-        where[column] = {
-          gte: new Date(startDate),
-          lte: new Date(endDate),
-        };
-      } else {
-        if (operator === 'contains') {
-          where[column] = { contains: value, mode: 'insensitive' };
-        } else if (operator === 'equals') {
-          where[column] = value;
-        }
-      }
-    });
+    const where = buildWhereFilter(filters, lang);
 
     const orderBy = sort?.column
       ? { [sort.column]: sort.value }
@@ -184,17 +162,19 @@ const updateById = async (id, machineParamsData) => {
   }
 };
 
-const getSelectList = async (machineId) => {
-  return await prisma.machineParams.findMany({
-    where: {
-      machineId,
-    },
-    select: {
-      nameEn: true,
-      params: true,
-    },
-  });
-};
+// const getSelectList = async (machineId) => {
+//   return await prisma.machineParams.findMany({
+//     where: {
+//       machineId,
+//     },
+//     select: {
+//       nameEn: true,
+//       nameRu: true,
+//       nameUz: true,
+//       params: true,
+//     },
+//   });
+// };
 
 const distroy = async (id) => {
   return await prisma.machineParams.delete({
@@ -228,6 +208,6 @@ export default {
   getByMachineId,
   distroy,
   updateById,
-  getSelectList,
+  // getSelectList,
   getParamsOption,
 };

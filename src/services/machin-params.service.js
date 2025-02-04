@@ -49,36 +49,23 @@ const deleteMachineParam = async (id) => {
   return await machineParamsRepo.distroy(id);
 };
 
-const selectMachineParams = async (machinId) => {
+const optionSelectParams = async (lang, machinId) => {
   try {
-    const params = await machineParamsRepo.getSelectList(machinId);
+    const params = await machineParamsRepo.getParamsOption(machinId);
 
-    const result = params.reduce((acc, { nameEn, params }) => {
+    const result = params.reduce((acc, { nameRu, nameUz, nameEn, params }) => {
       const parsedParams = params ? params : [];
 
-      acc[nameEn ?? 'unknown'] = Array.isArray(parsedParams)
-        ? parsedParams.map((param) => param.name)
-        : [];
+      acc.push({
+        title: lang === 'ru' ? nameRu : nameUz,
+        params: parsedParams.map((p) => p.name),
+        key: nameEn,
+      });
+
       return acc;
-    }, {});
+    }, []);
 
     return result;
-  } catch (error) {
-    console.error('Error fetching machine params:', error);
-    throw error;
-  }
-};
-
-const optionSelect = async (lang, machineId) => {
-  try {
-    const data = await machineParamsRepo.getParamsOption(machineId);
-
-    if (!data) return [];
-
-    return data.map(({ nameRu, nameUz, nameEn, params }) => ({
-      [nameEn]: params.map((p) => p.name),
-      title: lang === 'ru' ? nameRu : nameUz,
-    }));
   } catch (error) {
     console.error('Error fetching machine params:', error);
     throw error;
@@ -108,7 +95,7 @@ const getParamsOptions = async (lang, machineId) => {
     const machinePrice =
       await machinePriceService.getPriceByMachineId(machineId);
 
-    const params = await optionSelect(lang, machineId);
+    const selectParamsOptions = await optionSelectParams(lang, machineId);
 
     const paramsFilters = await paramsFiltersService.getByMachineId(machineId);
 
@@ -116,7 +103,7 @@ const getParamsOptions = async (lang, machineId) => {
 
     return {
       fullAmount: machinePrice?.minAmount ?? 0,
-      params,
+      paramsOptions: selectParamsOptions,
       filters: paramsFilters.filterParams,
       amount,
     };
@@ -131,8 +118,7 @@ export default {
   createMachineParam,
   updateMachineParam,
   deleteMachineParam,
-  selectMachineParams,
   getParamsByMachineId,
   getParamsOptions,
-  optionSelect,
+  optionSelectParams,
 };

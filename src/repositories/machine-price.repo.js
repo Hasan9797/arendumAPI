@@ -1,31 +1,13 @@
 import prisma from '../config/prisma.js';
+import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
 export const getMachinesPrice = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
-  const skip = (page - 1) * limit;
+  const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
 
   try {
-    let where = {};
-
-    filters.forEach((filter) => {
-      let { column, operator, value } = filter;
-
-      if (operator === 'between' && column === 'createdAt') {
-        const [startDate, endDate] = value.split('_');
-
-        where[column] = {
-          gte: new Date(startDate),
-          lte: new Date(endDate),
-        };
-      } else {
-        if (operator === 'contains') {
-          where[column] = { contains: value, mode: 'insensitive' };
-        } else if (operator === 'equals') {
-          where[column] = value;
-        }
-      }
-    });
+    const where = buildWhereFilter(filters, lang);
 
     const orderBy = sort?.column
       ? { [sort.column]: sort.value }

@@ -1,52 +1,15 @@
 import prisma from '../config/prisma.js';
 import { getDriverStatusText } from '../enums/driver/driver-status.enum.js';
+import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
 export const findAll = async (lang, query) => {
-  const { page = 1, limit = 10, sort, filters = [] } = query;
+  const { page, limit, sort, filters = [] } = query;
 
-  const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10); // Default page = 1, limit = 10
+  const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
 
   try {
-    let where = {};
+    const where = buildWhereFilter(filters, lang);
 
-    filters.forEach((filter) => {
-      let { column, operator, value } = filter;
-
-      if (!column || !operator || value === undefined) return; // Agar noto‘g‘ri filter bo‘lsa, uni o‘tkazib yuboramiz
-
-      // Tilga qarab `nameUz` yoki `nameRu` ustunini dinamik tanlash
-      if (column === 'name' && (lang === 'uz' || lang === 'ru')) {
-        column = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
-      }
-
-      // Agar ustun `status` bo‘lsa va u `Int` bo‘lishi kerak bo‘lsa, `parseInt()` qilish
-      if (column === 'status') {
-        value = parseInt(value, 10);
-      }
-
-      // Agar ustun `createdAt` va `between` operatori bo‘lsa, `Date` obyektiga o‘tkazish
-      if (operator === 'between' && column === 'createdAt') {
-        const [startDate, endDate] = value.split('_');
-
-        where[column] = {
-          gte: new Date(startDate),
-          lte: new Date(endDate),
-        };
-      } else {
-        // Operatorga qarab filterni o‘rnatish
-        if (operator === 'contains') {
-          where[column] = { contains: value, mode: 'insensitive' };
-        } else if (operator === 'equals') {
-          where[column] = { equals: value };
-        } else if (operator === 'gt') {
-          where[column] = { gt: value };
-        } else if (operator === 'lt') {
-          where[column] = { lt: value };
-        }
-      }
-    });
-
-    // Default `orderBy` agar `sort` mavjud bo‘lsa
     const orderBy = sort?.column
       ? { [sort.column]: sort.value === 'asc' ? 'asc' : 'desc' }
       : { id: 'desc' };

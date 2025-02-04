@@ -10,19 +10,19 @@ import UserRole from '../enums/user/user-role.enum.js';
 
 const router = Router();
 
-router.get('/',  machinParamsController.getAll);
+router.get('/', machinParamsController.getAll);
 
 router.get('/:id', machinParamsController.getById);
 
 router.post('/by-machine', machinParamsController.getMachineParamsByMachineId);
 
-router.post('/create',  machinParamsController.create);
+router.post('/create', machinParamsController.create);
 
 router.put('/update/:id', machinParamsController.update);
 
-router.post('/select-options', machinParamsController.getSelectParams);
+router.post('/select-params-options', machinParamsController.getSelectParamsOptions);
 
-router.post('/filter-options', machinParamsController.getMachineOprions);
+router.post('/filter-params-options', machinParamsController.getMachineParamsOptions);
 
 router.delete('/delete/:id', machinParamsController.distroy);
 
