@@ -1,38 +1,14 @@
 import prisma from '../config/prisma.js';
 import { getStructureStatusText } from '../enums/structure/structure-status.enum.js';
+import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
 export const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
-  const currentPage = page ? parseInt(page, 10) : 1;
-  const pageSize = limit ? parseInt(limit, 10) : 10;
-  const skip = (currentPage - 1) * pageSize;
+  const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
 
   try {
-    let where = {};
-
-    if (Array.isArray(filters) && filters.length > 0) {
-      filters.forEach((filter) => {
-        let { column, operator, value } = filter;
-
-        if (column === 'name' && (lang === 'uz' || lang === 'ru')) {
-          column += (lang) => lang[0].toUpperCase() + lang.slice(1);
-        }
-
-        if (operator === 'between' && column === 'createdAt') {
-          const [startDate, endDate] = value.split('_');
-
-          where[column] = {
-            gte: new Date(startDate),
-            lte: new Date(endDate),
-          };
-        } else if (operator === 'contains') {
-          where[column] = { contains: value, mode: 'insensitive' };
-        } else if (operator === 'equals') {
-          where[column] = value;
-        }
-      });
-    }
+    const where = buildWhereFilter(filters, lang);
 
     const orderBy = sort?.column
       ? { [sort.column]: sort.value }
@@ -42,7 +18,7 @@ export const getAll = async (lang, query) => {
       where,
       orderBy,
       skip,
-      take: pageSize,
+      take: limit,
       include: { region: true },
     });
 
@@ -63,13 +39,12 @@ export const getAll = async (lang, query) => {
       pagination: {
         total,
         totalPages: Math.ceil(total / pageSize),
-        currentPage,
-        pageSize,
+        currentPage: page,
+        pageSize: limit,
       },
     };
   } catch (error) {
-    console.error('Error fetching structures:', error);
-    throw new Error('An error occurred while fetching structures.');
+    throw error;
   }
 };
 
@@ -93,8 +68,7 @@ const updateById = async (id, machineData) => {
     });
     return updatedUser;
   } catch (error) {
-    console.error('Error updating user:', error);
-    return null;
+    throw error;
   }
 };
 
@@ -104,7 +78,7 @@ const deleteById = async (id) => {
       where: { id },
     });
   } catch (error) {
-    throw error.message;
+    throw error;
   }
 };
 
@@ -114,7 +88,7 @@ const getIds = async () => {
       select: { id: true, name: true },
     });
   } catch (error) {
-    throw error.message;
+    throw error;
   }
 };
 

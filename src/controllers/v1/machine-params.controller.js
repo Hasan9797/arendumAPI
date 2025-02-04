@@ -6,7 +6,7 @@ import {
 
 const getAll = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
-  
+
   const query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
@@ -73,9 +73,11 @@ const distroy = async (req, res) => {
   }
 };
 
-const getSelectParams = async (req, res) => {
+const getSelectParamsOptions = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
-    const params = await machinParamsService.selectMachineParams(
+    const params = await machinParamsService.optionSelectParams(
+      lang,
       parseInt(req.body.machineId)
     );
     res.status(200).json(responseSuccess(params));
@@ -97,7 +99,7 @@ const getMachineParamsByMachineId = async (req, res) => {
   }
 };
 
-const getMachineOprions = async (req, res) => {
+const getMachineParamsOptions = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
     const params = await machinParamsService.getParamsOptions(
@@ -116,7 +118,7 @@ export default {
   create,
   update,
   distroy,
-  getSelectParams,
+  getSelectParamsOptions,
   getMachineParamsByMachineId,
-  getMachineOprions,
+  getMachineParamsOptions,
 };
