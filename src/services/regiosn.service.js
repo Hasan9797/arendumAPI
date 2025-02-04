@@ -4,8 +4,8 @@ import { formatResponseDates } from '../helpers/format-date.helper.js';
 const getRegions = async (lang, query) => {
   const regions = await regionRepo.getAll(lang, query);
   return {
-    data: formatResponseDates(result.data),
-    pagination: result.pagination,
+    data: formatResponseDates(regions.data),
+    pagination: regions.pagination,
   };
 };
 
