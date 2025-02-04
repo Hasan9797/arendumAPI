@@ -5,8 +5,8 @@ import bcrypt from 'bcryptjs';
 const getUsers = async (query) => {
   const users = await userRepository.getUsers(query);
   return {
-    data: formatResponseDates(result.data),
-    pagination: result.pagination,
+    data: formatResponseDates(users.data),
+    pagination: users.pagination,
   };
 };
 
