@@ -5,8 +5,11 @@ import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getAll = async (lang, query) => {
   try {
-    const drivers = await driverRepository.findAll(lang, query);
-    return formatResponseDates(drivers);
+    const result = await driverRepository.findAll(lang, query);
+    return {
+      data: formatResponseDates(result.data),
+      pagination: result.pagination,
+    };
   } catch (error) {
     console.error('Error fetching users:', error);
     throw error;

@@ -12,7 +12,7 @@ export const getAll = async (lang, query) => {
       let { column, operator, value } = filter;
 
       if (column === 'name' && (lang === 'uz' || lang === 'ru')) {
-        column += lang => lang[0].toUpperCase() + lang.slice(1);
+        column += (lang) => lang[0].toUpperCase() + lang.slice(1);
       }
 
       if (operator === 'between' && column === 'createdAt') {
@@ -103,6 +103,8 @@ const getById = async (lang, id) => {
       include: {
         machines: {
           select: {
+            id: true,
+            nameEn: true,
             nameRu: true,
             nameUz: true,
             status: true,
@@ -120,12 +122,12 @@ const getById = async (lang, id) => {
         name: lang === 'ru' ? machines.nameRu : machines.nameUz,
       };
 
-      delete machine.nameRu;
-      delete machine.nameUz;
-
       return {
         ...rest,
         name: lang === 'ru' ? nameRu : nameUz,
+        nameRu,
+        nameUz,
+        nameEn,
         machine,
       };
     };

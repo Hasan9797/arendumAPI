@@ -3,7 +3,10 @@ import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getStructures = async (lang, query) => {
   const result = await structureRepo.getAll(lang, query);
-  return formatResponseDates(result);
+  return {
+    data: formatResponseDates(result.data),
+    pagination: result.pagination,
+  };
 };
 
 const getById = async (id) => {

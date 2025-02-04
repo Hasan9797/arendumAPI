@@ -3,7 +3,10 @@ import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getMachines = async (query) => {
   const result = await machinesRepo.getMachines(query);
-  return formatResponseDates(result);
+  return {
+    data: formatResponseDates(result.data),
+    pagination: result.pagination,
+  };
 };
 
 const getMachineById = async (id) => {
