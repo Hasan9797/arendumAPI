@@ -2,9 +2,9 @@ import prisma from '../config/prisma.js';
 import { getDriverStatusText } from '../enums/driver/driver-status.enum.js';
 
 export const findAll = async (lang, query) => {
-  const { page, limit, sort, filters } = query;
+  const { page = 1, limit = 10, sort, filters = [] } = query;
 
-  const skip = (page - 1) * limit;
+  const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10); // Default page = 1, limit = 10
 
   try {
     let where = {};
@@ -12,10 +12,19 @@ export const findAll = async (lang, query) => {
     filters.forEach((filter) => {
       let { column, operator, value } = filter;
 
+      if (!column || !operator || value === undefined) return; // Agar noto‘g‘ri filter bo‘lsa, uni o‘tkazib yuboramiz
+
+      // Tilga qarab `nameUz` yoki `nameRu` ustunini dinamik tanlash
       if (column === 'name' && (lang === 'uz' || lang === 'ru')) {
-        column += (lang) => lang[0].toUpperCase() + lang.slice(1);
+        column = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
       }
 
+      // Agar ustun `status` bo‘lsa va u `Int` bo‘lishi kerak bo‘lsa, `parseInt()` qilish
+      if (column === 'status') {
+        value = parseInt(value, 10);
+      }
+
+      // Agar ustun `createdAt` va `between` operatori bo‘lsa, `Date` obyektiga o‘tkazish
       if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
 
@@ -24,23 +33,30 @@ export const findAll = async (lang, query) => {
           lte: new Date(endDate),
         };
       } else {
+        // Operatorga qarab filterni o‘rnatish
         if (operator === 'contains') {
           where[column] = { contains: value, mode: 'insensitive' };
         } else if (operator === 'equals') {
-          where[column] = value;
+          where[column] = { equals: value };
+        } else if (operator === 'gt') {
+          where[column] = { gt: value };
+        } else if (operator === 'lt') {
+          where[column] = { lt: value };
         }
       }
     });
 
+    // Default `orderBy` agar `sort` mavjud bo‘lsa
     const orderBy = sort?.column
-      ? { [sort.column]: sort.value }
+      ? { [sort.column]: sort.value === 'asc' ? 'asc' : 'desc' }
       : { id: 'desc' };
 
+    // Prisma so‘rov
     const drivers = await prisma.driver.findMany({
       where,
       orderBy,
       skip,
-      take: limit,
+      take: parseInt(limit, 10),
       include: {
         region: {
           select: {
@@ -74,15 +90,17 @@ export const findAll = async (lang, query) => {
 
     const total = await prisma.driver.count({ where });
 
+    // Bog‘liq bo‘lmagan ID maydonlarini olib tashlash
     const sanitizedDrivers = drivers.map(
       ({ regionId, structureId, machineId, ...rest }) => rest
     );
 
+    // Ma’lumotlarni formatlash
     const data = sanitizedDrivers.map((driver) => {
       const { region, structure, machine, ...rest } = driver;
 
-      // Adjust name field based on the language
       const adjustName = (obj) => {
+        if (!obj) return null;
         const { nameRu, nameUz, status, ...relationRest } = obj;
         return {
           ...relationRest,
@@ -93,22 +111,24 @@ export const findAll = async (lang, query) => {
       return {
         ...rest,
         status: { key: rest.status, value: getDriverStatusText(rest.status) },
-        region: region ? adjustName(region) : null,
-        structure: structure ? adjustName(structure) : null,
-        machine: machine ? adjustName(machine) : null,
+        region: adjustName(region),
+        structure: adjustName(structure),
+        machine: adjustName(machine),
       };
     });
 
+    // Natijani qaytarish
     return {
       data,
       pagination: {
         total,
         totalPages: Math.ceil(total / limit),
-        currentPage: page,
-        pageSize: limit,
+        currentPage: parseInt(page, 10),
+        pageSize: parseInt(limit, 10),
       },
     };
   } catch (error) {
+    console.error('Error in findAll:', error);
     throw error;
   }
 };
