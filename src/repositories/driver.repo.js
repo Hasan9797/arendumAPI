@@ -12,6 +12,10 @@ export const findAll = async (lang, query) => {
     filters.forEach((filter) => {
       let { column, operator, value } = filter;
 
+      if (column === 'name' && (lang === 'uz' || lang === 'ru')) {
+        column += (lang) => lang[0].toUpperCase() + lang.slice(1);
+      }
+
       if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
 
@@ -105,8 +109,7 @@ export const findAll = async (lang, query) => {
       },
     };
   } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users');
+    throw error;
   }
 };
 

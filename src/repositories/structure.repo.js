@@ -15,6 +15,10 @@ export const getAll = async (lang, query) => {
       filters.forEach((filter) => {
         let { column, operator, value } = filter;
 
+        if (column === 'name' && (lang === 'uz' || lang === 'ru')) {
+          column += (lang) => lang[0].toUpperCase() + lang.slice(1);
+        }
+
         if (operator === 'between' && column === 'createdAt') {
           const [startDate, endDate] = value.split('_');
 
@@ -51,7 +55,6 @@ export const getAll = async (lang, query) => {
         ...rest,
         name: lang === 'ru' ? nameRu : nameUz,
         region: region[regionNameKey],
-        status: getStructureStatusText(rest.status),
       })
     );
 

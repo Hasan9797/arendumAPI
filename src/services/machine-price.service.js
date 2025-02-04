@@ -5,7 +5,10 @@ import { formatResponseDates } from '../helpers/format-date.helper.js';
 const getPrices = async (lang, query) => {
   try {
     const result = await machinePriceRepo.getMachinesPrice(lang, query);
-    return formatResponseDates(result);
+    return {
+      data: formatResponseDates(result.data),
+      pagination: result.pagination,
+    };
   } catch (error) {
     throw error;
   }
@@ -15,9 +18,9 @@ const getPriceById = async (lang, id) => {
   return await machinePriceRepo.getMachinePriceById(lang, id);
 };
 
-const getPriceByMachineId = async ( id) => {
+const getPriceByMachineId = async (id) => {
   try {
-    const result = await machinePriceRepo.getPriceByMachineId( id);
+    const result = await machinePriceRepo.getPriceByMachineId(id);
     if (!result) {
       return {};
     }

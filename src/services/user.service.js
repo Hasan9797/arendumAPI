@@ -4,7 +4,10 @@ import bcrypt from 'bcryptjs';
 
 const getUsers = async (query) => {
   const users = await userRepository.getUsers(query);
-  return formatResponseDates(users);
+  return {
+    data: formatResponseDates(result.data),
+    pagination: result.pagination,
+  };
 };
 
 const getUserById = async (userId) => {
@@ -20,14 +23,14 @@ const getUserById = async (userId) => {
 };
 
 const createUser = async (data) => {
- try {
-  const passwordHash = bcrypt.hashSync(data.password, 10);
+  try {
+    const passwordHash = bcrypt.hashSync(data.password, 10);
 
-  const newUser = { ...data, password: passwordHash };
-  return await userRepository.createUser(newUser);
- } catch (error) {
-  throw error;
- }
+    const newUser = { ...data, password: passwordHash };
+    return await userRepository.createUser(newUser);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const updateUser = async (id, data) => {

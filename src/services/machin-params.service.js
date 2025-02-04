@@ -6,7 +6,10 @@ import { formatResponseDates } from '../helpers/format-date.helper.js';
 const getMachineParams = async (lang, query) => {
   try {
     const result = await machineParamsRepo.getAll(lang, query);
-    return formatResponseDates(result);
+    return {
+      data: formatResponseDates(result.data),
+      pagination: result.pagination,
+    };
   } catch (error) {
     throw error;
   }

@@ -4,7 +4,10 @@ import { formatResponseDates } from '../helpers/format-date.helper.js';
 const getParamsFilters = async (query) => {
   try {
     const result = await machineParamsFilterRepo.getAll(query);
-    return formatResponseDates(result);
+    return {
+      data: formatResponseDates(result.data),
+      pagination: result.pagination,
+    };
   } catch (error) {
     throw error;
   }
