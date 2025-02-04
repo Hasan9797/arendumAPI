@@ -15,7 +15,7 @@ export const findAll = async (lang, query) => {
       if (column === 'name' && (lang === 'uz' || lang === 'ru')) {
         column += (lang) => lang[0].toUpperCase() + lang.slice(1);
       }
-      
+
       if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
 
@@ -129,10 +129,9 @@ const getById = async (lang, id) => {
     });
 
     const adjustName = (obj) => {
-      const { nameRu, nameUz, ...relationRest } = obj;
       return {
-        ...relationRest,
-        name: lang === 'ru' ? nameRu : nameUz,
+        ...obj,
+        name: lang === 'ru' ? obj.nameRu : obj.nameUz,
       };
     };
 

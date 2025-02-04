@@ -10,7 +10,7 @@ export const getAll = async (query) => {
 
     filters.forEach((filter) => {
       let { column, operator, value } = filter;
-
+      
       if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
 
