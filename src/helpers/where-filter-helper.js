@@ -41,8 +41,8 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
         }
 
         where[column] = { gte: startDate, lte: endDate };
-      } else if (operator === 'contains' && typeof value === 'string') {
-        where[column] = { contains: value, mode: 'insensitive' }; // Matn qidirish
+      } else if (operator === 'contains') {
+        where[column] = { contains: String(value), mode: 'insensitive' }; // Matn qidirish
       } else if (operator === 'equals') {
         where[column] = { equals: value }; // Aniq tenglik
       } else {
