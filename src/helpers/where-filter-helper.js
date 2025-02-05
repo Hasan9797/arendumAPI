@@ -30,12 +30,16 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
 
       // 🟢 3. Operatorga qarab filter qo‘shish
       if (operator === 'between' && column === 'createdAt') {
-        const [startDate, endDate] = String(value).split('_');
+        const [startDate, endDate] = value.split('_');
 
         if (isValidDateFormat(startDate) && isValidDateFormat(endDate)) {
           where[column] = {
-            gte: parseDate(startDate), // `YYYY-MM-DD` → `Date`
-            lte: parseDate(endDate, true), // `YYYY-MM-DD` → `Date` (end of day)
+            gte: moment
+              .tz(startDate, 'Asia/Tashkent')
+              .startOf('day')
+              .toISOString(),
+
+            lte: moment.tz(endDate, 'Asia/Tashkent').endOf('day').toISOString(),
           };
         } else {
           throw new Error(
