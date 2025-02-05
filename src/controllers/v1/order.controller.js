@@ -13,15 +13,14 @@ const getAll = async (req, res) => {
       column: 'id',
       value: 'desc',
     },
-    role: {},
   };
 
   const user = req.user;
 
   if (user.role == userRoleEnum.CLIENT) {
-    query.role = { clientId: user.id };
+    query.filters.push({ column: 'clientId', operator: 'equals', value: user.id });
   } else if (user.role == userRoleEnum.DRIVER) {
-    query.role = { driverId: user.id };
+    query.filters.push({ column: 'driverId', operator: 'equals', value: user.id });
   }
 
   try {
@@ -63,7 +62,7 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    
+
     if (!req.user.role == userRoleEnum.CLIENT) {
       const client = await clientService.getClientById(req.user.id);
       if (!client.status !== userStatus.ACTIVE) {

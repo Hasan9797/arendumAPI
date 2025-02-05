@@ -4,7 +4,7 @@ import moment from 'moment-timezone';
  * Prisma uchun `where` obyektini quruvchi optimal funksiya.
  * Har xil ma'lumot turlarini avtomatik aniqlaydi.
  */
-export const buildWhereFilter = (filters, lang) => {
+export const buildWhereFilter = (filters, lang = 'uz') => {
   try {
     let where = {};
 

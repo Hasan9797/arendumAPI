@@ -2,12 +2,12 @@ import prisma from '../config/prisma.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
 export const findAll = async (query) => {
-  const { page, limit, sort, filters, role } = query;
+  const { page, limit, sort, filters } = query;
 
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
 
   try {
-    const where = buildWhereFilter(filters, lang);
+    const where = buildWhereFilter(filters);
 
     const orderBy = sort?.column
       ? { [sort.column]: sort.value }
