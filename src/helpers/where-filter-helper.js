@@ -25,10 +25,10 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
 
       // 🟢 3. Operatorga qarab filter qo‘shish
       if (operator === 'between' && column === 'createdAt') {
-        const isDate = moment(value, moment.ISO_8601, true).isValid();
-        const [startDate, endDate] = isDate.split('_').map((v) => new Date(v));
+        const [startDate, endDate] = value.split('_').map((v) => new Date(v));
+
         where[column] = { gte: startDate, lte: endDate };
-      }else {
+      } else {
         where[column] = value;
       }
 
