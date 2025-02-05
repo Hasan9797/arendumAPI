@@ -7,7 +7,7 @@ import {
 const getAll = async (req, res) => {
   const query = {
     page: parseInt(req.query.page) || 1,
-    limit: parseInt(req.query.limit) || 10,
+    limit: parseInt(req.query.limit) || 20,
     filters: req.query.filters || [],
     sort: req.query.sort || {
       column: 'id',
@@ -37,7 +37,6 @@ const getById = async (req, res) => {
     res.status(500).json(responseError(error.message, 500));
   }
 };
-
 
 const getMe = async (req, res) => {
   try {
