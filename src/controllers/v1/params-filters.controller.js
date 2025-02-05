@@ -34,7 +34,6 @@ const getById = async (req, res) => {
     );
     res.status(200).json(responseSuccess(machineParams));
   } catch (error) {
-    console.error('Error fetching machine params:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
@@ -46,7 +45,6 @@ const getByMachineId = async (req, res) => {
     );
     res.status(200).json(machineParams);
   } catch (error) {
-    console.error('Error fetching machine params:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
@@ -59,7 +57,6 @@ const create = async (req, res) => {
     });
     res.status(201).json(responseSuccess());
   } catch (error) {
-    console.error('Error fetching machin params:', error);
     res.status(500).json(responseError(error.message, 500));
   }
 };
