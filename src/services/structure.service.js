@@ -9,8 +9,8 @@ const getStructures = async (lang, query) => {
   };
 };
 
-const getById = async (id) => {
-  const structure = await structureRepo.getById(id);
+const getById = async (lang, id) => {
+  const structure = await structureRepo.getById(lang, id);
   return formatResponseDates(structure);
 };
 

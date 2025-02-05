@@ -46,10 +46,22 @@ export const getAll = async (lang, query) => {
   }
 };
 
-const getById = async (id) => {
-  return await prisma.structure.findUnique({
+const getById = async (lang, id) => {
+  const structure = await prisma.structure.findUnique({
     where: { id },
   });
+
+  const adjustName = ({ nameRu, nameUz, nameEn, ...res }) => {
+    return {
+      ...res,
+      name: lang === 'ru' ? nameRu : nameUz,
+      nameRu,
+      nameUz,
+      nameEn,
+    };
+  };
+
+  return adjustName(structure);
 };
 
 const create = async (newUser) => {

@@ -10,7 +10,7 @@ export const getAll = async (lang, query) => {
     const where = buildWhereFilter(filters, lang);
 
     const orderBy = { [sort.column]: sort.value };
-    
+
     const regions = await prisma.region.findMany({
       where,
       orderBy,
@@ -101,6 +101,9 @@ const getById = async (lang, id) => {
     return {
       ...res,
       name: lang === 'ru' ? nameRu : nameUz,
+      nameRu,
+      nameUz,
+      nameEn,
     };
   };
 
