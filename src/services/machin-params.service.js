@@ -58,7 +58,7 @@ const optionSelectParams = async (lang, machinId) => {
 
       acc.push({
         title: lang === 'ru' ? nameRu : nameUz,
-        params: parsedParams.map((p) => p.name),
+        params: parsedParams.map((p) => p.param),
         key: nameEn,
       });
 
@@ -78,9 +78,9 @@ const optionAmount = async (machineId) => {
     if (!data) return [];
 
     return data.flatMap(({ nameEn, params }) =>
-      params.map((param) => ({
-        [nameEn]: param.name,
-        amount: param.amount,
+      params.map((item) => ({
+        [nameEn]: item.param,
+        amount: item.amount,
       }))
     );
   } catch (error) {

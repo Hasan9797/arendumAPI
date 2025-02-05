@@ -19,7 +19,7 @@ export const findAll = async (lang, query) => {
       where,
       orderBy,
       skip,
-      take: parseInt(limit, 10),
+      take: limit,
       include: {
         region: {
           select: {
@@ -86,8 +86,8 @@ export const findAll = async (lang, query) => {
       pagination: {
         total,
         totalPages: Math.ceil(total / limit),
-        currentPage: parseInt(page, 10),
-        pageSize: parseInt(limit, 10),
+        currentPage: page,
+        pageSize: limit,
       },
     };
   } catch (error) {
