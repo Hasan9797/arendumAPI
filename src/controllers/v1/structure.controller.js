@@ -21,7 +21,6 @@ const getAll = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -41,7 +40,6 @@ const getById = async (req, res) => {
       data: structure,
     });
   } catch (error) {
-    console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -60,11 +58,12 @@ const create = async (req, res) => {
       error: false,
     });
   } catch (error) {
-    console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to fetch structure',
+      error: {
+        message: error.message,
+        code: 500,
+      },
     });
   }
 };
@@ -77,7 +76,6 @@ const update = async (req, res) => {
       error: false,
     });
   } catch (error) {
-    console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -96,7 +94,6 @@ const distroy = async (req, res) => {
       error: false,
     });
   } catch (error) {
-    console.error('Error fetching structure:', error);
     res.status(500).json({
       success: false,
       error: {

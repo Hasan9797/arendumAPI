@@ -38,7 +38,7 @@ export const getAll = async (lang, query) => {
       data,
       pagination: {
         total,
-        totalPages: Math.ceil(total / pageSize),
+        totalPages: Math.ceil(total / limit),
         currentPage: page,
         pageSize: limit,
       },
