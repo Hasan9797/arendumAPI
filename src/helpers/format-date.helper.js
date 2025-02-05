@@ -16,10 +16,13 @@ const formatDate = (date) => {
     hour12: false, // 24 soat formatda
   })
     .format(date)
-    .replace(',', '')
-    .replace(/\//g, '-'); // `YYYY/MM/DD` → `YYYY-MM-DD`;
+    .replace(',', ''); // Vergulni olib tashlash
 
-  return tzDate;
+  // `DD/MM/YYYY HH:mm:ss` → `YYYY-MM-DD HH:mm:ss` formatga o'tkazish
+  return tzDate.replace(
+    /(\d{2})\/(\d{2})\/(\d{4}) (\d{2}:\d{2}:\d{2})/,
+    '$3-$2-$1 $4'
+  );
 };
 
 /**
