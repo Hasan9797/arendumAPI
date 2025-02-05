@@ -30,10 +30,15 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
 
       // 🟢 3. Operatorga qarab filter qo‘shish
       if (operator === 'between' && column === 'createdAt') {
-        const [startDate, endDate] = value.split('_');
+        let startDate = value.split('_')[0];
+        let endDate = value.split('_')[1];
 
         if (isValidDateFormat(startDate) && isValidDateFormat(endDate)) {
-          where[column] = { gte: startDate, lte: endDate };
+          startDate = moment(startDate)
+            .startOf('day')
+            .format('YYYY-MM-DD HH:mm:ss');
+
+          endDate = moment(endDate).endOf('day').format('YYYY-MM-DD HH:mm:ss');
         } else {
           throw new Error(
             `Invalid date format for 'between' operator: ${value}`
