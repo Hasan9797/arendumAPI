@@ -1,14 +1,17 @@
-import moment from 'moment-timezone';
-
 /**
- * Prisma uchun `where` obyektini quruvchi optimal funksiya.
- * Har xil ma'lumot turlarini avtomatik aniqlaydi.
+ * `YYYY-MM-DD` formatni tekshirish (faqat `YYYY-MM-DD` bo‘lsa, true qaytaradi)
  */
-
 const isValidDateFormat = (dateString) => {
-  return moment(dateString, 'YYYY-MM-DD', true).isValid();
+  const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format tekshirish
+  return regex.test(dateString) && !isNaN(new Date(dateString).getTime());
 };
 
+/**
+ * `YYYY-MM-DD` formatdagi sanani `Date` obyektiga o‘tkazish
+ * @param {string} dateString - Sana (`YYYY-MM-DD`)
+ * @param {boolean} endOfDay - `true` bo‘lsa, kunning oxiriga o‘tkazadi
+ * @returns {Date} - `DateTime` obyektini qaytaradi (`ISO-8601` formatga mos)
+ */
 const parseDate = (dateString, endOfDay = false) => {
   const [year, month, day] = dateString.split('-').map(Number);
   return endOfDay
@@ -41,8 +44,8 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
 
         if (isValidDateFormat(startDate) && isValidDateFormat(endDate)) {
           where[column] = {
-            gte: parseDate(startDate), // `YYYY-MM-DD` → `Date`
-            lte: parseDate(endDate, true), // `YYYY-MM-DD` → `Date` (end of day)
+            gte: parseDate(startDate),
+            lte: parseDate(endDate, true),
           };
         } else {
           throw new Error(
