@@ -20,25 +20,27 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
 
       // 🟢 2. Data turini aniqlash va moslashtirish
       const isNumeric = !isNaN(value); // Son ekanligini tekshirish
-      const isDate = moment(value, moment.ISO_8601, true).isValid(); // Sana ekanligini tekshirish
 
-      if (isNumeric) value = parseFloat(value);
-      if (isDate) value = new Date(value);
+      if (isNumeric) value = parseInt(value);
 
       // 🟢 3. Operatorga qarab filter qo‘shish
-      if (operator === 'between' && isDate) {
-        // `Date` bo‘lsa va `between` ishlatilgan bo‘lsa
-        const [startDate, endDate] = value.split('_').map((v) => new Date(v));
+      if (operator === 'between' && column === 'createdAt') {
+        const isDate = moment(value, moment.ISO_8601, true).isValid();
+        const [startDate, endDate] = isDate.split('_').map((v) => new Date(v));
         where[column] = { gte: startDate, lte: endDate };
-      } else if (operator === 'contains' && typeof value === 'string') {
-        where[column] = { contains: value, mode: 'insensitive' }; // Matn qidirish
-      } else if (operator === 'equals') {
-        where[column] = { equals: value }; // Aniq tenglik
-      } else if (operator === 'gt' && isNumeric) {
-        where[column] = { gt: value }; // `>` operatori faqat sonlar uchun
-      } else if (operator === 'lt' && isNumeric) {
-        where[column] = { lt: value }; // `<` operatori faqat sonlar uchun
+      }else {
+        where[column] = value;
       }
+
+      // else if (operator === 'contains' && typeof value === 'string') {
+      //   where[column] = { contains: value, mode: 'insensitive' }; // Matn qidirish
+      // } else if (operator === 'equals') {
+      //   where[column] = { equals: value }; // Aniq tenglik
+      // } else if (operator === 'gt' && isNumeric) {
+      //   where[column] = { gt: value }; // `>` operatori faqat sonlar uchun
+      // } else if (operator === 'lt' && isNumeric) {
+      //   where[column] = { lt: value }; // `<` operatori faqat sonlar uchun
+      // }
     });
 
     return where;

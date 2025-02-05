@@ -10,9 +10,7 @@ export const getMachines = async (query) => {
   try {
     const where = buildWhereFilter(filters, lang);
 
-    const orderBy = sort?.column
-      ? { [sort.column]: sort.value }
-      : { id: 'desc' };
+    const orderBy = { [sort.column]: sort.value };
 
     const categories = await prisma.machines.findMany({
       where,
