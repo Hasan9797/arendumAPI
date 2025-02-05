@@ -4,6 +4,11 @@ import moment from 'moment-timezone';
  * Prisma uchun `where` obyektini quruvchi optimal funksiya.
  * Har xil ma'lumot turlarini avtomatik aniqlaydi.
  */
+
+const isValidDateFormat = (dateString) => {
+  return moment(dateString, 'YYYY-MM-DD', true).isValid();
+};
+
 export const buildWhereFilter = (filters, lang = 'uz') => {
   try {
     let where = {};
@@ -27,20 +32,22 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
       if (operator === 'between' && column === 'createdAt') {
         const [startDate, endDate] = value.split('_');
 
+        if (isValidDateFormat(startDate) && isValidDateFormat(endDate)) {
+          where[column] = { gte: startDate, lte: endDate };
+        } else {
+          throw new Error(
+            `Invalid date format for 'between' operator: ${value}`
+          );
+        }
+
         where[column] = { gte: startDate, lte: endDate };
+      } else if (operator === 'contains' && typeof value === 'string') {
+        where[column] = { contains: value, mode: 'insensitive' }; // Matn qidirish
+      } else if (operator === 'equals') {
+        where[column] = { equals: value }; // Aniq tenglik
       } else {
         where[column] = value;
       }
-
-      // else if (operator === 'contains' && typeof value === 'string') {
-      //   where[column] = { contains: value, mode: 'insensitive' }; // Matn qidirish
-      // } else if (operator === 'equals') {
-      //   where[column] = { equals: value }; // Aniq tenglik
-      // } else if (operator === 'gt' && isNumeric) {
-      //   where[column] = { gt: value }; // `>` operatori faqat sonlar uchun
-      // } else if (operator === 'lt' && isNumeric) {
-      //   where[column] = { lt: value }; // `<` operatori faqat sonlar uchun
-      // }
     });
 
     return where;
