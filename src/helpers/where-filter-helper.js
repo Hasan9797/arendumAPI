@@ -34,11 +34,15 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
         let endDate = value.split('_')[1];
 
         if (isValidDateFormat(startDate) && isValidDateFormat(endDate)) {
-          startDate = moment(startDate)
+          startDate = moment
+            .tz(endDate, 'Asia/Tashkent')
             .startOf('day')
             .format('YYYY-MM-DD HH:mm:ss');
 
-          endDate = moment(endDate).endOf('day').format('YYYY-MM-DD HH:mm:ss');
+          endDate = moment
+            .tz(endDate, 'Asia/Tashkent')
+            .endOf('day')
+            .format('YYYY-MM-DD HH:mm:ss');
         } else {
           throw new Error(
             `Invalid date format for 'between' operator: ${value}`
