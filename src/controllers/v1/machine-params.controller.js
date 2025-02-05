@@ -78,7 +78,7 @@ const getSelectParamsOptions = async (req, res) => {
   try {
     const params = await machinParamsService.optionSelectParams(
       lang,
-      parseInt(req.body.machineId)
+      parseInt(req.params.id)
     );
     res.status(200).json(responseSuccess(params));
   } catch (error) {
@@ -104,7 +104,7 @@ const getMachineParamsOptions = async (req, res) => {
   try {
     const params = await machinParamsService.getParamsOptions(
       lang,
-      req.body.machineId
+      parseInt(req.params.id)
     );
     res.status(200).json(responseSuccess(params));
   } catch (error) {

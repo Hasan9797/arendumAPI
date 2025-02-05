@@ -12,17 +12,18 @@ const router = Router();
 
 router.get('/', machinParamsController.getAll);
 
-router.get('/:id', machinParamsController.getById);
 
 router.post('/by-machine', machinParamsController.getMachineParamsByMachineId);
+
+router.get('/:id', machinParamsController.getById);
 
 router.post('/create', machinParamsController.create);
 
 router.put('/update/:id', machinParamsController.update);
 
-router.post('/select-params-options', machinParamsController.getSelectParamsOptions);
+router.get('/select-params-options/:id', machinParamsController.getSelectParamsOptions);
 
-router.post('/filter-params-options', machinParamsController.getMachineParamsOptions);
+router.get('/filter-params-options/:id', machinParamsController.getMachineParamsOptions);
 
 router.delete('/delete/:id', machinParamsController.distroy);
 
