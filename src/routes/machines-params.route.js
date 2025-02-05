@@ -21,9 +21,9 @@ router.post('/create', machinParamsController.create);
 
 router.put('/update/:id', machinParamsController.update);
 
-router.get('/select-params-options/:id', machinParamsController.getSelectParamsOptions);
+router.get('/select-params-options', machinParamsController.getSelectParamsOptions);
 
-router.get('/filter-params-options/:id', machinParamsController.getMachineParamsOptions);
+router.get('/filter-params-options', machinParamsController.getMachineParamsOptions);
 
 router.delete('/delete/:id', machinParamsController.distroy);
 

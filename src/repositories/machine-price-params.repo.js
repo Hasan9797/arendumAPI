@@ -27,9 +27,7 @@ export const getMachinesPriceParams = async (query) => {
       }
     });
 
-    const orderBy = sort?.column
-      ? { [sort.column]: sort.value }
-      : { id: 'desc' };
+    const orderBy = { [sort.column]: sort.value };
 
     const machinePriceParams = await prisma.machinePriceParams.findMany({
       where,

@@ -10,9 +10,7 @@ export const getAll = async (lang, query) => {
   try {
     const where = buildWhereFilter(filters, lang);
 
-    const orderBy = sort?.column
-      ? { [sort.column]: sort.value }
-      : { id: 'desc' };
+    const orderBy = { [sort.column]: sort.value };
 
     const structures = await prisma.structure.findMany({
       where,

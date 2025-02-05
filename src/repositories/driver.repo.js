@@ -10,9 +10,7 @@ export const findAll = async (lang, query) => {
   try {
     const where = buildWhereFilter(filters, lang);
 
-    const orderBy = sort?.column
-      ? { [sort.column]: sort.value === 'asc' ? 'asc' : 'desc' }
-      : { id: 'desc' };
+    const orderBy = { [sort.column]: sort.value };
 
     // Prisma so‘rov
     const drivers = await prisma.driver.findMany({

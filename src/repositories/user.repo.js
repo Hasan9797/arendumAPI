@@ -9,9 +9,7 @@ export const getUsers = async (query) => {
   try {
     const where = buildWhereFilter(filters, lang);
 
-    const orderBy = sort?.column
-      ? { [sort.column]: sort.value }
-      : { id: 'desc' };
+    const orderBy = { [sort.column]: sort.value };
 
     const users = await prisma.user.findMany({
       where,
@@ -27,8 +25,8 @@ export const getUsers = async (query) => {
         img: true,
         status: true,
         createdAt: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     });
 
     const total = await prisma.user.count({ where });
