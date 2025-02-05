@@ -1,8 +1,8 @@
 import machinesRepo from '../repositories/machines.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
 
-const getMachines = async (query) => {
-  const result = await machinesRepo.getMachines(query);
+const getMachines = async (lang, query) => {
+  const result = await machinesRepo.getMachines(lang, query);
   return {
     data: formatResponseDates(result.data),
     pagination: result.pagination,

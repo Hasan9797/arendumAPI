@@ -162,20 +162,6 @@ const updateById = async (id, machineParamsData) => {
   }
 };
 
-// const getSelectList = async (machineId) => {
-//   return await prisma.machineParams.findMany({
-//     where: {
-//       machineId,
-//     },
-//     select: {
-//       nameEn: true,
-//       nameRu: true,
-//       nameUz: true,
-//       params: true,
-//     },
-//   });
-// };
-
 const distroy = async (id) => {
   return await prisma.machineParams.delete({
     where: { id },
@@ -208,6 +194,5 @@ export default {
   getByMachineId,
   distroy,
   updateById,
-  // getSelectList,
   getParamsOption,
 };

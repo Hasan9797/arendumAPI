@@ -7,7 +7,7 @@ const getAll = async (req, res) => {
 
   let query = {
     page: parseInt(req.query.page) || 1,
-    limit: parseInt(req.query.limit) || 10,
+    limit: parseInt(req.query.limit) || 20,
     filters: req.query.filters || [],
     sort: req.query.sort || {
       column: 'id',
