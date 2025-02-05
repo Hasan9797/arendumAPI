@@ -67,7 +67,6 @@ const optionSelectParams = async (lang, machinId) => {
 
     return result;
   } catch (error) {
-    console.error('Error fetching machine params:', error);
     throw error;
   }
 };
@@ -85,7 +84,6 @@ const optionAmount = async (machineId) => {
       }))
     );
   } catch (error) {
-    console.error('Error fetching machine params:', error);
     throw error;
   }
 };

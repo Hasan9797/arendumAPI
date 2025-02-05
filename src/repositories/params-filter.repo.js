@@ -7,7 +7,7 @@ export const getAll = async (query) => {
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
 
   try {
-    const where = buildWhereFilter(filters, lang);
+    const where = buildWhereFilter(filters);
 
     const orderBy = sort?.column
       ? { [sort.column]: sort.value }
@@ -32,8 +32,7 @@ export const getAll = async (query) => {
       },
     };
   } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users');
+    throw error;
   }
 };
 
@@ -87,7 +86,6 @@ const updateById = async (id, paramsFilterData) => {
     });
     return updatedUser;
   } catch (error) {
-    console.error('Error updating user:', error);
     throw error;
   }
 };
