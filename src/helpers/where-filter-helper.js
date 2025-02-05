@@ -9,6 +9,13 @@ const isValidDateFormat = (dateString) => {
   return moment(dateString, 'YYYY-MM-DD', true).isValid();
 };
 
+const parseDate = (dateString, endOfDay = false) => {
+  const [year, month, day] = dateString.split('-').map(Number);
+  return endOfDay
+    ? new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999)) // End of day
+    : new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0)); // Start of day
+};
+
 export const buildWhereFilter = (filters, lang = 'uz') => {
   try {
     let where = {};
@@ -34,12 +41,8 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
 
         if (isValidDateFormat(startDate) && isValidDateFormat(endDate)) {
           where[column] = {
-            gte: moment
-              .tz(startDate, 'Asia/Tashkent')
-              .startOf('day')
-              .toISOString(),
-
-            lte: moment.tz(endDate, 'Asia/Tashkent').endOf('day').toISOString(),
+            gte: parseDate(startDate), // `YYYY-MM-DD` → `Date`
+            lte: parseDate(endDate, true), // `YYYY-MM-DD` → `Date` (end of day)
           };
         } else {
           throw new Error(
