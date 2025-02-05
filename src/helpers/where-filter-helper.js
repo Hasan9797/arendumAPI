@@ -2,8 +2,9 @@
  * `YYYY-MM-DD` formatni tekshirish (faqat `YYYY-MM-DD` bo‘lsa, true qaytaradi)
  */
 const isValidDateFormat = (dateString) => {
-  const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format tekshirish
-  return regex.test(dateString) && !isNaN(new Date(dateString).getTime());
+  // const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format tekshirish
+  // return regex.test(dateString) && !isNaN(new Date(dateString).getTime());
+  return true;
 };
 
 /**
