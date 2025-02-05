@@ -45,6 +45,14 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
         where[column] = { contains: String(value), mode: 'insensitive' }; // Matn qidirish
       } else if (operator === 'equals') {
         where[column] = { equals: value }; // Aniq tenglik
+      } else if (operator === 'gt') {
+        where[column] = { gt: value }; // Katta
+      } else if (operator === 'gte') {
+        where[column] = { gte: value }; // Katta teng
+      } else if (operator === 'lt') {
+        where[column] = { lt: value }; // Kichik
+      } else if (operator === 'lte') {
+        where[column] = { lte: value }; // Kichik teng
       } else {
         where[column] = value;
       }
