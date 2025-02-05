@@ -30,26 +30,18 @@ export const buildWhereFilter = (filters, lang = 'uz') => {
 
       // 🟢 3. Operatorga qarab filter qo‘shish
       if (operator === 'between' && column === 'createdAt') {
-        let startDate = value.split('_')[0];
-        let endDate = value.split('_')[1];
+        const [startDate, endDate] = String(value).split('_');
 
         if (isValidDateFormat(startDate) && isValidDateFormat(endDate)) {
-          startDate = moment
-            .tz(endDate, 'Asia/Tashkent')
-            .startOf('day')
-            .format('YYYY-MM-DD HH:mm:ss');
-
-          endDate = moment
-            .tz(endDate, 'Asia/Tashkent')
-            .endOf('day')
-            .format('YYYY-MM-DD HH:mm:ss');
+          where[column] = {
+            gte: parseDate(startDate), // `YYYY-MM-DD` → `Date`
+            lte: parseDate(endDate, true), // `YYYY-MM-DD` → `Date` (end of day)
+          };
         } else {
           throw new Error(
             `Invalid date format for 'between' operator: ${value}`
           );
         }
-
-        where[column] = { gte: startDate, lte: endDate };
       } else if (operator === 'contains') {
         where[column] = { contains: String(value), mode: 'insensitive' }; // Matn qidirish
       } else if (operator === 'equals') {
