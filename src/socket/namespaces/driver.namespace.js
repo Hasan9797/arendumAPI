@@ -38,7 +38,7 @@ export default (io) => {
     });
 
     socket.on('acceptOrder', async ({ orderId, driverName, driverPhone }) => {
-      socket.join(orderId);
+      socket.join(`order_room_${orderId}`);
 
       await orderService.updateOrder(orderId, {
         driverId: parseInt(socket.userId),

@@ -39,6 +39,7 @@ model Driver {
   machineColor            String?
   machineNumber           String?
   companyName             String?   @map("company_name")
+  companyInn              String?
   legal                   Boolean   @default(false)
   merchantId              Int?      @map("merchant_id")
   machine                 Machines? @relation("MachineDrivers", fields: [machineId], references: [id])
@@ -186,10 +187,12 @@ model Order {
   amount      Int
   amountType  Int       @default(1) @map("amount_type")
   status      Int       @default(1)
+  type        Int       @default(1)
   caunt       Int       @default(1)
   params      Json      @default("{}") @map("params")
   long        String?
   lat         String?
+  address     String?
   structureId Int       @default(0) @map("structure_id")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
@@ -220,3 +223,11 @@ model MachinePriceParams {
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
 }
+
+// model Transaction {
+//   id       Int @id @default(autoincrement())
+//   orderId  Int @map("order_id")
+//   clientId Int @map("client_id")
+//   driverId Int @map("driver_id")
+//   amount   Int
+// }
