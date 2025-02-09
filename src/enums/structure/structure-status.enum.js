@@ -15,10 +15,6 @@ export const structureStatusOptions = [
     label: StatusTranslations[structureStatus.ACTIVE],
   },
   {
-    value: structureStatus.CREATED,
-    label: StatusTranslations[structureStatus.CREATED],
-  },
-  {
     value: structureStatus.INACTIVE,
     label: StatusTranslations[structureStatus.INACTIVE],
   },

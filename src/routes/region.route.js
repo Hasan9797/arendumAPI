@@ -12,14 +12,14 @@ const router = Router();
 
 router.get('/', regionController.getAll);
 
-router.get('/:id', regionController.getById);
-
 router.post('/create', regionController.create);
 
 router.put('/update/:id', regionController.update);
 
 router.delete('/delete/:id', regionController.distroy);
 
-router.get('/get-region-static', regionController.getRegionStatic);
+router.get('/get-static', regionController.getRegionStatic);
+
+router.get('/:id', regionController.getById);
 
 export default router;
