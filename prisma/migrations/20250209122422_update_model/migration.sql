@@ -9,9 +9,6 @@
 ALTER TABLE "Driver" ALTER COLUMN "params" SET DEFAULT '[]';
 
 -- AlterTable
-ALTER TABLE "MachinePrice" ADD COLUMN     "priceMode" TEXT NOT NULL;
-
--- AlterTable
 ALTER TABLE "Order" DROP COLUMN "caunt",
 ADD COLUMN     "count" INTEGER NOT NULL DEFAULT 1,
 ADD COLUMN     "end_hour" TIMESTAMP(3),
