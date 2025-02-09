@@ -108,9 +108,10 @@ const distroy = async (req, res) => {
   }
 };
 
-const getRegionStatic = (req, res) => {
+const getRegionStatic = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
-    const regions = regionService.getRegionStatic();
+    const regions = await regionService.getRegionStatic(lang);
     res.status(200).json({ success: true, data: regions });
   } catch (error) {
     res.status(500).json({

@@ -26,9 +26,9 @@ const deleteRegion = async (id) => {
   return await regionRepo.deleteById(id);
 };
 
-const getRegionStatic = () => {
+const getRegionStatic = async (lang) => {
   try {
-    return regionRepo.getRegionStatic();
+    return await regionRepo.getRegionStatic(lang);
   } catch (error) {
     throw error;
   }

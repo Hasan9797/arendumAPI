@@ -1,4 +1,6 @@
 import prisma from '../config/prisma.js';
+import { regionStatus } from '../enums/Region/region-status.enum.js';
+import { structureStatus } from '../enums/structure/structure-status.enum.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
 export const getAll = async (lang, query) => {
@@ -154,46 +156,42 @@ const getIds = async () => {
   }
 };
 
-const getRegionStatic = async () => {
+const getRegionStatic = async (lang) => {
   try {
     const regions = await prisma.region.findMany({
-      select: { id: true, name: true, status: true },
-      include: {
+      where: { status: regionStatus.ACTIVE },
+      select: {
+        id: true,
+        name: true,
+        nameRu: true,
+        nameUz: true,
         structures: {
+          where: { status: structureStatus.ACTIVE },
           select: {
             id: true,
             name: true,
             nameRu: true,
             nameUz: true,
-            status: true,
           },
         },
       },
     });
 
-    const data = regions.map((driver) => {
-      const {
-        nameRu,
-        nameUz,
-        nameEn,
-        structures,
-        createdAt,
-        updatedAt,
-        ...rest
-      } = driver;
-
-      const adjustName = (obj) => {
-        const { nameRu, nameUz, ...relationRest } = obj;
-        return {
-          ...relationRest,
-          name: lang === 'ru' ? nameRu : nameUz,
-        };
+    const adjustName = (obj) => {
+      const { nameRu, nameUz, ...relationRest } = obj;
+      return {
+        ...relationRest,
+        name: lang === 'ru' ? nameRu : nameUz,
       };
+    };
+
+    const data = regions.map((region) => {
+      const { nameRu, nameUz, structures, createdAt, updatedAt, ...rest } =
+        region;
 
       return {
         ...rest,
         name: lang === 'ru' ? nameRu : nameUz,
-        // status: { key: rest.status, value: getRegionStatusText(rest.status) },
         structure: structures
           ? structures.map((structure) => adjustName(structure))
           : [],
