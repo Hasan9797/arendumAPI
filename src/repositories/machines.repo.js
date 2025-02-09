@@ -23,6 +23,17 @@ export const getMachines = async (lang, query) => {
             minAmount: true,
             minHourTime: true,
           },
+          include: {
+            machinePriceParams: {
+              select: {
+                id: true,
+                parameter: true,
+                parameterName: true,
+                unit: true,
+                type: true,
+              },
+            },
+          },
         },
       },
     });
