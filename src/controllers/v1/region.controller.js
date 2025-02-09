@@ -34,7 +34,7 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
-    const region = await regionService.getById(lang, parseInt(req.params.id));
+    const region = await regionService.getById(parseInt(req.params.id), lang);
     res.status(200).json({
       success: true,
       error: false,

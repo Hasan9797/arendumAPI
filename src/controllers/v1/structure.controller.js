@@ -35,8 +35,8 @@ const getById = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
     const structure = await structureService.getById(
-      lang,
-      parseInt(req.params.id)
+      parseInt(req.params.id),
+      lang
     );
     res.status(200).json({
       success: true,
