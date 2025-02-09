@@ -154,6 +154,60 @@ const getIds = async () => {
   }
 };
 
+const getRegionStatic = async () => {
+  try {
+    const regions = await prisma.region.findMany({
+      select: { id: true, name: true, status: true },
+      include: {
+        structures: {
+          select: {
+            id: true,
+            name: true,
+            nameRu: true,
+            nameUz: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    const data = regions.map((driver) => {
+      const {
+        nameRu,
+        nameUz,
+        nameEn,
+        structures,
+        createdAt,
+        updatedAt,
+        ...rest
+      } = driver;
+
+      const adjustName = (obj) => {
+        const { nameRu, nameUz, ...relationRest } = obj;
+        return {
+          ...relationRest,
+          name: lang === 'ru' ? nameRu : nameUz,
+        };
+      };
+
+      return {
+        ...rest,
+        name: lang === 'ru' ? nameRu : nameUz,
+        // status: { key: rest.status, value: getRegionStatusText(rest.status) },
+        structure: structures
+          ? structures.map((structure) => adjustName(structure))
+          : [],
+        createdAt,
+        updatedAt,
+      };
+    });
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getAll,
   getById,
@@ -161,4 +215,5 @@ export default {
   updateById,
   deleteById,
   getIds,
+  getRegionStatic,
 };

@@ -41,7 +41,6 @@ const getById = async (req, res) => {
       data: region,
     });
   } catch (error) {
-    console.error('Error fetching region:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -60,7 +59,6 @@ const create = async (req, res) => {
       error: false,
     });
   } catch (error) {
-    console.error('Error fetching region:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -82,7 +80,6 @@ const update = async (req, res) => {
       error: false,
     });
   } catch (error) {
-    console.error('Error fetching region:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -101,7 +98,21 @@ const distroy = async (req, res) => {
       error: false,
     });
   } catch (error) {
-    console.error('Error fetching region:', error);
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+};
+
+const getRegionStatic = (req, res) => {
+  try {
+    const regions = regionService.getRegionStatic();
+    res.status(200).json({ success: true, data: regions });
+  } catch (error) {
     res.status(500).json({
       success: false,
       error: {
@@ -118,4 +129,5 @@ export default {
   create,
   update,
   distroy,
+  getRegionStatic,
 };

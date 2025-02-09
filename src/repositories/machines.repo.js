@@ -19,7 +19,7 @@ export const getMachines = async (lang, query) => {
       include: {
         MachinePrice: {
           include: {
-            machinePriceParams: true, // Barcha maydonlarni oladi
+            machinePriceParams: true,
           },
         },
       },
