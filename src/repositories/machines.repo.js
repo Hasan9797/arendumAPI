@@ -18,21 +18,8 @@ export const getMachines = async (lang, query) => {
       take: limit,
       include: {
         MachinePrice: {
-          select: {
-            id: true,
-            minAmount: true,
-            minHourTime: true,
-          },
           include: {
-            machinePriceParams: {
-              select: {
-                id: true,
-                parameter: true,
-                parameterName: true,
-                unit: true,
-                type: true,
-              },
-            },
+            machinePriceParams: true, // Barcha maydonlarni oladi
           },
         },
       },
