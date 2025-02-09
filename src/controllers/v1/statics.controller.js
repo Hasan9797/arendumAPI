@@ -1,6 +1,7 @@
 import { driverStatusOptions } from '../../enums/driver/driver-status.enum.js';
 import { clientStatusOptions } from '../../enums/client/client-status.enum.js';
 import { StatusOptions } from '../../enums/order/order-status.enum.js';
+import { amountTypeOptions } from '../../enums/order/order-amount-type.enum.js';
 
 import regionRepository from '../../repositories/region.repo.js';
 import structureRepository from '../../repositories/structure.repo.js';
@@ -50,6 +51,10 @@ const orderStatus = (req, res) => {
   res.status(200).json({ success: true, data: StatusOptions });
 };
 
+const orderAmountType = (req, res) => {
+  res.status(200).json({ success: true, data: amountTypeOptions });
+};
+
 const userOptions = (req, res) => {};
 
 const machineManufacturers = (req, res) => {};
@@ -65,6 +70,7 @@ export default {
   clientStatus,
   machineStatus,
   orderStatus,
+  orderAmountType,
   userOptions,
   machineManufacturers,
   machineModels,

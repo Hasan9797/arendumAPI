@@ -33,7 +33,7 @@ model Driver {
   photoConfidencePassport Json      @default("[]") @map("photo_confidence_passport")
   photoDriverLicense      Json      @default("[]") @map("photo_driver_license")
   photoCar                Json      @default("[]") @map("photo_car")
-  params                  Json      @default("{}") @map("params")
+  params                  Json      @default("[]") @map("params")
   long                    Decimal?  @default(0)
   lat                     Decimal?  @default(0)
   machineColor            String?
@@ -177,25 +177,41 @@ model Structure {
 }
 
 model Order {
-  id          Int       @id @default(autoincrement())
-  clientId    Int       @map("client_id")
-  client      Client    @relation("ClientOrder", fields: [clientId], references: [id])
-  driverId    Int?      @map("driver_id")
-  driver      Driver?   @relation(fields: [driverId], references: [id])
-  machineId   Int?      @map("machine_id")
-  machine     Machines? @relation(fields: [machineId], references: [id])
-  amount      Int
-  amountType  Int       @default(1) @map("amount_type")
-  status      Int       @default(1)
-  type        Int       @default(1)
-  caunt       Int       @default(1)
-  params      Json      @default("{}") @map("params")
-  long        String?
-  lat         String?
-  address     String?
-  structureId Int       @default(0) @map("structure_id")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id             Int          @id @default(autoincrement())
+  clientId       Int          @map("client_id")
+  client         Client       @relation("ClientOrder", fields: [clientId], references: [id])
+  driverId       Int?         @map("driver_id")
+  driver         Driver?      @relation(fields: [driverId], references: [id])
+  machineId      Int?         @map("machine_id")
+  machine        Machines?    @relation(fields: [machineId], references: [id])
+  amount         Int
+  amountType     Int          @default(1) @map("amount_type")
+  status         Int          @default(1)
+  startHour      DateTime?    @map("start_hour")
+  endHour        DateTime?    @map("end_hour")
+  hourCount      Int?         @map("hour_count")
+  kmCount        Int?         @map("km_count")
+  type           String
+  count          Int          @default(1)
+  params         Json         @default("[]") @map("params")
+  long           String?
+  lat            String?
+  address        String?
+  timeIsContinue Boolean      @default(false) @map("time_is_continue")
+  structureId    Int          @default(0) @map("structure_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  OrderPause     OrderPause[]
+}
+
+model OrderPause {
+  id         Int       @id @default(autoincrement())
+  orderId    Int       @map("order_id")
+  order      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  startPause DateTime  @map("start_pause")
+  endPause   DateTime? @map("end_pause")
+  status     Boolean   @default(false)
+  createdAt  DateTime  @default(now()) @map("created_at")
 }
 
 model MachinePrice {
@@ -205,6 +221,7 @@ model MachinePrice {
   minAmount          String               @map("min_amount")
   minHourTime        String               @map("min_hour_time")
   tariffName         String?              @map("tariff_name")
+  priceMode          String
   status             Int                  @default(0)
   createdAt          DateTime             @default(now()) @map("created_at")
   updatedAt          DateTime             @updatedAt @map("updated_at")

@@ -15,9 +15,12 @@ router.get('/client/status', staticController.clientStatus);
 
 router.get('/order/status', staticController.orderStatus);
 
+router.get('/order/amount-type', staticController.orderAmountType);
+
 router.put('/machine/status', staticController.machineStatus);
 
 router.get('/region/ids', staticController.getRegionIds);
+
 router.get('/structure/ids', staticController.getStructureIds);
 
 export default router;

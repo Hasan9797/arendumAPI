@@ -26,10 +26,19 @@ const deleteRegion = async (id) => {
   return await regionRepo.deleteById(id);
 };
 
+const getRegionStatic = () => {
+  try {
+    return regionRepo.getRegionStatic();
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getRegions,
   getById,
   createRegion,
   updateRegion,
   deleteRegion,
+  getRegionStatic,
 };

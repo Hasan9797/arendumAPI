@@ -20,4 +20,6 @@ router.put('/update/:id', regionController.update);
 
 router.delete('/delete/:id', regionController.distroy);
 
+router.get('/get-region-static', regionController.getRegionStatic);
+
 export default router;
