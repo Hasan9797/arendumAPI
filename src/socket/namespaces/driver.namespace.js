@@ -30,7 +30,6 @@ export default (io) => {
 
   driverNamespace.on('connection', (socket) => {
     console.log(`Socket connected: ${socket.id}`);
-    socket.role = 'driver';
 
     socket.on('joinRoom', (orderId) => {
       socket.join(`order_room_${orderId}`);
