@@ -9,7 +9,7 @@ const getStructures = async (lang, query) => {
   };
 };
 
-const getById = async (lang = 'ru', id) => {
+const getById = async (id, lang) => {
   const structure = await structureRepo.getById(lang, id);
   return formatResponseDates(structure);
 };

@@ -39,16 +39,13 @@ const register = async (req, res) => {
       throw new Error('Machine not found');
     }
 
-    const region = await regionService.getById('ru', req.body.regionId);
+    const region = await regionService.getById(req.body.regionId);
 
     if (!region) {
       throw new Error('Region not found');
     }
 
-    const structure = await structureService.getById(
-      'ru',
-      req.body.structureId
-    );
+    const structure = await structureService.getById(req.body.structureId);
 
     if (!structure) {
       throw new Error('Structure not found');
