@@ -19,6 +19,10 @@ import {
   getDriverStatusText,
 } from '../../enums/driver/driver-status.enum.js';
 
+import machineService from '../../services/machines.service.js';
+import regionService from '../../services/regiosn.service.js';
+import structureService from '../../services/structure.service.js';
+
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
 const register = async (req, res) => {
@@ -27,6 +31,27 @@ const register = async (req, res) => {
       return res
         .status(400)
         .json({ message: 'Driver not found for Register', success: false });
+    }
+
+    const machine = await machineService.getMachineById(req.body.machineId);
+
+    if (!machine) {
+      throw new Error('Machine not found');
+    }
+
+    const region = await regionService.getById('ru', req.body.regionId);
+
+    if (!region) {
+      throw new Error('Region not found');
+    }
+
+    const structure = await structureService.getById(
+      'ru',
+      req.body.structureId
+    );
+
+    if (!structure) {
+      throw new Error('Structure not found');
     }
 
     await driverService.updateById(req.user.id, {
@@ -38,7 +63,7 @@ const register = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to fetch users',
+      message: error.message,
     });
   }
 };
@@ -77,7 +102,7 @@ const login = async (req, res) => {
       .json({ message: 'SMS code sent successfully', success: true });
   } catch (error) {
     return res.status(500).json({
-      message: 'Failed Driver Create to send SMS code',
+      message: error.message,
       success: false,
     });
   }

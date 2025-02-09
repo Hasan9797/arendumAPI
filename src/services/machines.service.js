@@ -13,7 +13,7 @@ const getMachines = async (lang, query) => {
   }
 };
 
-const getMachineById = async (lang, id) => {
+const getMachineById = async (lang = 'ru', id) => {
   const result = await machinesRepo.getMachineById(lang, id);
   return formatResponseDates(result);
 };
