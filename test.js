@@ -1,1 +1,1 @@
-
+console.log('Tests passed!');

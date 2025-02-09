@@ -32,11 +32,13 @@ export default (io) => {
 
   clientNamespace.on('connection', (socket) => {
     try {
+      // agar qandaydur sababga ko'ra client chiqib ketgan bo'lsa room ga qo'shish
       socket.on('joinRoom', (orderId) => {
         socket.join(`order_room_${orderId}`);
         socket.emit('orderStatus', { status: true, orderId });
       });
 
+      //room ga qo'shish
       socket.on('createOrder', async ({ orderId, params }) => {
         socket.join(`order_room_${orderId}`);
 

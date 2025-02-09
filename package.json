@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node --trace-deprecation src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "node test.js && echo 'Tests passed!'"
+    "test": "node test.js && echo 'Tests passed!'",
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",

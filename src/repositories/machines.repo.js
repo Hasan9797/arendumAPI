@@ -27,7 +27,13 @@ export const getMachines = async (lang, query) => {
 
     const total = await prisma.machines.count({ where });
 
-    const data = machines.map((machine) => {
+    const formattedMachines = machines.map((machine) => ({
+      ...machine,
+      MachinePrice:
+        machine.MachinePrice.length > 0 ? machine.MachinePrice[0] : null, // Birinchi elementni olish
+    }));
+
+    const data = formattedMachines.map((machine) => {
       const { nameRu, nameUz, nameEn, ...rest } = machine;
       rest.name = lang == 'uz' ? nameUz : nameRu;
       return rest;
