@@ -119,6 +119,16 @@ const getMachinesIdAnName = async () => {
   });
 };
 
+const getOne = async (id) => {
+  try {
+    return await prisma.machines.findUniqueOrThrow({
+      where: { id },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getMachines,
   getMachineById,
@@ -126,4 +136,5 @@ export default {
   updateMachineById,
   deleteMachineById,
   getMachinesIdAnName,
+  getOne,
 };

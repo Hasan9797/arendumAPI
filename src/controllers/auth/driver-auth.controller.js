@@ -33,19 +33,21 @@ const register = async (req, res) => {
         .json({ message: 'Driver not found for Register', success: false });
     }
 
-    const machine = await machineService.getMachineById(req.body.machineId);
+    const machine = await machineService.getOne(parseInt(req.body.machineId));
 
     if (!machine) {
       throw new Error('Machine not found');
     }
 
-    const region = await regionService.getById(req.body.regionId);
+    const region = await regionService.getOne(parseInt(req.body.regionId));
 
     if (!region) {
       throw new Error('Region not found');
     }
 
-    const structure = await structureService.getById(req.body.structureId);
+    const structure = await structureService.getById(
+      parseInt(req.body.structureId)
+    );
 
     if (!structure) {
       throw new Error('Structure not found');
