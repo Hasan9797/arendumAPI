@@ -34,6 +34,14 @@ const getOptions = async () => {
   return await machinesRepo.getMachinesIdAnName();
 };
 
+const getOne = async (id) => {
+  try {
+    return await machinesRepo.getOne(id);
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getMachines,
   getMachineById,
@@ -41,4 +49,5 @@ export default {
   updateMachine,
   deleteMachine,
   getOptions,
+  getOne,
 };

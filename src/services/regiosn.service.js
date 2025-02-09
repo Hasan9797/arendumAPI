@@ -34,6 +34,14 @@ const getRegionStatic = async (lang) => {
   }
 };
 
+const getOne = async (id) => {
+  try {
+    return await regionRepo.getOne(id);
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getRegions,
   getById,
@@ -41,4 +49,5 @@ export default {
   updateRegion,
   deleteRegion,
   getRegionStatic,
+  getOne,
 };

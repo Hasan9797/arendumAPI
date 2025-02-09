@@ -206,6 +206,16 @@ const getRegionStatic = async (lang) => {
   }
 };
 
+const getOne = async (id) => {
+  try {
+    return await prisma.region.findUniqueOrThrow({
+      where: { id },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getAll,
   getById,
@@ -214,4 +224,5 @@ export default {
   deleteById,
   getIds,
   getRegionStatic,
+  getOne,
 };
