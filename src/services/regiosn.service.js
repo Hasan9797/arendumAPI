@@ -9,7 +9,7 @@ const getRegions = async (lang, query) => {
   };
 };
 
-const getById = async (id, lang) => {
+const getById = async (id, lang = 'ru') => {
   const region = await regionRepo.getById(lang, id);
   return formatResponseDates(region);
 };
