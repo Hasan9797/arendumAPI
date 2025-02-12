@@ -1,4 +1,6 @@
+import redisClient from '../../config/redis.js';
 import { OrderStatus } from '../../enums/order/order-status.enum.js';
+import redisSetHelper from '../../helpers/redis-set-helper.js';
 import orderService from '../../services/order.service.js';
 
 export default (io) => {
@@ -37,6 +39,14 @@ export default (io) => {
     });
 
     socket.on('acceptOrder', async ({ orderId, driverName, driverPhone }) => {
+      const stillExists = await redisSetHelper.isNotificationStopped(
+        String(orderId)
+      );
+
+      if (stillExists) {
+        return;
+      }
+
       socket.join(`order_room_${orderId}`);
 
       await orderService.updateOrder(orderId, {
@@ -44,9 +54,17 @@ export default (io) => {
         status: OrderStatus.ASSIGNED,
       });
 
-      io.of('/client')
-        .to(`order_room_${orderId}`)
-        .emit('orderAccepted', { success: true, driverName, driverPhone });
+      await redisSetHelper.stopNotificationForOrder(String(orderId));
+
+      io.to(`order_room_${orderId}`).emit('orderAccepted', {
+        success: true,
+        driverName,
+        driverPhone,
+      });
+
+      // io.of('/client')
+      //   .to(`order_room_${orderId}`)
+      //   .emit('driverJoined', { success: true });
     });
 
     socket.on('updateLocation', async ({ orderId, location }) => {
