@@ -1,7 +1,8 @@
 import { sendNotification } from '../../helpers/send-notification.helper.js';
 import driverService from '../../services/driver.service.js';
 import { verifyToken } from '../../helpers/jwt-token.helper.js';
-import userRoleEnum from '../../enums/user/user-role.enum.js';
+import redisSetHelper from '../../helpers/redis-set-helper.js';
+import redisClient from '../../config/redis.js';
 
 export default (io) => {
   const clientNamespace = io.of('/client');
@@ -40,6 +41,12 @@ export default (io) => {
 
       //room ga qo'shish
       socket.on('createOrder', async ({ orderId, params }) => {
+        if (!orderId || typeof orderId !== 'number') {
+          throw new Error('orderId is required');
+        }
+
+        socket.orderId = orderId;
+
         socket.join(`order_room_${orderId}`);
 
         const drivers = await driverService.getDriversInClientStructure(
@@ -47,48 +54,69 @@ export default (io) => {
           params
         );
 
-        if (drivers.length <= 0) {
+        if (drivers.length === 0) {
           socket.emit('driverNotFound', { message: 'Driver not found' });
           return;
         }
 
         const title = 'New Order';
         const body = 'You have a new order';
-
         const data = {
           key: 'new_order',
           orderId: String(orderId),
         };
 
-        let driverJoined = false;
+        await redisSetHelper.startNotificationForOrder(String(orderId));
 
         for (const driver of drivers) {
-          if (driverJoined) break;
+          // Agar Redis'da order hali ham mavjud bo‘lsa, notification jo‘natamiz
+          const orderExists = await redisSetHelper.isNotificationStopped(
+            String(orderId)
+          );
 
-          await sendNotification(driver?.fcmToken, title, body, data);
+          if (orderExists) break;
 
-          // Har 5 soniyada haydovchi tekshirish
+          await sendNotification(driver.fcmToken, title, body, data);
+
+          // 5 soniya kutish
           await new Promise((resolve) => setTimeout(resolve, 5000));
 
-          const room = io.sockets.adapter.rooms.get(`order_room_${orderId}`);
-          if (room && room.size > 1) {
-            for (const socketId of room) {
-              const socket = io.sockets.sockets.get(socketId);
+          // Yana Redis'ni tekshiramiz, agar order o‘chgan bo‘lsa, notification to‘xtaydi
+          const stillExists = await redisSetHelper.isNotificationStopped(
+            String(orderId)
+          );
 
-              if (socket && socket.role == userRoleEnum.DRIVER) {
-                driverJoined = true;
-                break;
-              }
-            }
-          }
+          if (stillExists) break;
         }
 
-        if (!driverJoined) {
-          socket.emit('driverNotFound', { success: false });
+        // Agar hech kim qabul qilmasa
+        const finalCheck = await redisSetHelper.isNotificationStopped(
+          String(orderId)
+        );
+
+        if (!finalCheck) {
+          socket.emit('driverNotFound', {
+            success: false,
+            message: 'No driver accepted the order',
+          });
         }
       });
 
-      socket.on('disconnect', async () => {});
+      socket.on('disconnect', async () => {
+        if (socket.orderId) {
+          const stillExists = await redisSetHelper.isNotificationStopped(
+            String(socket.orderId)
+          );
+
+          if (!stillExists) {
+            await redisSetHelper.stopNotificationForOrder(
+              String(socket.orderId)
+            );
+          }
+        } else {
+          console.log('⚠️ Client disconnected, but no orderId found.');
+        }
+      });
     } catch (error) {
       console.log(error);
       socket.emit('error', { message: error.message });
