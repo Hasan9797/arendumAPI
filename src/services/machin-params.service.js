@@ -3,6 +3,11 @@ import machinePriceService from './machine-price.service.js';
 import paramsFiltersService from './params-filters.service.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
 
+function convertToUnderscoreFormat(str) {
+  let trimmedStr = str.trim();
+  return trimmedStr.includes(' ') ? trimmedStr.replace(/\s+/g, '_') : trimmedStr;
+}
+
 const getMachineParams = async (lang, query) => {
   try {
     const result = await machineParamsRepo.getAll(lang, query);
@@ -24,9 +29,9 @@ const getMachineParamById = async (lang, id) => {
   }
 };
 
-const getParamsByMachineId = async (lang, machineId) => {
+const getParamsByMachineId = async (machineId, lang) => {
   try {
-    const result = await machineParamsRepo.getByMachineId(lang, machineId);
+    const result = await machineParamsRepo.getByMachineId(machineId, lang);
     return formatResponseDates(result);
   } catch (error) {
     throw error;
@@ -34,8 +39,13 @@ const getParamsByMachineId = async (lang, machineId) => {
 };
 
 const createMachineParam = async (data) => {
+  const { nameEn, ...rest } = data;
   try {
-    return await machineParamsRepo.create(data);
+    const convertData = {
+      ...rest,
+      key: convertToUnderscoreFormat(nameEn),
+    }
+    return await machineParamsRepo.create(convertData);
   } catch (error) {
     throw error;
   }
@@ -53,13 +63,13 @@ const optionSelectParams = async (lang, machinId) => {
   try {
     const params = await machineParamsRepo.getParamsOption(machinId);
 
-    const result = params.reduce((acc, { nameRu, nameUz, nameEn, params }) => {
+    const result = params.reduce((acc, { nameRu, nameUz, key, params }) => {
       const parsedParams = params ? params : [];
 
       acc.push({
         title: lang === 'ru' ? nameRu : nameUz,
         params: parsedParams.map((p) => p.param),
-        key: nameEn,
+        key,
       });
 
       return acc;
@@ -77,9 +87,9 @@ const optionAmount = async (machineId) => {
 
     if (!data) return [];
 
-    return data.flatMap(({ nameEn, params }) =>
+    return data.flatMap(({ key, params }) =>
       params.map((item) => ({
-        [nameEn]: item.param,
+        [key]: item.param,
         amount: item.amount,
       }))
     );
@@ -103,7 +113,7 @@ const getParamsOptions = async (lang, machineId) => {
       fullAmount: machinePrice?.minAmount ?? 0,
       paramsOptions: selectParamsOptions,
       filters: paramsFilters.filterParams,
-      amount,
+      // amount,
     };
   } catch (error) {
     throw error;

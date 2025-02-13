@@ -31,6 +31,7 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
+  
   try {
     const machineParams = await machinParamsService.getMachineParamById(
       lang,
@@ -45,7 +46,7 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const params = await machinParamsService.createMachineParam(req.body);
+    await machinParamsService.createMachineParam(req.body);
     res.status(201).json(responseSuccess());
   } catch (error) {
     res.status(500).json(responseError(error.message, error?.code));
@@ -90,8 +91,8 @@ const getMachineParamsByMachineId = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
     const params = await machinParamsService.getParamsByMachineId(
-      lang,
-      parseInt(req.body.machineId)
+      parseInt(req.query.id),
+      lang
     );
     res.status(200).json(responseSuccess(params));
   } catch (error) {

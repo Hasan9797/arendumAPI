@@ -12,7 +12,7 @@ const router = Router();
 
 router.get('/', machinParamsController.getAll);
 
-router.post('/by-machine', machinParamsController.getMachineParamsByMachineId);
+router.get('/get-by-machine-id', machinParamsController.getMachineParamsByMachineId);
 
 router.post('/create', machinParamsController.create);
 
