@@ -98,6 +98,7 @@ model MachineParams {
   nameUz    String   @map("name_uz")
   nameRu    String   @map("name_ru")
   nameEn    String?  @map("name_en")
+  key       String?
   prefix    String?
   machineId Int      @map("machine_id")
   status    Int      @default(0)

@@ -32,7 +32,7 @@ export const getAll = async (lang, query) => {
     const total = await prisma.machineParams.count({ where });
 
     const sanitizedMachines = allMachines.map(
-      ({ nameUz, nameRu, machineId, ...rest }) => ({
+      ({ nameUz, nameRu, nameEn, machineId, ...rest }) => ({
         ...rest,
         name: lang === 'ru' ? nameRu : nameUz,
       })
@@ -91,6 +91,8 @@ const getById = async (lang, id) => {
     });
 
     const adjustName = (obj) => {
+      if (!obj) return {};
+      
       const { nameRu, nameUz, nameEn, machineId, machines, ...rest } = obj;
 
       const machine = {
@@ -114,7 +116,7 @@ const getById = async (lang, id) => {
   }
 };
 
-const getByMachineId = async (lang, machineId) => {
+const getByMachineId = async (machineId, lang = 'ru') => {
   try {
     const params = await prisma.machineParams.findMany({
       where: { machineId },
@@ -174,7 +176,7 @@ const getParamsOption = async (machineId = 0) => {
       select: {
         nameUz: true,
         nameRu: true,
-        nameEn: true,
+        key: true,
         params: true,
       },
     });

@@ -51,9 +51,14 @@ const getByMachineId = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const params = await paramsSettingsService.createParamsFilter({
-      filterParams: req.body.params,
-      machineId: req.body.machineId,
+    const params = req.body.params;
+    const machineId = req.body.machineId;
+    
+    if(!Array.isArray(params) || !machineId) throw new Error('params is not array or machineId not found');
+
+    await paramsSettingsService.createParamsFilter({
+      filterParams: params,
+      machineId: machineId,
     });
     res.status(201).json(responseSuccess());
   } catch (error) {
