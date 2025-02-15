@@ -28,12 +28,13 @@ CREATE TABLE "Driver" (
     "photo_confidence_passport" JSONB NOT NULL DEFAULT '[]',
     "photo_driver_license" JSONB NOT NULL DEFAULT '[]',
     "photo_car" JSONB NOT NULL DEFAULT '[]',
-    "params" JSONB NOT NULL DEFAULT '{}',
+    "params" JSONB NOT NULL DEFAULT '[]',
     "long" DECIMAL(65,30) DEFAULT 0,
     "lat" DECIMAL(65,30) DEFAULT 0,
     "machineColor" TEXT,
     "machineNumber" TEXT,
     "company_name" TEXT,
+    "companyInn" TEXT,
     "legal" BOOLEAN NOT NULL DEFAULT false,
     "merchant_id" INTEGER,
     "region_id" INTEGER,
@@ -86,6 +87,7 @@ CREATE TABLE "MachineParams" (
     "name_uz" TEXT NOT NULL,
     "name_ru" TEXT NOT NULL,
     "name_en" TEXT,
+    "key" TEXT,
     "prefix" TEXT,
     "machine_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
@@ -185,15 +187,34 @@ CREATE TABLE "Order" (
     "amount" INTEGER NOT NULL,
     "amount_type" INTEGER NOT NULL DEFAULT 1,
     "status" INTEGER NOT NULL DEFAULT 1,
-    "caunt" INTEGER NOT NULL DEFAULT 1,
-    "params" JSONB NOT NULL DEFAULT '{}',
+    "start_hour" TIMESTAMP(3),
+    "end_hour" TIMESTAMP(3),
+    "hour_count" INTEGER,
+    "km_count" INTEGER,
+    "type" TEXT NOT NULL,
+    "count" INTEGER NOT NULL DEFAULT 1,
+    "params" JSONB NOT NULL DEFAULT '[]',
     "long" TEXT,
     "lat" TEXT,
+    "address" TEXT,
+    "time_is_continue" BOOLEAN NOT NULL DEFAULT false,
     "structure_id" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "OrderPause" (
+    "id" SERIAL NOT NULL,
+    "order_id" INTEGER NOT NULL,
+    "start_pause" TIMESTAMP(3) NOT NULL,
+    "end_pause" TIMESTAMP(3),
+    "status" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "OrderPause_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -203,6 +224,7 @@ CREATE TABLE "MachinePrice" (
     "min_amount" TEXT NOT NULL,
     "min_hour_time" TEXT NOT NULL,
     "tariff_name" TEXT,
+    "price_mode" TEXT NOT NULL DEFAULT 'hour',
     "status" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -278,6 +300,9 @@ ALTER TABLE "Order" ADD CONSTRAINT "Order_driver_id_fkey" FOREIGN KEY ("driver_i
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrderPause" ADD CONSTRAINT "OrderPause_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MachinePrice" ADD CONSTRAINT "MachinePrice_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
