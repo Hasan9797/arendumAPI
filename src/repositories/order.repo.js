@@ -1,5 +1,6 @@
 import prisma from '../config/prisma.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
+import { orderType } from '../enums/order/order-type.enum.js'
 
 export const findAll = async (query) => {
   const { page, limit, sort, filters } = query;
@@ -63,15 +64,26 @@ export const findAll = async (query) => {
   }
 };
 
-const create = async (newOrder) => {
+const create = async (data) => {
   try {
-    return await prisma.order.create({
-      data: newOrder,
+    return await prisma.$transaction(async (prisma) => {
+      const newOrder = await prisma.order.create({
+        data: data,
+      });
+
+      if (newOrder.type === orderType.hour) {
+        await prisma.orderPause.create({
+          data: { orderId: newOrder.id },
+        });
+      }
+
+      return newOrder;
     });
   } catch (error) {
     throw error;
   }
 };
+
 
 const getById = async (id) => {
   return await prisma.order.findUnique({
@@ -101,10 +113,38 @@ const deleteById = async (id) => {
   }
 };
 
+const orderTimeUpdate = async (driverId, type, status) => {
+  try {
+    const hourType = String(type).trim() === 'start' ? 'startHour' : 'endHour';
+
+    const lastOrder = await prisma.order.findFirst({
+      where: {
+        driverId,
+        status,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!lastOrder) {
+      throw new Error('Tegishli order topilmadi');
+    }
+
+    return await prisma.order.update({
+      where: { id: lastOrder.id },
+      data: { [hourType]: new Date() },
+    });
+
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 export default {
   findAll,
   getById,
   create,
   updateById,
   deleteById,
+  orderTimeUpdate
 };
