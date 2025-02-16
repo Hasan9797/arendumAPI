@@ -209,10 +209,11 @@ model OrderPause {
   id         Int       @id @default(autoincrement())
   orderId    Int       @map("order_id")
   order      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  startPause DateTime  @map("start_pause")
+  startPause DateTime? @map("start_pause")
   endPause   DateTime? @map("end_pause")
   status     Boolean   @default(false)
   createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
 }
 
 model MachinePrice {

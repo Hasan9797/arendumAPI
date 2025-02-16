@@ -1,4 +1,5 @@
 import orderService from '../../services/order.service.js';
+import pauseOrderService from '../../services/pause-order.service.js';
 import userRoleEnum from '../../enums/user/user-role.enum.js';
 import { userStatus } from '../../enums/user/user-status.enum.js';
 import clientService from '../../services/client.service.js';
@@ -123,10 +124,28 @@ const distroy = async (req, res) => {
   }
 };
 
+const updateOrderStartAndEndTime = async (req, res) => {
+  try {
+    await orderService.updateOrderTime(req.body.orderId, ody.hourType);
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+};
+
 export default {
   getAll,
   getById,
   create,
   update,
   distroy,
+  updateOrderStartAndEndTime
 };
