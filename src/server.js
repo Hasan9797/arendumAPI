@@ -16,7 +16,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Namespace-larni ulash
+// Namespace Socket IO
 socketHandler(io);
 
 // Middleware

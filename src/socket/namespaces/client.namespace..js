@@ -9,8 +9,8 @@ export default (io) => {
 
   clientNamespace.use((socket, next) => {
     try {
-      const { token } = socket.handshake.auth;
-
+      const token = socket.handshake.headers['auth'];
+      
       if (!token) {
         return next(new Error('Access denied, no token provided'));
       }
