@@ -15,14 +15,17 @@ export const amountTypeOptions = [
   {
     value: ORDER_AMOUNT_TYPE.CASH,
     label: TypeTranslations[ORDER_AMOUNT_TYPE.CASH],
+    percent: 0,
   },
   {
     value: ORDER_AMOUNT_TYPE.CARD,
     label: TypeTranslations[ORDER_AMOUNT_TYPE.CARD],
+    percent: 0,
   },
   {
     value: ORDER_AMOUNT_TYPE.ACCOUNT,
     label: TypeTranslations[ORDER_AMOUNT_TYPE.ACCOUNT],
+    percent: 12,
   },
 ];
 
