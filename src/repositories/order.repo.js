@@ -66,19 +66,11 @@ export const findAll = async (query) => {
 
 const create = async (data) => {
   try {
-    return await prisma.$transaction(async (prisma) => {
-      const newOrder = await prisma.order.create({
-        data: data,
-      });
 
-      if (newOrder.type === orderType.hour) {
-        await prisma.orderPause.create({
-          data: { orderId: newOrder.id },
-        });
-      }
-
-      return newOrder;
+    return await prisma.order.create({
+      data: data,
     });
+
   } catch (error) {
     throw error;
   }
