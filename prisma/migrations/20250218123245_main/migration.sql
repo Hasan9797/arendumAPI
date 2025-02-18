@@ -209,10 +209,11 @@ CREATE TABLE "Order" (
 CREATE TABLE "OrderPause" (
     "id" SERIAL NOT NULL,
     "order_id" INTEGER NOT NULL,
-    "start_pause" TIMESTAMP(3) NOT NULL,
+    "start_pause" TIMESTAMP(3),
     "end_pause" TIMESTAMP(3),
     "status" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "OrderPause_pkey" PRIMARY KEY ("id")
 );
@@ -221,9 +222,8 @@ CREATE TABLE "OrderPause" (
 CREATE TABLE "MachinePrice" (
     "id" SERIAL NOT NULL,
     "machine_id" INTEGER NOT NULL,
-    "min_amount" TEXT NOT NULL,
-    "min_hour_time" TEXT NOT NULL,
-    "tariff_name" TEXT,
+    "min_amount" INTEGER,
+    "minimum" INTEGER,
     "price_mode" TEXT NOT NULL DEFAULT 'hour',
     "status" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -235,7 +235,7 @@ CREATE TABLE "MachinePrice" (
 -- CreateTable
 CREATE TABLE "MachinePriceParams" (
     "id" SERIAL NOT NULL,
-    "parameter" TEXT NOT NULL,
+    "parameter" INTEGER,
     "parameter_name" TEXT NOT NULL,
     "unit" TEXT NOT NULL,
     "type" TEXT NOT NULL,
