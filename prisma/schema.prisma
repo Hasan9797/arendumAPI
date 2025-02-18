@@ -220,7 +220,7 @@ model MachinePrice {
   id                 Int                  @id @default(autoincrement())
   machineId          Int                  @map("machine_id")
   machines           Machines             @relation(fields: [machineId], references: [id])
-  minAmount          Int                  @map("min_amount")
+  minAmount          Int?                 @map("min_amount")
   minimum            Int?                 @map("minimum")
   priceMode          String               @default("hour") @map("price_mode")
   status             Int                  @default(0)
@@ -231,7 +231,7 @@ model MachinePrice {
 
 model MachinePriceParams {
   id             Int          @id @default(autoincrement())
-  parameter      String       @map("parameter")
+  parameter      Int?         @map("parameter")
   parameterName  String       @map("parameter_name")
   unit           String       @map("unit")
   type           String       @map("type")
