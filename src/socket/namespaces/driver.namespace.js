@@ -2,6 +2,7 @@ import redisClient from '../../config/redis.js';
 import { OrderStatus } from '../../enums/order/order-status.enum.js';
 import redisSetHelper from '../../helpers/redis-set-helper.js';
 import orderService from '../../services/order.service.js';
+import { verifyToken } from '../../helpers/jwt-token.helper.js';
 
 export default (io) => {
   const driverNamespace = io.of('/driver');
