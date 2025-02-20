@@ -105,25 +105,11 @@ const deleteById = async (id) => {
   }
 };
 
-const orderTimeUpdate = async (driverId, type, status) => {
+const orderUpdateHourTime = async (orderId, updateData) => {
   try {
-    const hourType = String(type).trim() === 'start' ? 'startHour' : 'endHour';
-
-    const lastOrder = await prisma.order.findFirst({
-      where: {
-        driverId,
-        status,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    if (!lastOrder) {
-      throw new Error('Tegishli order topilmadi');
-    }
-
     return await prisma.order.update({
-      where: { id: lastOrder.id },
-      data: { [hourType]: new Date() },
+      where: { id: orderId },
+      data: updateData,
     });
 
   } catch (error) {
@@ -138,5 +124,5 @@ export default {
   create,
   updateById,
   deleteById,
-  orderTimeUpdate
+  orderUpdateHourTime
 };

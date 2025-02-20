@@ -19,12 +19,14 @@ router.get(
   orderController.getAll
 );
 
-router.get('/:id', authentication, orderController.getById);
+router.get('/update-hour-time', authentication, orderController.updateOrderStartAndEndTime);
 
 router.post('/create', authentication, orderController.create);
 
 router.put('/update/:id', authentication, orderController.update);
 
 router.delete('/delete/:id', authentication, orderController.distroy);
+
+router.get('/:id', authentication, orderController.getById);
 
 export default router;

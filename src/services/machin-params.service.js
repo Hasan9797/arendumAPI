@@ -43,6 +43,7 @@ const createMachineParam = async (data) => {
   try {
     const convertData = {
       ...rest,
+      nameEn,
       key: convertToUnderscoreFormat(nameEn),
     }
     return await machineParamsRepo.create(convertData);
