@@ -4,6 +4,11 @@ import userRoleEnum from '../../enums/user/user-role.enum.js';
 import { userStatus } from '../../enums/user/user-status.enum.js';
 import clientService from '../../services/client.service.js';
 
+import {
+  responseSuccess,
+  responseError,
+} from '../../helpers/response.helper.js';
+
 const getAll = async (req, res) => {
 
   let query = {
@@ -125,8 +130,17 @@ const distroy = async (req, res) => {
 };
 
 const updateOrderStartAndEndTime = async (req, res) => {
+  const orderId = Number(req.query.id);
+  const type = String(req.query.type).trim().toLowerCase();
+
+  if (!['start', 'end'].includes(type)) {
+    throw new Error('Invalid type! please use "start" or "end"');
+  }
+
+  const hourType = type === 'start' ? 'startHour' : 'endHour';
+
   try {
-    await orderService.updateOrderTime(req.body.orderId, ody.hourType);
+    await orderService.updateOrderHourTime(orderId, hourType);
     res.status(200).json({
       success: true,
     });
@@ -141,11 +155,22 @@ const updateOrderStartAndEndTime = async (req, res) => {
   }
 };
 
+const pauseOrder = async (req, res) => {
+  try {
+    await pauseOrderService.create(req.body);
+    res.status(201).json(responseSuccess());
+  } catch (error) {
+    res.status(500).json(responseError(error.message, 500));
+  }
+}
+
+
 export default {
   getAll,
   getById,
   create,
   update,
   distroy,
-  updateOrderStartAndEndTime
+  updateOrderStartAndEndTime,
+  pauseOrder
 };

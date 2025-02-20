@@ -1,7 +1,7 @@
 import { driverStatusOptions } from '../../enums/driver/driver-status.enum.js';
 import { clientStatusOptions } from '../../enums/client/client-status.enum.js';
 import { StatusOptions } from '../../enums/order/order-status.enum.js';
-import { amountTypeOptions } from '../../enums/order/order-amount-type.enum.js';
+import { amountTypeOptions } from '../../enums/pay/payment-type.enum.js';
 
 import regionRepository from '../../repositories/region.repo.js';
 import structureRepository from '../../repositories/structure.repo.js';

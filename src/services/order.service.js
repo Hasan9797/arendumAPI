@@ -35,13 +35,58 @@ const deleteOrder = async (id) => {
   return await orderRepo.deleteById(id);
 };
 
-const updateOrderTime = async (orderId, type) => {
+const calculateFinalWorkTime = async (orderId) => {
   try {
-    return await orderRepo.orderTimeUpdate(orderId, type, OrderStatus.IN_PROGRESS);
+    // 1. Order va OrderPause larini olish
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        OrderPause: true,
+      },
+    });
+
+    if (!order) throw new Error('Order not found');
+
+    // 2. Agar pause bo‘lsa, jami totalTime yig‘iladi, aks holda 0
+    const totalPauseTimeInSeconds = order.OrderPause.reduce((total, pause) => total + (pause.totalTime || 0), 0);
+
+    // 3. Umumiy ish vaqtini hisoblash (soniyalarda)
+    const totalWorkInSeconds = (order.endHour - order.startHour) - totalPauseTimeInSeconds;
+
+    if (totalWorkInSeconds < 0) throw new Error('Invalid work time calculation');
+
+    // 4. Soat va minutlarga aylantirish (Umumiy Ish Vaqti)
+    const totalWorkHour = Math.floor(totalWorkInSeconds / 3600); // Soat
+    const totalWorkMinut = Math.floor((totalWorkInSeconds % 3600) / 60); // Minut
+
+    // 5. Soat va minutlarga aylantirish (Umumiy Pause Vaqti)
+    const totalPauseHour = Math.floor(totalPauseTimeInSeconds / 3600);
+    const totalPauseMinut = Math.floor((totalPauseTimeInSeconds % 3600) / 60);
+
+    return {
+      totalWorkHour,
+      totalWorkMinut,
+      totalPauseHour,
+      totalPauseMinut
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+const updateOrderHourTime = async (orderId, hourType) => {
+  try {
+    if (hourType == 'startHour') {
+      return await orderRepo.orderUpdateHourTime(orderId, { startHour: Math.floor(Date.now() / 1000) });
+    }
+
+    const updateTimeData = await calculateFinalWorkTime(orderId);
+    return await orderRepo.orderUpdateHourTime(orderId, { endHour: Math.floor(Date.now() / 1000), ...updateTimeData });
   } catch (error) {
     throw error;
   }
 }
+
 
 export default {
   getOrders,
@@ -49,5 +94,5 @@ export default {
   createOrder,
   updateOrder,
   deleteOrder,
-  updateOrderTime
+  updateOrderHourTime
 };
