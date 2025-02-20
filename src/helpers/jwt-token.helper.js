@@ -4,7 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret-access-key';
 const JWT_REFRESH_SECRET =
   process.env.JWT_REFRESH_SECRET || 'secret-refresh-key';
 
-export const generateAccessToken = (payload, expiresIn = '1d') => {
+export const generateAccessToken = (payload, expiresIn = '7d') => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn });
 };
 
