@@ -8,7 +8,7 @@ export const generateAccessToken = (payload, expiresIn = '1d') => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn });
 };
 
-export const generateRefreshAccessToken = (payload, expiresIn = '7d') => {
+export const generateRefreshToken = (payload, expiresIn = '7d') => {
   return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn });
 };
 

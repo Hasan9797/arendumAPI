@@ -8,7 +8,7 @@ import {
 
 import {
   generateAccessToken,
-  generateRefreshAccessToken,
+  generateRefreshToken,
 } from '../../helpers/jwt-token.helper.js';
 
 import userRoleEnum from '../../enums/user/user-role.enum.js';
@@ -119,7 +119,7 @@ const verifySmsCode = async (req, res) => {
 
     const accessToken = generateAccessToken(payload);
 
-    const refreshToken = generateRefreshAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
 
     const userToken = {
       token: refreshToken,
