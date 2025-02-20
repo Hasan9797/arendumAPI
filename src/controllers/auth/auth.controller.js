@@ -3,14 +3,14 @@ import bcrypt from 'bcryptjs';
 import prisma from '../../config/prisma.js';
 import {
   generateAccessToken,
-  generateRefreshAccessToken,
+  generateRefreshToken,
 } from '../../helpers/jwt-token.helper.js';
 
 import { ROLE_NAME } from '../../enums/user/user-role.enum.js';
 import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
 
-const JWT_SECRET = process.env.JWT_SECRET ?? 'secret';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh';
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
 // Login
 const login = async (req, res) => {
@@ -42,7 +42,7 @@ const login = async (req, res) => {
 
     const accessToken = generateAccessToken(payload);
 
-    const refreshToken = generateRefreshAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
 
     const userToken = {
       token: refreshToken,
@@ -67,6 +67,7 @@ const login = async (req, res) => {
   }
 };
 
+// Refresh Token
 const refreshToken = async (req, res) => {
   const userRefreshToken = req.body.refreshToken || null;
 
@@ -87,13 +88,13 @@ const refreshToken = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const newAccessToken = generateRefreshAccessToken(decoded);
+    const newAccessToken = generateAccessToken({ id: decoded.id, role: decoded.role });
 
     return res
       .status(200)
       .json({ message: 'Token refreshed', accessToken: newAccessToken });
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    return res.status(401).json({ message: error.message });
   }
 };
 
