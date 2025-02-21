@@ -21,7 +21,7 @@ function updateParamsWithTotalAmount(filterParams, machineParams) {
       if (mappedParams) {
         mappedParams.forEach(element => {
           if (Number(element.param) === Number(param[key])) {
-            totalAmount += element.amount;
+            totalAmount += Number(element.amount);
           }
         });
       }
