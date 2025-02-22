@@ -1,31 +1,18 @@
 import orderPauseRepo from '../repositories/pause-order.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
 
-const getById = async (id) => {
-    const order = await orderPauseRepo.getById(id);
-    return formatResponseDates(order);
-};
-
-const create = async (data) => {
+const startPauseTime = async (orderId) => {
     try {
-        return await orderPauseRepo.create(data);
+        return await orderPauseRepo.createStartPause(orderId);
     } catch (error) {
         throw error;
     }
 };
 
-const update = async (id, data) => {
-    return await orderPauseRepo.updateById(id, data);
+const endPauseTime = async (orderId) => {
+    return await orderPauseRepo.updateEndPause(orderId);
 };
-
-const distroy = async (id) => {
-    return await orderPauseRepo.deleteById(id);
-};
-
 
 export default {
-    getById,
-    create,
-    update,
-    distroy,
+    startPauseTime,
+    endPauseTime,
 };

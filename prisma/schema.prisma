@@ -196,6 +196,7 @@ model Order {
   totalPauseMinut Int?         @map("total_pause_minut")
   hourCount       Int?         @map("hour_count")
   kmCount         Int?         @map("km_count")
+  totalAmount     Int?         @map("total_amount")
   type            String
   count           Int          @default(1)
   params          Json         @default("[]") @map("params")

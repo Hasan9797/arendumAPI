@@ -1,4 +1,3 @@
-import redisClient from '../../config/redis.js';
 import { OrderStatus } from '../../enums/order/order-status.enum.js';
 import redisSetHelper from '../../helpers/redis-set-helper.js';
 import orderService from '../../services/order.service.js';

@@ -2,7 +2,6 @@ import { sendNotification } from '../../helpers/send-notification.helper.js';
 import driverService from '../../services/driver.service.js';
 import { verifyToken } from '../../helpers/jwt-token.helper.js';
 import redisSetHelper from '../../helpers/redis-set-helper.js';
-import redisClient from '../../config/redis.js';
 
 export default (io) => {
   const clientNamespace = io.of('/client');
