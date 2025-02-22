@@ -1,6 +1,8 @@
 import { Router } from 'express';
 
 import orderController from '../controllers/v1/order.controller.js';
+import orderPauseController from '../controllers/v1/order-pause.controller.js';
+
 import {
   authentication,
   authorization,
@@ -19,7 +21,11 @@ router.get(
   orderController.getAll
 );
 
-router.get('/update-hour-time', authentication, orderController.updateOrderStartAndEndTime);
+router.get('/work-time', authentication, orderController.updateOrderStartAndEndTime);
+
+router.get('/start-pause', authentication, orderPauseController.startPauseTime);
+
+router.get('/end-pause', authentication, orderPauseController.endPauseTime);
 
 router.post('/create', authentication, orderController.create);
 

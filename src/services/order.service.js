@@ -38,12 +38,7 @@ const deleteOrder = async (id) => {
 const calculateFinalWorkTime = async (orderId) => {
   try {
     // 1. Order va OrderPause larini olish
-    const order = await prisma.order.findUnique({
-      where: { id: orderId },
-      include: {
-        OrderPause: true,
-      },
-    });
+    const order = await orderRepo.getById(orderId);
 
     if (!order) throw new Error('Order not found');
 
@@ -63,11 +58,15 @@ const calculateFinalWorkTime = async (orderId) => {
     const totalPauseHour = Math.floor(totalPauseTimeInSeconds / 3600);
     const totalPauseMinut = Math.floor((totalPauseTimeInSeconds % 3600) / 60);
 
+    // 6. Umumiy miqdor hisoblash
+    const totalAmount = 0;
+
     return {
       totalWorkHour,
       totalWorkMinut,
       totalPauseHour,
-      totalPauseMinut
+      totalPauseMinut,
+      totalAmount
     };
   } catch (error) {
     throw error;

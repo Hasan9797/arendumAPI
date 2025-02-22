@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-const create = async (orderId) => {
+const createStartPause = async (orderId) => {
     try {
         const startPause = Math.floor(Date.now() / 1000); // Hozirgi vaqt soniyalarda
 
@@ -15,24 +15,6 @@ const create = async (orderId) => {
             endPause: orderPause.endPause,
             status: orderPause.status
         };
-    } catch (error) {
-        throw error;
-    }
-};
-
-const getById = async (id) => {
-    return await prisma.orderPause.findUnique({
-        where: { id },
-    });
-};
-
-const updateById = async (id, orderData) => {
-    try {
-        const updatedOrder = await prisma.orderPause.update({
-            where: { id },
-            data: orderData,
-        });
-        return updatedOrder;
     } catch (error) {
         throw error;
     }
@@ -84,20 +66,7 @@ const updateEndPause = async (orderId) => {
     }
 }
 
-const deleteById = async (id) => {
-    try {
-        return await prisma.orderPause.delete({
-            where: { id },
-        });
-    } catch (error) {
-        throw error;
-    }
-};
-
 export default {
-    getById,
-    create,
-    updateById,
-    deleteById,
+    createStartPause,
     updateEndPause
 };
