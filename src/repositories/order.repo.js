@@ -118,9 +118,7 @@ const getNewOrderByStructureId = async (structureId) => {
     return await prisma.order.findMany({
       where: {
         structureId,
-        status: {
-          in: [OrderStatus.NEW, OrderStatus.SEARCHING],
-        },
+        status: OrderStatus.NEW,
       },
     });
   } catch (error) {
