@@ -76,28 +76,46 @@ const getNewOrderByDriverParams = async (driverParams, structureId) => {
   }
 }
 
+// function filterOrdersByDriverParams(orders, driverParams) {
+//   // 1. Driver params ni parse qilish
+//   driverParams = typeof driverParams === 'string'
+//     ? JSON.parse(driverParams)
+//     : driverParams;
+
+//   // 2. Driver params'larni Map qilib olish
+//   const driverMap = new Map(driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]]));
+
+//   // 3. Orderlarni filter qilish
+//   return orders.filter(order => {
+//     // Order params'larni parse qilish
+//     order.params = typeof order.params === 'string'
+//       ? JSON.parse(order.params)
+//       : order.params;
+
+//     return order.params.every(orderParam => {
+//       const driverValues = driverMap.get(orderParam.key); // Tezkor qidirish uchun Map
+//       return driverValues && driverValues.includes(orderParam.param);
+//     });
+//   });
+// }
+
 function filterOrdersByDriverParams(orders, driverParams) {
-  // 1. Driver params ni parse qilish
-  driverParams = typeof driverParams === 'string'
-    ? JSON.parse(driverParams)
-    : driverParams;
+  // 1. Driver params'larni Map qilib olish
+  const driverMap = new Map(
+      driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]])
+  );
 
-  // 2. Driver params'larni Map qilib olish
-  const driverMap = new Map(driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]]));
-
-  // 3. Orderlarni filter qilish
-  return orders.filter(order => {
-    // Order params'larni parse qilish
-    order.params = typeof order.params === 'string'
-      ? JSON.parse(order.params)
-      : order.params;
-
-    return order.params.every(orderParam => {
-      const driverValues = driverMap.get(orderParam.key); // Tezkor qidirish uchun Map
-      return driverValues && driverValues.includes(orderParam.param);
-    });
-  });
+  // 2. Orderlarni filter qilish
+  return orders.filter(order =>
+      order.params.every(orderParam => {
+          const driverValues = driverMap.get(orderParam.key);
+          // Har bir objectning key'ga mos driver params bor-yo‘qligini va 
+          // param qiymati shu driver array ichida topilishini tekshirish
+          return driverValues && driverValues.includes(orderParam.param);
+      })
+  );
 }
+
 
 
 export default {
