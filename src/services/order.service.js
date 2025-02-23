@@ -65,6 +65,41 @@ const endOrder = async (orderId) => {
   }
 }
 
+const getNewOrderByDriverParams = async (driverParams, structureId) => {
+  try {
+    const orders = await orderRepo.getNewOrderByStructureId(structureId);
+    if (!orders) return [];
+
+    return filterOrdersByDriverParams(orders, driverParams);
+  } catch (error) {
+    throw error;
+  }
+}
+
+function filterOrdersByDriverParams(orders, driverParams) {
+  // 1. Driver params ni parse qilish
+  driverParams = typeof driverParams === 'string'
+    ? JSON.parse(driverParams)
+    : driverParams;
+
+  // 2. Driver params'larni Map qilib olish
+  const driverMap = new Map(driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]]));
+
+  // 3. Orderlarni filter qilish
+  return orders.filter(order => {
+    // Order params'larni parse qilish
+    order.params = typeof order.params === 'string'
+      ? JSON.parse(order.params)
+      : order.params;
+
+    return order.params.every(orderParam => {
+      const driverValues = driverMap.get(orderParam.key); // Tezkor qidirish uchun Map
+      return driverValues && driverValues.includes(orderParam.param);
+    });
+  });
+}
+
+
 export default {
   getOrders,
   getOrderById,
@@ -72,5 +107,6 @@ export default {
   updateOrder,
   deleteOrder,
   startOrder,
-  endOrder
+  endOrder,
+  getNewOrderByDriverParams
 };

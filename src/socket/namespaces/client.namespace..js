@@ -75,9 +75,6 @@ export default (io) => {
 
           if (orderExists === true) break;
 
-          console.log('driver', driver);
-          console.log('token', driver.fcmToken);
-          
           await sendNotification(driver.fcmToken, title, body, data);
 
           // 5 soniya kutish

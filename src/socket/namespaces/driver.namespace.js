@@ -69,8 +69,7 @@ export default (io) => {
         });
 
       await redisSetHelper.stopNotificationForOrder(String(orderId));
-
-
+      
     });
 
     socket.on('updateLocation', async ({ orderId, location }) => {

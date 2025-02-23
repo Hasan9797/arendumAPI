@@ -3,6 +3,7 @@ import pauseOrderService from '../../services/pause-order.service.js';
 import userRoleEnum from '../../enums/user/user-role.enum.js';
 import { userStatus } from '../../enums/user/user-status.enum.js';
 import clientService from '../../services/client.service.js';
+import driverService from '../../services/driver.service.js';
 
 import {
   responseSuccess,
@@ -165,6 +166,26 @@ const orderEndWork = async (req, res) => {
   }
 };
 
+// Driver lar uchun yangi (status driver SEARCHING) qo'shilgan orderlarni chiqarish, 
+// driver params ga moslarini
+const getNewOrderByDriverParams = async (req, res) => {
+  try {
+    const driver = await driverService.getById(req.user.id);
+    const orders = await orderService.getNewOrderByDriverParams(driver.params, driver.structureId);
+    res.status(200).json({
+      success: true,
+      data: orders,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+}
 
 export default {
   getAll,
@@ -173,5 +194,6 @@ export default {
   update,
   distroy,
   orderStartWork,
-  orderEndWork
+  orderEndWork,
+  getNewOrderByDriverParams
 };
