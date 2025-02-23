@@ -43,7 +43,7 @@ export default (io) => {
         String(orderId)
       );
 
-      if (stillExists === false) {
+      if (stillExists === true) {
         socket.emit('orderAccepted', { success: false });
         return;
       }
