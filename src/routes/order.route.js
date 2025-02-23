@@ -21,7 +21,9 @@ router.get(
   orderController.getAll
 );
 
-router.get('/work-time', authentication, orderController.updateOrderStartAndEndTime);
+router.get('/start-work', authentication, orderController.orderStartWork);
+
+router.get('/end-work', authentication, orderController.orderEndWork);
 
 router.get('/start-pause', authentication, orderPauseController.startPauseTime);
 

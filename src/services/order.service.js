@@ -1,7 +1,7 @@
 import orderRepo from '../repositories/order.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
 import { OrderStatus } from '../enums/order/order-status.enum.js';
-import { calculateWorkTimeAmount, calculateWorkKmAmount } from '../helpers/order-calculate-work.helper.js';
+import orderCalculateWork from '../helpers/order-calculate-work.helper.js';
 import orderType from '../enums/order/order-type.enum.js';
 
 const getOrders = async (query) => {
@@ -56,7 +56,7 @@ const endOrder = async (orderId) => {
     let updateData = {};
 
     if (String(order.type) == orderType.hour) {
-      updateData = calculateWorkTimeAmount(order);
+      updateData = orderCalculateWork.calculateWorkTimeAmount(order);
     }
 
     return await orderRepo.updateById(orderId, { endHour: Math.floor(Date.now() / 1000), ...updateData });

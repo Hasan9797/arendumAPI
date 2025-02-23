@@ -54,13 +54,14 @@ export default (io) => {
         status: OrderStatus.ASSIGNED,
       });
 
-      await redisSetHelper.stopNotificationForOrder(String(orderId));
-
+      
       io.to(`order_room_${orderId}`).emit('orderAccepted', {
         success: true,
         driverName,
         driverPhone,
       });
+      
+      await redisSetHelper.stopNotificationForOrder(String(orderId));
 
       // io.of('/client')
       //   .to(`order_room_${orderId}`)
