@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import { getClientStatusText } from '../enums/client/client-status.enum.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
-export const findAll = async (lang, query) => {
+const findAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
@@ -10,7 +10,7 @@ export const findAll = async (lang, query) => {
   try {
     const where = buildWhereFilter(filters, lang);
 
-    const orderBy =  { [sort.column]: sort.value }
+    const orderBy = { [sort.column]: sort.value }
 
     const clients = await prisma.client.findMany({
       where,

@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import { getDriverStatusText } from '../enums/driver/driver-status.enum.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
-export const findAll = async (lang, query) => {
+const findAll = async (lang, query) => {
   const { page, limit, sort, filters = [] } = query;
 
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
@@ -138,15 +138,21 @@ const getDriversByStructureIdForNotification = async (
   structureId,
   orderParams
 ) => {
-  return await prisma.driver.findMany({
-    where: { structureId },
-    select: {
-      id: true,
-      lat: true,
-      long: true,
-      fcmToken: true,
-    },
-  });
+  try {
+    return await prisma.driver.findMany({
+      where: { structureId },
+      select: {
+        id: true,
+        fullName: true,
+        phone: true,
+        lat: true,
+        long: true,
+        fcmToken: true,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 export default {

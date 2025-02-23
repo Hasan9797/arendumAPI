@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 import { orderType } from '../enums/order/order-type.enum.js'
 
-export const findAll = async (query) => {
+const findAll = async (query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
@@ -112,24 +112,10 @@ const deleteById = async (id) => {
   }
 };
 
-const orderUpdateHourTime = async (orderId, updateData) => {
-  try {
-    return await prisma.order.update({
-      where: { id: orderId },
-      data: updateData,
-    });
-
-  } catch (error) {
-    throw error;
-  }
-};
-
-
 export default {
   findAll,
   getById,
   create,
   updateById,
   deleteById,
-  orderUpdateHourTime
 };

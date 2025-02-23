@@ -129,18 +129,10 @@ const distroy = async (req, res) => {
   }
 };
 
-const updateOrderStartAndEndTime = async (req, res) => {
+const orderStartWork = async (req, res) => {
   const orderId = Number(req.query.id);
-  const type = String(req.query.type).trim().toLowerCase();
-
-  if (!['start', 'end'].includes(type)) {
-    throw new Error('Invalid type! please use "start" or "end"');
-  }
-
-  const hourType = type === 'start' ? 'startHour' : 'endHour';
-
   try {
-    await orderService.updateOrderHourTime(orderId, hourType);
+    await orderService.startOrder(orderId);
     res.status(200).json({
       success: true,
     });

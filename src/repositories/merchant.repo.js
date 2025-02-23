@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import UserRole from '../constants/user-role.constant.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
-export const getMachines = async (query) => {
+const getMachines = async (query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);

@@ -3,7 +3,7 @@ import { regionStatus } from '../enums/Region/region-status.enum.js';
 import { structureStatus } from '../enums/structure/structure-status.enum.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
-export const getAll = async (lang, query) => {
+const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
