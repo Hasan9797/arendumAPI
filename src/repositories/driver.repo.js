@@ -1,6 +1,7 @@
 import prisma from '../config/prisma.js';
 import { getDriverStatusText } from '../enums/driver/driver-status.enum.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
+import redisClient from '../config/redis.js';
 
 const findAll = async (lang, query) => {
   const { page, limit, sort, filters = [] } = query;
@@ -106,17 +107,39 @@ const create = async (newDriver) => {
 };
 
 const getById = async (id) => {
-  return await prisma.driver.findUnique({
+  const cacheKey = `driver_${id}`; // Redis kaliti
+
+  // 1. Avval Redis cache dan tekshirish
+  const cachedDriver = await redisClient.get(cacheKey);
+  if (cachedDriver) {
+    return JSON.parse(cachedDriver); // Cache'da bo‘lsa, JSON parse qilamiz
+  }
+
+  // 2. Agar cache'da bo‘lmasa, bazadan olish
+  const driver = await prisma.driver.findUnique({
     where: { id },
   });
+
+  // 3. Agar driver topilsa, Redis cache'ga 1 soatga saqlaymiz
+  if (driver) {
+    await redisClient.setex(cacheKey, 86400, JSON.stringify(driver)); // 86400 soniya = 1 kun
+  }
+
+  return driver;
 };
 
 const updateById = async (id, driverData) => {
   try {
+    const cacheKey = `driver_${id}`;
+
     const updatedUser = await prisma.driver.update({
       where: { id },
       data: driverData,
     });
+
+    // 2. Redis cache'dan o‘chirish (agar bo‘lsa)
+    await redisClient.del(cacheKey);
+
     return updatedUser;
   } catch (error) {
     console.error('Error updating user:', error);
@@ -126,9 +149,16 @@ const updateById = async (id, driverData) => {
 
 const deleteById = async (id) => {
   try {
-    return await prisma.driver.delete({
+    const cacheKey = `driver_${id}`;
+
+    await prisma.driver.delete({
       where: { id },
     });
+
+    // 2. Redis cache'dan o‘chirish (agar bo‘lsa)
+    await redisClient.del(cacheKey);
+
+    return
   } catch (error) {
     throw error;
   }

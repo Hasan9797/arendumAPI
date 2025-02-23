@@ -29,6 +29,8 @@ router.get('/start-pause', authentication, orderPauseController.startPauseTime);
 
 router.get('/end-pause', authentication, orderPauseController.endPauseTime);
 
+router.get('/get-new-order', authentication, orderController.getNewOrderByDriverParams);
+
 router.post('/create', authentication, orderController.create);
 
 router.put('/update/:id', authentication, orderController.update);
