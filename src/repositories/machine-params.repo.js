@@ -1,7 +1,7 @@
 import prisma from '../config/prisma.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 
-export const getAll = async (lang, query) => {
+const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
@@ -92,7 +92,7 @@ const getById = async (lang, id) => {
 
     const adjustName = (obj) => {
       if (!obj) return {};
-      
+
       const { nameRu, nameUz, nameEn, machineId, machines, ...rest } = obj;
 
       const machine = {
@@ -123,7 +123,7 @@ const getByMachineId = async (machineId, lang = 'ru') => {
     });
 
     const adjustName = (obj) => {
-      const { nameRu, nameUz, ...relationRest } = obj;
+      const { nameRu, nameUz, nameEn, ...relationRest } = obj;
       return {
         ...relationRest,
         name: lang === 'ru' ? nameRu : nameUz,
@@ -167,7 +167,7 @@ const distroy = async (id) => {
   });
 };
 
-const getParamsOption = async (machineId = 0) => {
+const getParamsOption = async (machineId) => {
   try {
     return await prisma.machineParams.findMany({
       where: {

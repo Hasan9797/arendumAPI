@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 
-export const getMachinesPriceParams = async (query) => {
+const getMachinesPriceParams = async (query) => {
   const { page, limit, sort, filters } = query;
 
   const skip = (page - 1) * limit;
