@@ -13,13 +13,11 @@ async function startNotificationForOrder(orderId) {
     orderId = String(orderId);
   }
 
-  const exists = await redisClient.exists('active_orders');
+  const isMember = await redisClient.sIsMember('active_orders', orderId); // Set ichida bor-yo'qligini tekshirish
 
-  if (!exists) {
+  if (!isMember) {
     await redisClient.sAdd('active_orders', orderId);
-    await setMidnightExpiration();
-  } else {
-    await redisClient.sAdd('active_orders', orderId);
+    await setMidnightExpiration(); // Faqat yangi order qo‘shilganda vaqtni o‘rnatish
   }
 }
 

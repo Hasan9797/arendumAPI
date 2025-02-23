@@ -52,7 +52,7 @@ export default (io) => {
           socket.userId,
           params
         );
-
+        
         if (drivers.length === 0) {
           socket.emit('driverNotFound', { message: 'Driver not found' });
           return;
@@ -73,8 +73,11 @@ export default (io) => {
             String(orderId)
           );
 
-          if (orderExists) break;
+          if (orderExists === true) break;
 
+          console.log('driver', driver);
+          console.log('token', driver.fcmToken);
+          
           await sendNotification(driver.fcmToken, title, body, data);
 
           // 5 soniya kutish
@@ -85,7 +88,7 @@ export default (io) => {
             String(orderId)
           );
 
-          if (stillExists) break;
+          if (stillExists === true) break;
         }
 
         // Agar hech kim qabul qilmasa
@@ -93,7 +96,7 @@ export default (io) => {
           String(orderId)
         );
 
-        if (!finalCheck) {
+        if (finalCheck === false) {
           socket.emit('driverNotFound', {
             success: false,
             message: 'No driver accepted the order',
