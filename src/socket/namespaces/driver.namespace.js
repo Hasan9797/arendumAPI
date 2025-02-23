@@ -44,7 +44,7 @@ export default (io) => {
       );
 
       if (stillExists === true) {
-        socket.emit('orderAccepted', { success: false });
+        socket.emit('orderDriverAccept', { success: false });
         return;
       }
 
@@ -55,18 +55,22 @@ export default (io) => {
         status: OrderStatus.ASSIGNED,
       });
 
-      
-      io.to(`order_room_${orderId}`).emit('orderAccepted', {
-        success: true,
-        driverName,
-        driverPhone,
-      });
-      
+      // io.to(`order_room_${orderId}`).emit('orderAccepted', {
+      //   success: true,
+      //   driverName,
+      //   driverPhone,
+      // });
+
+      io.of('/client')
+        .to(`order_room_${orderId}`)
+        .emit('orderAccepted', {
+          success: true, driverName,
+          driverPhone
+        });
+
       await redisSetHelper.stopNotificationForOrder(String(orderId));
 
-      // io.of('/client')
-      //   .to(`order_room_${orderId}`)
-      //   .emit('driverJoined', { success: true });
+
     });
 
     socket.on('updateLocation', async ({ orderId, location }) => {
@@ -81,6 +85,6 @@ export default (io) => {
       });
     });
 
-    socket.on('disconnect', async () => {});
+    socket.on('disconnect', async () => { });
   });
 };
