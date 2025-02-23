@@ -147,14 +147,23 @@ const orderStartWork = async (req, res) => {
   }
 };
 
-const pauseOrder = async (req, res) => {
+const orderEndWork = async (req, res) => {
+  const orderId = Number(req.query.id);
   try {
-    const orderPause = await pauseOrderService.create(req.body);
-    res.status(201).json(responseSuccess(orderPause));
+    await orderService.endOrder(orderId);
+    res.status(200).json({
+      success: true,
+    });
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
   }
-}
+};
 
 
 export default {
@@ -163,6 +172,6 @@ export default {
   create,
   update,
   distroy,
-  updateOrderStartAndEndTime,
-  pauseOrder
+  orderStartWork,
+  orderEndWork
 };

@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
-import { orderType } from '../enums/order/order-type.enum.js'
+import orderType from '../enums/order/order-type.enum.js'
 
 const findAll = async (query) => {
   const { page, limit, sort, filters } = query;
