@@ -21,15 +21,15 @@ router.get(
   orderController.getAll
 );
 
-router.get('/start-work', authentication, orderController.orderStartWork);
+router.get('/start-work', authentication, orderController.orderStartWork); // query params: order ID
 
-router.get('/end-work', authentication, orderController.orderEndWork);
+router.get('/end-work', authentication, orderController.orderEndWork); // query params: order ID
 
-router.get('/start-pause', authentication, orderPauseController.startPauseTime);
+router.get('/start-pause', authentication, orderPauseController.startPauseTime); // query params: order ID
 
-router.get('/end-pause', authentication, orderPauseController.endPauseTime);
+router.get('/end-pause', authentication, orderPauseController.endPauseTime); // query params: order ID
 
-router.get('/get-new-order', authentication, orderController.getNewOrderByDriverParams);
+router.get('/get-new-order', authentication, authorization([userRole.DRIVER]), orderController.getNewOrderByDriverParams); // Authentication required
 
 router.post('/create', authentication, orderController.create);
 
