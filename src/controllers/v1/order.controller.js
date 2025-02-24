@@ -1,5 +1,4 @@
 import orderService from '../../services/order.service.js';
-import pauseOrderService from '../../services/pause-order.service.js';
 import userRoleEnum from '../../enums/user/user-role.enum.js';
 import { userStatus } from '../../enums/user/user-status.enum.js';
 import clientService from '../../services/client.service.js';

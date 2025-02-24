@@ -120,7 +120,7 @@ const getById = async (id) => {
     where: { id },
   });
 
-  // 3. Agar driver topilsa, Redis cache'ga 1 soatga saqlaymiz
+  // 3. Agar driver topilsa, Redis cache'ga 1 kunga saqlaymiz
   if (driver) {
     await redisClient.setEx(cacheKey, 86400, JSON.stringify(driver)); // 86400 soniya = 1 kun
   }
