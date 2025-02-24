@@ -3,22 +3,22 @@ export const OrderStatus = Object.freeze({
   NEW: 1,
   SEARCHING: 2,
   ASSIGNED: 3,
-  IN_PROGRESS: 4,
-  ARRIVED: 5,
+  ARRIVED: 4,
+  START_WORK: 5,
   COMPLETED: 6,
-  CANCELLED: 7,
-  FAILED: 8,
+  CANCELLED: 9,
+  FAILED: 0,
 });
 
 const StatusTranslations = {
   1: 'Новый заказ',
   2: 'Поиск водителя',
   3: 'Водитель назначен',
-  4: 'В пути',
-  5: 'Водитель прибыл',
+  4: 'Водитель на месте', //'Водитель прибыл',
+  5: 'Начало',
   6: 'Завершено',
-  7: 'Отменено',
-  8: 'Ошибка',
+  9: 'Отменено',
+  0: 'Ошибка',
 };
 
 export const StatusOptions = [

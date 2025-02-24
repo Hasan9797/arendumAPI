@@ -1,47 +1,38 @@
 const calculateWorkTimeAmount = (order) => {
-    const totalPauseTimeInSeconds = 0;
-    const totalWorkInSeconds = 0;
-    try {
-        if (order.OrderPause && order.OrderPause.length > 0) {
-            // 1. Agar pause bo‘lsa, jami totalTime yig‘iladi, aks holda 0
-            totalPauseTimeInSeconds = order.OrderPause.reduce((total, pause) => total + (pause.totalTime || 0), 0);
-        };
 
+    // 1. Total pause time hisoblash (soniyalarda)
+    const totalPauseTimeInSeconds = Array.isArray(order?.OrderPause)
+        ? order.OrderPause.reduce((total, pause) => total + (pause.totalTime || 0), 0)
+        : 0;
 
-        // 2. Umumiy ish vaqtini hisoblash (soniyalarda)
-        if (!order.startHour || !order.endHour) throw new Error('Invalid work time calculation');
+    // 2. Total work time hisoblash (soniyalarda)
+    const totalWorkInSeconds = (order.endHour - order.startHour) - totalPauseTimeInSeconds;
+    if (totalWorkInSeconds < 0) throw new Error('Invalid work time calculation');
 
-        if (totalPauseTimeInSeconds > 0) {
-            totalWorkInSeconds = (order.endHour - order.startHour) - totalPauseTimeInSeconds;
-        }else{
-            totalWorkInSeconds = order.endHour - order.startHour;
-        }
+    // 3. Ish vaqtini soat va minutlarga aylantirish
+    const totalWorkHour = Math.floor(totalWorkInSeconds / 3600);
+    const totalWorkMinut = Math.floor((totalWorkInSeconds % 3600) / 60);
 
-        if (totalWorkInSeconds < 0) throw new Error('Invalid work time calculation');
+    // 4. Pause vaqtini soat va minutlarga aylantirish
+    const totalPauseHour = Math.floor(totalPauseTimeInSeconds / 3600);
+    const totalPauseMinut = Math.floor((totalPauseTimeInSeconds % 3600) / 60);
 
-        // 3. Soat va minutlarga aylantirish (Umumiy Ish Vaqti)
-        const totalWorkHour = Math.floor(totalWorkInSeconds / 3600); // Soat
-        const totalWorkMinut = Math.floor((totalWorkInSeconds % 3600) / 60); // Minut
+    // 5. Total amount hisoblash: order.amount soatlik narx sifatida
+    const amountPerMinute = order.amount / 60; // 1 minut uchun to'g'ri keladigan narx
+    const totalAmount = (totalWorkHour * order.amount) + (totalWorkMinut * amountPerMinute);
 
-        // 4. Soat va minutlarga aylantirish (Umumiy Pause Vaqti)
-        const totalPauseHour = Math.floor(totalPauseTimeInSeconds / 3600);
-        const totalPauseMinut = Math.floor((totalPauseTimeInSeconds % 3600) / 60);
-
-        // 5. Umumiy miqdor hisoblash
-        const totalAmount = 0;
-
-        return {
-            totalWorkHour,
-            totalWorkMinut,
-            totalPauseHour,
-            totalPauseMinut,
-            totalAmount
-        };
-    } catch (error) {
-        throw error;
-    }
+    return {
+        totalWorkHour,
+        totalWorkMinut,
+        totalPauseHour,
+        totalPauseMinut,
+        totalAmount
+    };
 };
 
-const calculateWorkKmAmount = (order) => { }
+const calculateWorkKmAmount = (order) => {
+    const totalAmount = (order?.amount * order?.kmCount) ?? 0;
+    return { totalAmount };
+};
 
 export default { calculateWorkTimeAmount, calculateWorkKmAmount };

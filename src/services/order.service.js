@@ -1,7 +1,7 @@
 import orderRepo from '../repositories/order.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
 import { OrderStatus } from '../enums/order/order-status.enum.js';
-import orderCalculateWork from '../helpers/order-calculate-work.helper.js';
+import orderCalculateWorkHelper from '../helpers/order-calculate-work.helper.js';
 import orderType from '../enums/order/order-type.enum.js';
 
 const getOrders = async (query) => {
@@ -40,7 +40,10 @@ const deleteOrder = async (id) => {
 //Start Order
 const startOrder = async (orderId) => {
   try {
-    return await orderRepo.updateById(orderId, { startHour: Math.floor(Date.now() / 1000) });
+    return await orderRepo.updateById(orderId, {
+      startHour: Math.floor(Date.now() / 1000),
+      status: OrderStatus.START_WORK
+    });
   } catch (error) {
     throw error;
   }
@@ -49,17 +52,32 @@ const startOrder = async (orderId) => {
 //End Order and Calculate Work (Time or Km) amount
 const endOrder = async (orderId) => {
   try {
+    if (!orderId) throw new Error('Order ID is required');
+
     const order = await orderRepo.getById(orderId);
+    if (!order || order.status != OrderStatus.START_WORK) throw new Error('Order is not started');
 
-    if (!order) throw new Error('Order not found');
+    // 1. Order Tukash vaqti (soniyalarda)
+    const endHour = Math.floor(Date.now() / 1000);
+    let updateData;
 
-    let updateData = {};
-
-    if (String(order.type) == orderType.hour) {
-      updateData = orderCalculateWork.calculateWorkTimeAmount(order);
+    // 1. Order type bo'yicha hisoblash
+    switch (String(order.type)) {
+      case orderType.hour:
+        updateData = orderCalculateWorkHelper.calculateWorkTimeAmount({ ...order, endHour });
+        break;
+      case orderType.km:
+        updateData = orderCalculateWorkHelper.calculateWorkKmAmount(order);
+        break;
+      default:
+        updateData = { totalAmount: order.amount };
     }
 
-    return await orderRepo.updateById(orderId, { endHour: Math.floor(Date.now() / 1000), ...updateData });
+    return await orderRepo.updateById(orderId, {
+      endHour,
+      orderStatus: OrderStatus.COMPLETED,
+      ...updateData
+    });
   } catch (error) {
     throw error;
   }
@@ -76,43 +94,20 @@ const getNewOrderByDriverParams = async (driverParams, structureId) => {
   }
 }
 
-// function filterOrdersByDriverParams(orders, driverParams) {
-//   // 1. Driver params ni parse qilish
-//   driverParams = typeof driverParams === 'string'
-//     ? JSON.parse(driverParams)
-//     : driverParams;
-
-//   // 2. Driver params'larni Map qilib olish
-//   const driverMap = new Map(driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]]));
-
-//   // 3. Orderlarni filter qilish
-//   return orders.filter(order => {
-//     // Order params'larni parse qilish
-//     order.params = typeof order.params === 'string'
-//       ? JSON.parse(order.params)
-//       : order.params;
-
-//     return order.params.every(orderParam => {
-//       const driverValues = driverMap.get(orderParam.key); // Tezkor qidirish uchun Map
-//       return driverValues && driverValues.includes(orderParam.param);
-//     });
-//   });
-// }
-
 function filterOrdersByDriverParams(orders, driverParams) {
   // 1. Driver params'larni Map qilib olish
   const driverMap = new Map(
-      driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]])
+    driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]])
   );
 
   // 2. Orderlarni filter qilish
   return orders.filter(order =>
-      order.params.every(orderParam => {
-          const driverValues = driverMap.get(orderParam.key);
-          // Har bir objectning key'ga mos driver params bor-yo‘qligini va 
-          // param qiymati shu driver array ichida topilishini tekshirish
-          return driverValues && driverValues.includes(orderParam.param);
-      })
+    order.params.every(orderParam => {
+      const driverValues = driverMap.get(orderParam.key);
+      // Har bir objectning key'ga mos driver params bor-yo‘qligini va 
+      // param qiymati shu driver array ichida topilishini tekshirish
+      return driverValues && driverValues.includes(orderParam.param);
+    })
   );
 }
 
