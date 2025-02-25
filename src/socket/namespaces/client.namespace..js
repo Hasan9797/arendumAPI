@@ -9,7 +9,7 @@ export default (io) => {
   clientNamespace.use((socket, next) => {
     try {
       const token = socket.handshake.headers['auth'];
-      
+
       if (!token) {
         return next(new Error('Access denied, no token provided'));
       }
@@ -39,7 +39,8 @@ export default (io) => {
       });
 
       //room ga qo'shish
-      socket.on('createOrder', async ({ orderId, params }) => {
+      socket.on('createOrder', async ({ orderId, orderType, amountType, legal, params }) => {
+
         if (!orderId || typeof orderId !== 'number') {
           throw new Error('orderId is required');
         }
@@ -50,9 +51,12 @@ export default (io) => {
 
         const drivers = await driverService.getDriversInClientStructure(
           socket.userId,
-          params
+          params,
+          orderType,
+          amountType,
+          legal
         );
-        
+
         if (drivers.length === 0) {
           socket.emit('driverNotFound', { message: 'Driver not found' });
           return;

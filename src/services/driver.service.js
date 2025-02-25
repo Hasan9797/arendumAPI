@@ -47,7 +47,7 @@ const deleteById = async (id) => {
   }
 };
 
-const getDriversInClientStructure = async (clientId, orderParams) => {
+const getDriversInClientStructure = async (clientId, orderParams, orderType, amountType, legal) => {
   try {
     const structureId = await clientRepository.getClientStructureId(clientId);
 
@@ -55,7 +55,10 @@ const getDriversInClientStructure = async (clientId, orderParams) => {
 
     return await driverRepository.getDriversByStructureIdForNotification(
       structureId,
-      orderParams
+      orderParams,
+      orderType,
+      amountType,
+      legal
     );
   } catch (error) {
     throw error;

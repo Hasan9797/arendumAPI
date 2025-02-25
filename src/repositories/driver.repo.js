@@ -166,7 +166,10 @@ const deleteById = async (id) => {
 
 const getDriversByStructureIdForNotification = async (
   structureId,
-  orderParams
+  orderParams,
+  orderType,
+  amountType,
+  legal
 ) => {
   try {
     return await prisma.driver.findMany({

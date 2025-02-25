@@ -64,12 +64,15 @@ export default (io) => {
       io.of('/client')
         .to(`order_room_${orderId}`)
         .emit('orderAccepted', {
-          success: true, driverName,
+          success: true,
+          driverName,
           driverPhone
         });
 
+      socket.emit('acceptedOrder', { success: true });
+
       await redisSetHelper.stopNotificationForOrder(String(orderId));
-      
+
     });
 
     socket.on('updateLocation', async ({ orderId, location }) => {
