@@ -39,92 +39,72 @@ export default (io) => {
       });
 
       //room ga qo'shish
-      socket.on('createOrder', async ({ orderId, orderType, amountType, structureId, params }) => {
+      socket.on(
+        'createOrder',
+        async ({ orderId, orderType, amountType, structureId, params }) => {
+          if (!orderId || typeof orderId !== 'number') {
+            throw new Error('orderId is required');
+          }
 
-        if (!orderId || typeof orderId !== 'number') {
-          throw new Error('orderId is required');
-        }
+          socket.orderId = orderId;
 
-        socket.orderId = orderId;
+          socket.join(`order_room_${orderId}`);
 
-        socket.join(`order_room_${orderId}`);
+          const drivers = await driverService.getDriversInClientStructure(
+            structureId,
+            params,
+            orderType,
+            amountType
+          );
 
-        // const drivers = await driverService.getDriversInClientStructure(
-        //   structureId,
-        //   params,
-        //   orderType,
-        //   amountType,
-        // );
+          if (drivers.length === 0) {
+            socket.emit('driverNotFound', { message: 'Driver not found' });
+            return;
+          }
 
-        const drivers = [
-          {
-            id: 1,
-            name: 'John Doe',
-            phone: '1234567890',
-            fcmToken: null,
-          },
-          {
-            id: 2,
-            name: 'Jane Smith',
-            phone: '9876543210',
-            fcmToken: null,
-          },
-          {
-            id: 3,
-            name: 'Bob Johnson',
-            phone: '5555555555',
-            fcmToken: null,
-          },
-        ];
+          const title = 'New Order';
+          const body = 'You have a new order';
+          const data = {
+            key: 'new_order',
+            orderId: String(orderId),
+          };
 
-        if (drivers.length === 0) {
-          socket.emit('driverNotFound', { message: 'Driver not found' });
-          return;
-        }
+          await redisSetHelper.startNotificationForOrder(String(orderId));
 
-        const title = 'New Order';
-        const body = 'You have a new order';
-        const data = {
-          key: 'new_order',
-          orderId: String(orderId),
-        };
+          for (const driver of drivers) {
+            // Agar Redis'da order hali ham mavjud bo‘lsa, notification jo‘natamiz
+            const orderExists = await redisSetHelper.isNotificationStopped(
+              String(orderId)
+            );
 
-        await redisSetHelper.startNotificationForOrder(String(orderId));
+            if (orderExists === true) break;
 
-        for (const driver of drivers) {
-          // Agar Redis'da order hali ham mavjud bo‘lsa, notification jo‘natamiz
-          const orderExists = await redisSetHelper.isNotificationStopped(
+            await sendNotification(driver?.fcmToken, title, body, data);
+
+            // 5 soniya kutish
+            await new Promise((resolve) => setTimeout(resolve, 5000));
+
+            // Yana Redis'ni tekshiramiz, agar order o‘chgan bo‘lsa, notification to‘xtaydi
+            const stillExists = await redisSetHelper.isNotificationStopped(
+              String(orderId)
+            );
+
+            if (stillExists === true) break;
+          }
+
+          // Agar hech kim qabul qilmasa
+          const finalCheck = await redisSetHelper.isNotificationStopped(
             String(orderId)
           );
 
-          if (orderExists === true) break;
-
-          // await sendNotification(driver?.fcmToken, title, body, data);
-
-          // 5 soniya kutish
-          await new Promise((resolve) => setTimeout(resolve, 5000));
-          console.log('5 soniya kutildi');
-          
-          // Yana Redis'ni tekshiramiz, agar order o‘chgan bo‘lsa, notification to‘xtaydi
-          const stillExists = await redisSetHelper.isNotificationStopped(
-            String(orderId)
-          );
-
-          if (stillExists === true) break;
+          if (finalCheck === false) {
+            socket.emit('driverWaiting', {
+              success: false,
+              message: 'No driver accepted the order',
+            });
+          }
         }
-
-        // Agar hech kim qabul qilmasa
-        const finalCheck = await redisSetHelper.isNotificationStopped(
-          String(orderId)
-        );
-
-        if (finalCheck === false) {
-          socket.emit('driverWaiting', {
-            success: false,
-            message: 'No driver accepted the order',
-          });
-        }
-      });
+      );
 
       socket.on('disconnect', async () => {
         if (socket.orderId) {
