@@ -45,7 +45,10 @@ export default (io) => {
         );
 
         if (stillExists === true) {
-          socket.emit('orderPicked', { success: false, message: 'Order has been accepted by another driver' });
+          socket.emit('orderPicked', {
+            success: false,
+            message: 'Order has been accepted by another driver',
+          });
           return;
         }
 
@@ -62,18 +65,18 @@ export default (io) => {
         //   driverPhone,
         // });
 
-        io.of('/client')
-          .to(`order_room_${orderId}`)
-          .emit('orderAccepted', {
-            success: true,
-            driverName,
-            driverPhone
-          });
+        io.of('/client').to(`order_room_${orderId}`).emit('orderAccepted', {
+          success: true,
+          driverName,
+          driverPhone,
+        });
 
-        socket.emit('acceptedOrder', { success: true });
+        socket.emit('acceptedOrder', {
+          success: true,
+          message: 'You accepted the order',
+        });
 
         await redisSetHelper.stopNotificationForOrder(String(orderId));
-
       } catch (error) {
         console.log(error);
         socket.emit('error', { message: error.message });
@@ -93,11 +96,12 @@ export default (io) => {
         status: OrderStatus.ARRIVED,
       });
 
-      io.of('/client')
-        .to(`order_room_${orderId}`)
-        .emit('driverArrived', { success: true, message: 'Driver arrived to client' });
+      io.of('/client').to(`order_room_${orderId}`).emit('driverArrived', {
+        success: true,
+        message: 'Driver arrived to client',
+      });
     });
 
-    socket.on('disconnect', async () => { });
+    socket.on('disconnect', async () => {});
   });
 };
