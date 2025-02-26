@@ -9,7 +9,7 @@ export default (io) => {
   clientNamespace.use((socket, next) => {
     try {
       const token = socket.handshake.headers['auth'];
-      
+
       if (!token) {
         return next(new Error('Access denied, no token provided'));
       }
@@ -39,7 +39,8 @@ export default (io) => {
       });
 
       //room ga qo'shish
-      socket.on('createOrder', async ({ orderId, params }) => {
+      socket.on('createOrder', async ({ orderId, orderType, amountType, structureId, params }) => {
+
         if (!orderId || typeof orderId !== 'number') {
           throw new Error('orderId is required');
         }
@@ -48,11 +49,34 @@ export default (io) => {
 
         socket.join(`order_room_${orderId}`);
 
-        const drivers = await driverService.getDriversInClientStructure(
-          socket.userId,
-          params
-        );
-        
+        // const drivers = await driverService.getDriversInClientStructure(
+        //   structureId,
+        //   params,
+        //   orderType,
+        //   amountType,
+        // );
+
+        const drivers = [
+          {
+            id: 1,
+            name: 'John Doe',
+            phone: '1234567890',
+            fcmToken: null,
+          },
+          {
+            id: 2,
+            name: 'Jane Smith',
+            phone: '9876543210',
+            fcmToken: null,
+          },
+          {
+            id: 3,
+            name: 'Bob Johnson',
+            phone: '5555555555',
+            fcmToken: null,
+          },
+        ];
+
         if (drivers.length === 0) {
           socket.emit('driverNotFound', { message: 'Driver not found' });
           return;
@@ -75,11 +99,12 @@ export default (io) => {
 
           if (orderExists === true) break;
 
-          await sendNotification(driver.fcmToken, title, body, data);
+          // await sendNotification(driver?.fcmToken, title, body, data);
 
           // 5 soniya kutish
           await new Promise((resolve) => setTimeout(resolve, 5000));
-
+          console.log('5 soniya kutildi');
+          
           // Yana Redis'ni tekshiramiz, agar order o‘chgan bo‘lsa, notification to‘xtaydi
           const stillExists = await redisSetHelper.isNotificationStopped(
             String(orderId)
@@ -94,7 +119,7 @@ export default (io) => {
         );
 
         if (finalCheck === false) {
-          socket.emit('driverNotFound', {
+          socket.emit('driverWaiting', {
             success: false,
             message: 'No driver accepted the order',
           });
@@ -107,11 +132,11 @@ export default (io) => {
             String(socket.orderId)
           );
 
-          if (!stillExists) {
-            await redisSetHelper.stopNotificationForOrder(
-              String(socket.orderId)
-            );
-          }
+          // if (!stillExists) {
+          //   await redisSetHelper.stopNotificationForOrder(
+          //     String(socket.orderId)
+          //   );
+          // }
         } else {
           console.log('⚠️ Client disconnected, but no orderId found.');
         }

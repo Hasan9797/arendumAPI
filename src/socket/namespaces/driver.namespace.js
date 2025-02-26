@@ -39,49 +39,63 @@ export default (io) => {
     });
 
     socket.on('acceptOrder', async ({ orderId, driverName, driverPhone }) => {
-      const stillExists = await redisSetHelper.isNotificationStopped(
-        String(orderId)
-      );
+      try {
+        const stillExists = await redisSetHelper.isNotificationStopped(
+          String(orderId)
+        );
 
-      if (stillExists === true) {
-        socket.emit('orderDriverAccept', { success: false });
-        return;
-      }
+        if (stillExists === true) {
+          socket.emit('orderPicked', { success: false, message: 'Order has been accepted by another driver' });
+          return;
+        }
 
-      socket.join(`order_room_${orderId}`);
+        socket.join(`order_room_${orderId}`);
 
-      await orderService.updateOrder(orderId, {
-        driverId: parseInt(socket.userId),
-        status: OrderStatus.ASSIGNED,
-      });
-
-      // io.to(`order_room_${orderId}`).emit('orderAccepted', {
-      //   success: true,
-      //   driverName,
-      //   driverPhone,
-      // });
-
-      io.of('/client')
-        .to(`order_room_${orderId}`)
-        .emit('orderAccepted', {
-          success: true, driverName,
-          driverPhone
+        await orderService.updateOrder(orderId, {
+          driverId: parseInt(socket.userId),
+          status: OrderStatus.ASSIGNED,
         });
 
-      await redisSetHelper.stopNotificationForOrder(String(orderId));
-      
+        // io.to(`order_room_${orderId}`).emit('orderAccepted', {
+        //   success: true,
+        //   driverName,
+        //   driverPhone,
+        // });
+
+        io.of('/client')
+          .to(`order_room_${orderId}`)
+          .emit('orderAccepted', {
+            success: true,
+            driverName,
+            driverPhone
+          });
+
+        socket.emit('acceptedOrder', { success: true });
+
+        await redisSetHelper.stopNotificationForOrder(String(orderId));
+
+      } catch (error) {
+        console.log(error);
+        socket.emit('error', { message: error.message });
+      }
     });
 
-    socket.on('updateLocation', async ({ orderId, location }) => {
+    // Dreiver Location Send
+    socket.on('updateLocation', async ({ orderId, log, lat }) => {
       io.of('/client')
         .to(`order_room_${orderId}`)
-        .emit('driverLocation', location);
+        .emit('driverLocation', { orderId, log, lat });
     });
 
+    // Driver arrived to client
     socket.on('icame', async ({ orderId }) => {
       await orderService.updateOrder(orderId, {
         status: OrderStatus.ARRIVED,
       });
+
+      io.of('/client')
+        .to(`order_room_${orderId}`)
+        .emit('driverArrived', { success: true, message: 'Driver arrived to client' });
     });
 
     socket.on('disconnect', async () => { });
