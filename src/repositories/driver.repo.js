@@ -169,7 +169,6 @@ const getDriversByStructureIdForNotification = async (
   orderParams,
   orderType,
   amountType,
-  legal
 ) => {
   try {
     return await prisma.driver.findMany({
