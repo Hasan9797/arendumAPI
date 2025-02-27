@@ -59,12 +59,6 @@ export default (io) => {
           status: OrderStatus.ASSIGNED,
         });
 
-        // io.to(`order_room_${orderId}`).emit('orderAccepted', {
-        //   success: true,
-        //   driverName,
-        //   driverPhone,
-        // });
-
         io.of('/client').to(`order_room_${orderId}`).emit('orderAccepted', {
           success: true,
           driverName,
