@@ -47,12 +47,18 @@ const findAll = async (query) => {
 
     const total = await prisma.order.count({ where });
 
-    const sanitizedOrders = orders.map(
+    const sanitizedOrders = orders.map(order => ({
+      ...order,
+      startHour: order.startHour ? order.startHour.toString() : null,
+      endHour: order.endHour ? order.endHour.toString() : null,
+    }));
+
+    const data = sanitizedOrders.map(
       ({ driverId, clientId, machineId, ...rest }) => rest
     );
 
     return {
-      data: sanitizedOrders,
+      data,
       pagination: {
         total,
         totalPages: Math.ceil(total / limit),
