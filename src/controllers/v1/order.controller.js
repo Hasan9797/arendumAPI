@@ -170,7 +170,7 @@ const orderEndWork = async (req, res) => {
 const getNewOrderByDriverParams = async (req, res) => {
   try {
     const driver = await driverService.getById(req.user.id);
-    const orders = await orderService.getNewOrderByDriverParams(driver.params, Number(driver.structureId));
+    const orders = await orderService.getNewOrderByDriverParams(driver?.params, Number(driver.structureId));
     res.status(200).json({
       success: true,
       data: orders,
