@@ -1,7 +1,8 @@
 import prisma from '../config/prisma.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 import orderType from '../enums/order/order-type.enum.js'
-import { OrderStatus } from '../enums/order/order-status.enum.js'
+import { OrderStatus, getStatusText } from '../enums/order/order-status.enum.js'
+import { getAmountTypeText } from '../enums/pay/payment-type.enum.js'
 
 const findAll = async (query) => {
   const { page, limit, sort, filters } = query;
@@ -49,6 +50,8 @@ const findAll = async (query) => {
 
     const sanitizedOrders = orders.map(order => ({
       ...order,
+      amountType: { id: order.amountType, text: getAmountTypeText(order.amountType) },
+      status: { id: order.status, text: getStatusText(order.status) },
       startHour: order.startHour ? order.startHour.toString() : null,
       endHour: order.endHour ? order.endHour.toString() : null,
     }));
