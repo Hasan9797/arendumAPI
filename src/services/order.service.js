@@ -10,7 +10,7 @@ const getOrders = async (query) => {
 
     if (!orders) return [];
 
-    const sanitizedOrders = orders.map(order => ({
+    const sanitizedOrders = orders.data.map(order => ({
       ...order,
       amountType: { id: order.amountType, text: getAmountTypeText(order.amountType) },
       status: { id: order.status, text: getStatusText(order.status) },
