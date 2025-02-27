@@ -42,6 +42,8 @@ const getAll = async (req, res) => {
       error: {
         message: error.message,
         code: 500,
+        file: error.file,
+        line: error.line,
       },
     });
   }
@@ -171,7 +173,7 @@ const getNewOrderByDriverParams = async (req, res) => {
   try {
     const driver = await driverService.getById(req.user.id);
     if (!driver) throw new Error('Driver not found');
-    
+
     const orders = await orderService.getNewOrderByDriverParams(driver?.params, Number(driver?.structureId));
     res.status(200).json({
       success: true,

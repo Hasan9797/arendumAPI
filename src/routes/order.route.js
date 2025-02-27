@@ -29,7 +29,7 @@ router.get('/start-pause', authentication, orderPauseController.startPauseTime);
 
 router.get('/end-pause', authentication, orderPauseController.endPauseTime); // query params: order ID
 
-router.get('/get-new-order', authentication, authorization([userRole.DRIVER]), orderController.getNewOrderByDriverParams); // Authentication required
+router.get('/get-new-order', authentication, orderController.getNewOrderByDriverParams); // Authentication required
 
 router.post('/create', authentication, orderController.create);
 
