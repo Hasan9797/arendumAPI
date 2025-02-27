@@ -7,8 +7,23 @@ import orderType from '../enums/order/order-type.enum.js';
 const getOrders = async (query) => {
   try {
     const orders = await orderRepo.findAll(query);
+
+    if (!orders) return [];
+
+    const sanitizedOrders = orders.map(order => ({
+      ...order,
+      amountType: { id: order.amountType, text: getAmountTypeText(order.amountType) },
+      status: { id: order.status, text: getStatusText(order.status) },
+      startHour: order.startHour ? order.startHour.toString() : null,
+      endHour: order.endHour ? order.endHour.toString() : null,
+    }));
+
+    const data = sanitizedOrders.map(
+      ({ driverId, clientId, machineId, ...rest }) => rest
+    );
+
     return {
-      data: formatResponseDates(orders.data),
+      data: formatResponseDates(data),
       pagination: orders.pagination,
     };
   } catch (error) {
@@ -96,7 +111,7 @@ const getNewOrderByDriverParams = async (driverParams, structureId) => {
 
 function filterOrdersByDriverParams(orders, driverParams) {
   // 1. Driver params'larni Map qilib olish
-  if(!driverParams) return [];
+  if (!driverParams) return [];
 
   const driverMap = new Map(
     driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]])

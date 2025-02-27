@@ -1,7 +1,8 @@
 import prisma from '../config/prisma.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
 import orderType from '../enums/order/order-type.enum.js'
-import { OrderStatus } from '../enums/order/order-status.enum.js'
+import { OrderStatus, getStatusText } from '../enums/order/order-status.enum.js'
+import { getAmountTypeText } from '../enums/pay/payment-type.enum.js'
 
 const findAll = async (query) => {
   const { page, limit, sort, filters } = query;
@@ -47,18 +48,8 @@ const findAll = async (query) => {
 
     const total = await prisma.order.count({ where });
 
-    const sanitizedOrders = orders.map(order => ({
-      ...order,
-      startHour: order.startHour ? order.startHour.toString() : null,
-      endHour: order.endHour ? order.endHour.toString() : null,
-    }));
-
-    const data = sanitizedOrders.map(
-      ({ driverId, clientId, machineId, ...rest }) => rest
-    );
-
     return {
-      data,
+      data: orders,
       pagination: {
         total,
         totalPages: Math.ceil(total / limit),
