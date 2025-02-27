@@ -96,6 +96,8 @@ const getNewOrderByDriverParams = async (driverParams, structureId) => {
 
 function filterOrdersByDriverParams(orders, driverParams) {
   // 1. Driver params'larni Map qilib olish
+  if(!driverParams) return [];
+
   const driverMap = new Map(
     driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]])
   );
