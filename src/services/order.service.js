@@ -4,9 +4,9 @@ import { OrderStatus, getStatusText } from '../enums/order/order-status.enum.js'
 import orderCalculateWorkHelper from '../helpers/order-calculate-work.helper.js';
 import orderType from '../enums/order/order-type.enum.js';
 import { getAmountTypeText } from '../enums/pay/payment-type.enum.js'
-import machinesRepo from '../repositories/machines.repo.js';
 import machinePriceService from './machine-price.service.js';
 import structureService from './structure.service.js';
+import machineService from './machines.service.js';
 
 const getOrders = async (query) => {
   try {
@@ -43,7 +43,7 @@ const getOrderById = async (lang, id) => {
       throw new Error('Order not found');
     }
 
-    const machine = await machinesRepo.getMachineById(lang, order.machineId);
+    const machine = await machineService.getMachineById(lang, order.machineId);
     const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
     const structure = await structureService.getById(order.structureId);
 
@@ -60,7 +60,7 @@ const getOrderById = async (lang, id) => {
       }
     }
 
-    const orderDateFormate = formatResponseDates(orderFiltered);
+    const orderDateFormate = formatResponseDates(order);
     return sanitizedOrders(orderDateFormate);
   } catch (error) {
     throw error;
@@ -162,7 +162,7 @@ function filterOrdersByDriverParams(orders, driverParams) {
 const getOrderByDriverId = async (lang, driverId) => {
   try {
     const order = await orderRepo.getOrderByDriverId(lang, driverId);
-    const machine = await machinesRepo.getMachineById(lang, order.machineId);
+    const machine = await machineService.getMachineById(lang, order.machineId);
 
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
       return {
@@ -186,7 +186,7 @@ const getOrderByDriverId = async (lang, driverId) => {
 const getOrderByClientId = async (lang, clientId) => {
   try {
     const order = await orderRepo.getOrderByClientId(lang, clientId);
-    const machine = await machinesRepo.getMachineById(lang, order.machineId);
+    const machine = await machineService.getMachineById(lang, order.machineId);
 
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
       return {
