@@ -65,11 +65,35 @@ const createMachine = async (newUser) => {
 };
 
 
-const getOneById = async (id) => {
+const getMachineById = async (lang, id) => {
   try {
-    return await prisma.machines.findUnique({
-      where: { id },
+    const cacheKey = `machine:${id}:${lang}`;
+    const cachedData = await redisClient.get(cacheKey);
+
+    if (cachedData) {
+      console.log('Cache hit!');
+      return JSON.parse(cachedData);
+    }
+
+    const machine = await prisma.machines.findUnique({
+      where: { id }
     });
+
+    if (!machine) {
+      throw new Error('Machine not found');
+    }
+
+    const adjustName = (obj) => {
+      return {
+        ...obj,
+        name: lang === 'ru' ? obj.nameRu : obj.nameUz,
+      };
+    };
+
+    const result = adjustName(machine);
+    await redisClient.set(cacheKey, JSON.stringify(result), { EX: 3600 });
+
+    return result;
   } catch (error) {
     throw error;
   }
@@ -117,40 +141,6 @@ const getMachinesIdAnName = async () => {
   });
 };
 
-const getMachineByIdWithLanguage = async (lang, id) => {
-  try {
-    const cacheKey = `machine:${id}:${lang}`;
-    const cachedData = await redisClient.get(cacheKey);
-
-    if (cachedData) {
-      console.log('Cache hit!');
-      return JSON.parse(cachedData);
-    }
-
-    const machine = await prisma.machines.findUnique({
-      where: { id }
-    });
-
-    if (!machine) {
-      throw new Error('Machine not found');
-    }
-
-    const adjustName = (obj) => {
-      const { nameRu, nameUz, nameEn, ...rest } = obj;
-      return {
-        ...rest,
-        name: lang === 'ru' ? nameRu : nameUz,
-      };
-    };
-
-    const result = adjustName(machine);
-    await redisClient.set(cacheKey, JSON.stringify(result), { EX: 3600 });
-
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};
 
 async function deleteMachineCache(id) {
   const pattern = `machine:${id}:*`; // Barcha `machine:${id}:lang` kalitlarni topadi
@@ -169,6 +159,5 @@ export default {
   updateMachineById,
   deleteMachineById,
   getMachinesIdAnName,
-  getOneById,
-  getMachineByIdWithLanguage,
+  getMachineById,
 };
