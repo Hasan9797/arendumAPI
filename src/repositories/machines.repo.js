@@ -78,7 +78,7 @@ const getMachineById = async (lang, id) => {
           id: true,
           minAmount: true,
           minimum: true,
-          MachinePriceParams: {
+          machinePriceParams: {
             select: {
               id: true,
               parameter: true,
