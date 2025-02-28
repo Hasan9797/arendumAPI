@@ -190,6 +190,24 @@ const getNewOrderByDriverParams = async (req, res) => {
   }
 }
 
+const getOrderByDriverId = async (req, res) => {
+  try {
+    const orders = await orderService.getOrderByDriverId(Number(req.user.id));
+    res.status(200).json({
+      success: true,
+      data: orders,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+}
+
 export default {
   getAll,
   getById,
@@ -198,5 +216,6 @@ export default {
   distroy,
   orderStartWork,
   orderEndWork,
+  getOrderByDriverId,
   getNewOrderByDriverParams
 };

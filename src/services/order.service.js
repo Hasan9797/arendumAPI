@@ -34,6 +34,17 @@ const getOrders = async (query) => {
 
 const getOrderById = async (id) => {
   const order = await orderRepo.getById(id);
+
+  const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
+    return {
+      ...rest,
+      amountType: { id: rest.amountType, text: getAmountTypeText(rest.amountType) },
+      status: { id: rest.status, text: getStatusText(rest.status) },
+      startHour: rest.startHour ? rest.startHour.toString() : null,
+      endHour: rest.endHour ? rest.endHour.toString() : null,
+    }
+  }
+
   return formatResponseDates(order);
 };
 
@@ -129,6 +140,17 @@ function filterOrdersByDriverParams(orders, driverParams) {
   );
 }
 
+const getOrderByDriverId = async (driverId) => {
+  try {
+    // const driver = await driverRepo.getById(driverId);
+
+    // if (!driver) throw new Error('Driver not found');
+
+    return await orderRepo.getOrderByDriverId(driverId);
+  } catch (error) {
+    throw error;
+  }
+}
 
 
 export default {
@@ -139,5 +161,6 @@ export default {
   deleteOrder,
   startOrder,
   endOrder,
+  getOrderByDriverId,
   getNewOrderByDriverParams
 };
