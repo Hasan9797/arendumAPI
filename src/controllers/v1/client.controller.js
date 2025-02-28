@@ -82,7 +82,14 @@ const update = async (req, res) => {
   }
 };
 
-const distroy = async (req, res) => { };
+const distroy = async (req, res) => {
+  try {
+    await clientService.deleteClient(parseInt(req.params.id));
+    res.status(200).json(responseSuccess());
+  } catch (error) {
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
 
 const getProcessOrder = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
