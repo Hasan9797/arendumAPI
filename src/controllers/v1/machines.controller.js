@@ -32,12 +32,11 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
-  const lang = req.headers['accept-language'] || 'uz';
   try {
-    const machine = await machinesService.getMachineById(
-      parseInt(req.params.id),
-      lang
+    const machine = await machinesService.getOneForUpdate(
+      parseInt(req.params.id)
     );
+
     res.status(200).json({
       success: true,
       error: false,
@@ -57,7 +56,7 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const machine = await machinesService.createMachine(req.body);
+    await machinesService.createMachine(req.body);
     res.status(201).json({
       success: true,
       error: false,
@@ -77,7 +76,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const machine = await machinesService.updateMachine(
+    await machinesService.updateMachine(
       parseInt(req.params.id),
       req.body
     );

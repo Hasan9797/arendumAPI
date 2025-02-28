@@ -5,6 +5,8 @@ import orderCalculateWorkHelper from '../helpers/order-calculate-work.helper.js'
 import orderType from '../enums/order/order-type.enum.js';
 import { getAmountTypeText } from '../enums/pay/payment-type.enum.js'
 import machinesRepo from '../repositories/machines.repo.js';
+import machinePriceService from './machine-price.service.js';
+import structureService from './structure.service.js';
 
 const getOrders = async (query) => {
   try {
@@ -36,21 +38,30 @@ const getOrders = async (query) => {
 const getOrderById = async (lang, id) => {
   try {
     const order = await orderRepo.getById(id);
-    const machine = await machinesRepo.getMachineById(lang, order.machineId);
 
-    const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    const machine = await machinesRepo.getMachineByIdWithLanguage(lang, order.machineId);
+    const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+    const structure = await structureService.getById(order.structureId);
+
+    const sanitizedOrders = ({ driverId, clientId, machineId, structureId, ...rest }) => {
       return {
         ...rest,
         amountType: { id: rest.amountType, text: getAmountTypeText(rest.amountType) },
         status: { id: rest.status, text: getStatusText(rest.status) },
         startHour: rest.startHour ? rest.startHour.toString() : null,
         endHour: rest.endHour ? rest.endHour.toString() : null,
-        machine
+        machine,
+        machinePrice,
+        structure
       }
     }
 
-    const orderFiltered = sanitizedOrders(order);
-    return formatResponseDates(orderFiltered);
+    const orderDateFormate = formatResponseDates(orderFiltered);
+    return sanitizedOrders(orderDateFormate);;
   } catch (error) {
     throw error;
   }
