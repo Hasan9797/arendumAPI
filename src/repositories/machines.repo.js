@@ -77,7 +77,7 @@ const getMachineById = async (lang, id) => {
         select: {
           id: true,
           minAmount: true,
-          minHourTime: true,
+          minimum: true,
           MachinePriceParams: {
             select: {
               id: true,
@@ -94,9 +94,9 @@ const getMachineById = async (lang, id) => {
 
 
   const adjustName = (obj) => {
-    const { nameRu, nameUz, nameEn, ...relationRest } = obj;
+    const { nameRu, nameUz, nameEn, ...rest } = obj;
     return {
-      ...relationRest,
+      ...rest,
       name: lang === 'ru' ? nameRu : nameUz,
     };
   };
