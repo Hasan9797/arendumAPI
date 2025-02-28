@@ -61,7 +61,7 @@ const getOrderById = async (lang, id) => {
     }
 
     const orderDateFormate = formatResponseDates(orderFiltered);
-    return sanitizedOrders(orderDateFormate);;
+    return sanitizedOrders(orderDateFormate);
   } catch (error) {
     throw error;
   }
