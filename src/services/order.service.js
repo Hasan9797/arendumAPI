@@ -43,9 +43,9 @@ const getOrderById = async (lang, id) => {
       throw new Error('Order not found');
     }
 
-    const machine = await machineService.getMachineById(lang, order.machineId);
+    const machine = await machineService.getMachineById(order.machineId, lang);
     const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
-    const structure = await structureService.getById(order.structureId);
+    const structure = await structureService.getById(order.structureId, lang);
 
     const sanitizedOrders = ({ driverId, clientId, machineId, structureId, ...rest }) => {
       return {
@@ -162,7 +162,14 @@ function filterOrdersByDriverParams(orders, driverParams) {
 const getOrderByDriverId = async (lang, driverId) => {
   try {
     const order = await orderRepo.getOrderByDriverId(lang, driverId);
-    const machine = await machineService.getMachineById(lang, order.machineId);
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    const machine = await machineService.getMachineById(order.machineId, lang);
+    const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+    const structure = await structureService.getById(order.structureId, lang);
 
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
       return {
@@ -171,13 +178,15 @@ const getOrderByDriverId = async (lang, driverId) => {
         status: { id: rest.status, text: getStatusText(rest.status) },
         startHour: rest.startHour ? rest.startHour.toString() : null,
         endHour: rest.endHour ? rest.endHour.toString() : null,
-        machine
+        machine,
+        machinePrice,
+        structure
       }
     }
 
-    const orderFiltered = sanitizedOrders(order);
+    const orderFiltered = formatResponseDates(order);
 
-    return formatResponseDates(orderFiltered);
+    return sanitizedOrders(orderFiltered);
   } catch (error) {
     throw error;
   }
@@ -185,8 +194,15 @@ const getOrderByDriverId = async (lang, driverId) => {
 
 const getOrderByClientId = async (lang, clientId) => {
   try {
-    const order = await orderRepo.getOrderByClientId(lang, clientId);
-    const machine = await machineService.getMachineById(lang, order.machineId);
+    const order = await orderRepo.getOrderByClientId(clientId);
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    const machine = await machineService.getMachineById(order.machineId, lang);
+    const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+    const structure = await structureService.getById(order.structureId, lang);
 
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
       return {
@@ -195,13 +211,15 @@ const getOrderByClientId = async (lang, clientId) => {
         status: { id: rest.status, text: getStatusText(rest.status) },
         startHour: rest.startHour ? rest.startHour.toString() : null,
         endHour: rest.endHour ? rest.endHour.toString() : null,
-        machine
+        machine,
+        machinePrice,
+        structure
       }
     }
 
-    const orderFiltered = sanitizedOrders(order);
+    const orderDateFormate = formatResponseDates(order);;
 
-    return formatResponseDates(orderFiltered);
+    return sanitizedOrders(orderDateFormate);
   } catch (error) {
     throw error;
   }
