@@ -76,10 +76,26 @@ const create = async (data) => {
 
 const getById = async (id) => {
   try {
-    return await prisma.order.findUnique({
-      where: { id },
+    prisma.order.findUnique({
+      where: {
+        id: 155
+      },
       include: {
         OrderPause: true,
+        client: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true
+          }
+        },
+        driver: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true
+          }
+        },
         machine: {
           select: {
             id: true,
@@ -87,8 +103,6 @@ const getById = async (id) => {
             nameRu: true,
             nameUz: true,
             img: true,
-          },
-          include: {
             MachinePrice: {
               select: {
                 id: true,
@@ -96,36 +110,20 @@ const getById = async (id) => {
                 minimum: true,
                 priceMode: true,
                 status: true,
-              },
-              include: {
                 machinePriceParams: {
                   select: {
                     id: true,
                     parameter: true,
                     parameterName: true,
                     unit: true,
-                    type: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        client: {
-          select: {
-            id: true,
-            fullName: true,
-            phone: true,
-          },
-        },
-        driver: {
-          select: {
-            id: true,
-            fullName: true,
-            phone: true,
-          },
-        },
-      },
+                    type: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     });
   } catch (error) {
     throw error;
