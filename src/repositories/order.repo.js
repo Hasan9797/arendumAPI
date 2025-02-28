@@ -183,7 +183,7 @@ const getOrderByDriverId = async (lang, driverId) => {
   }
 };
 
-const getOrderByClientId = async (lang, clientId) => {
+const getOrderByClientId = async (clientId) => {
   try {
     return await prisma.order.findFirst({
       where: {
@@ -208,7 +208,7 @@ const getOrderByClientId = async (lang, clientId) => {
             fullName: true,
             phone: true
           }
-        }
+        },
       },
       orderBy: {
         id: 'desc', // { id: 'desc' }

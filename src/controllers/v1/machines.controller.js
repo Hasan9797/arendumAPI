@@ -32,9 +32,11 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
-    const machine = await machinesService.getOneForUpdate(
-      parseInt(req.params.id)
+    const machine = await machinesService.getMachineById(
+      parseInt(req.params.id),
+      lang
     );
 
     res.status(200).json({
