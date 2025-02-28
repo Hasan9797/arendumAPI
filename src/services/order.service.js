@@ -43,7 +43,7 @@ const getOrderById = async (lang, id) => {
       throw new Error('Order not found');
     }
 
-    const machine = await machinesRepo.getMachineByIdWithLanguage(lang, order.machineId);
+    const machine = await machinesRepo.getMachineById(lang, order.machineId);
     const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
     const structure = await structureService.getById(order.structureId);
 
@@ -61,7 +61,7 @@ const getOrderById = async (lang, id) => {
     }
 
     const orderDateFormate = formatResponseDates(orderFiltered);
-    return sanitizedOrders(orderDateFormate);;
+    return sanitizedOrders(orderDateFormate);
   } catch (error) {
     throw error;
   }
