@@ -66,16 +66,32 @@ const createMachine = async (newUser) => {
 const getMachineById = async (lang, id) => {
   const machine = await prisma.machines.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      nameRu: true,
+      nameUz: true,
+      nameEn: true,
+      img: true,
       MachinePrice: {
         select: {
           id: true,
           minAmount: true,
           minHourTime: true,
+          MachinePriceParams: {
+            select: {
+              id: true,
+              parameter: true,
+              parameterName: true,
+              unit: true,
+              type: true,
+            },
+          },
         },
       },
     },
   });
+
 
   const adjustName = (obj) => {
     const { nameRu, nameUz, nameEn, ...relationRest } = obj;

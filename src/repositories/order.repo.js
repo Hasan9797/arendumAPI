@@ -80,6 +80,51 @@ const getById = async (id) => {
       where: { id },
       include: {
         OrderPause: true,
+        machine: {
+          select: {
+            id: true,
+            name: true,
+            nameRu: true,
+            nameUz: true,
+            img: true,
+          },
+          include: {
+            MachinePrice: {
+              select: {
+                id: true,
+                minAmount: true,
+                minimum: true,
+                priceMode: true,
+                status: true,
+              },
+              include: {
+                MachinePriceParams: {
+                  select: {
+                    id: true,
+                    parameter: true,
+                    parameterName: true,
+                    unit: true,
+                    type: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        client: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        },
+        driver: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        },
       },
     });
   } catch (error) {
@@ -122,6 +167,24 @@ const getNewOrderByStructureId = async (structureId) => {
   }
 };
 
+const getOrderByDriverId = async (driverId) => {
+  try {
+    return await prisma.order.findFirst({
+      where: {
+        driverId: driverId,
+        status: {
+          in: [OrderStatus.ASSIGNED, OrderStatus.ARRIVED, OrderStatus.START_WORK]
+        }
+      },
+      orderBy: {
+        id: 'desc' // Yoki id bo‘yicha tartiblash mumkin: { id: 'desc' }
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 export default {
   findAll,
@@ -129,5 +192,6 @@ export default {
   create,
   updateById,
   deleteById,
+  getOrderByDriverId,
   getNewOrderByStructureId
 };
