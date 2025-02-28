@@ -81,7 +81,15 @@ const getById = async (id) => {
         id,
       },
       include: {
-        OrderPause: true,
+        OrderPause: {
+          select: {
+            id: true,
+            startPause: true,
+            endPause: true,
+            status: true,
+            totalTime: true,
+          },
+        },
         client: {
           select: {
             id: true,
@@ -96,33 +104,6 @@ const getById = async (id) => {
             phone: true
           }
         },
-        machine: {
-          select: {
-            id: true,
-            name: true,
-            nameRu: true,
-            nameUz: true,
-            img: true,
-            MachinePrice: {
-              select: {
-                id: true,
-                minAmount: true,
-                minimum: true,
-                priceMode: true,
-                status: true,
-                machinePriceParams: {
-                  select: {
-                    id: true,
-                    parameter: true,
-                    parameterName: true,
-                    unit: true,
-                    type: true
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     });
   } catch (error) {
@@ -165,7 +146,7 @@ const getNewOrderByStructureId = async (structureId) => {
   }
 };
 
-const getOrderByDriverId = async (driverId) => {
+const getOrderByDriverId = async (lang, driverId) => {
   try {
     return await prisma.order.findFirst({
       where: {
@@ -174,10 +155,66 @@ const getOrderByDriverId = async (driverId) => {
           in: [OrderStatus.ASSIGNED, OrderStatus.ARRIVED, OrderStatus.START_WORK]
         }
       },
+      include: {
+        OrderPause: {
+          select: {
+            id: true,
+            startPause: true,
+            endPause: true,
+            status: true,
+            totalTime: true,
+          },
+        },
+        client: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true
+          }
+        },
+      },
       orderBy: {
-        id: 'desc' // Yoki id bo‘yicha tartiblash mumkin: { id: 'desc' }
+        id: 'desc', // { id: 'desc' }
       }
     });
+
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getOrderByClientId = async (lang, clientId) => {
+  try {
+    return await prisma.order.findFirst({
+      where: {
+        clientId,
+        status: {
+          in: [OrderStatus.ASSIGNED, OrderStatus.ARRIVED, OrderStatus.START_WORK]
+        }
+      },
+      include: {
+        OrderPause: {
+          select: {
+            id: true,
+            startPause: true,
+            endPause: true,
+            status: true,
+            totalTime: true,
+          },
+        },
+        driver: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true
+          }
+        }
+      },
+      orderBy: {
+        id: 'desc', // { id: 'desc' }
+      }
+    });
+
   } catch (error) {
     throw error;
   }
@@ -191,5 +228,6 @@ export default {
   updateById,
   deleteById,
   getOrderByDriverId,
+  getOrderByClientId,
   getNewOrderByStructureId
 };

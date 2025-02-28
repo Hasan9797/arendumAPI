@@ -14,6 +14,8 @@ router.get('/', driverController.getAll);
 
 router.get('/me', authentication, driverController.getMe);
 
+router.get('/process-order', authentication, driverController.getProcessOrder);
+
 router.get('/:id', driverController.getById);
 
 router.post('/create', driverController.create);
