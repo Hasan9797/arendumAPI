@@ -98,7 +98,7 @@ const getById = async (id) => {
                 status: true,
               },
               include: {
-                MachinePriceParams: {
+                machinePriceParams: {
                   select: {
                     id: true,
                     parameter: true,
