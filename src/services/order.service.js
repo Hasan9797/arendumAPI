@@ -4,6 +4,9 @@ import { OrderStatus, getStatusText } from '../enums/order/order-status.enum.js'
 import orderCalculateWorkHelper from '../helpers/order-calculate-work.helper.js';
 import orderType from '../enums/order/order-type.enum.js';
 import { getAmountTypeText } from '../enums/pay/payment-type.enum.js'
+import machinesRepo from '../repositories/machines.repo.js';
+import machinePriceService from './machine-price.service.js';
+import structureService from './structure.service.js';
 
 const getOrders = async (query) => {
   try {
@@ -32,20 +35,36 @@ const getOrders = async (query) => {
   }
 };
 
-const getOrderById = async (id) => {
-  const order = await orderRepo.getById(id);
+const getOrderById = async (lang, id) => {
+  try {
+    const order = await orderRepo.getById(id);
 
-  const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
-    return {
-      ...rest,
-      amountType: { id: rest.amountType, text: getAmountTypeText(rest.amountType) },
-      status: { id: rest.status, text: getStatusText(rest.status) },
-      startHour: rest.startHour ? rest.startHour.toString() : null,
-      endHour: rest.endHour ? rest.endHour.toString() : null,
+    if (!order) {
+      throw new Error('Order not found');
     }
-  }
 
-  return formatResponseDates(order);
+    const machine = await machinesRepo.getMachineByIdWithLanguage(lang, order.machineId);
+    const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+    const structure = await structureService.getById(order.structureId);
+
+    const sanitizedOrders = ({ driverId, clientId, machineId, structureId, ...rest }) => {
+      return {
+        ...rest,
+        amountType: { id: rest.amountType, text: getAmountTypeText(rest.amountType) },
+        status: { id: rest.status, text: getStatusText(rest.status) },
+        startHour: rest.startHour ? rest.startHour.toString() : null,
+        endHour: rest.endHour ? rest.endHour.toString() : null,
+        machine,
+        machinePrice,
+        structure
+      }
+    }
+
+    const orderDateFormate = formatResponseDates(orderFiltered);
+    return sanitizedOrders(orderDateFormate);;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const createOrder = async (data) => {
@@ -140,13 +159,49 @@ function filterOrdersByDriverParams(orders, driverParams) {
   );
 }
 
-const getOrderByDriverId = async (driverId) => {
+const getOrderByDriverId = async (lang, driverId) => {
   try {
-    // const driver = await driverRepo.getById(driverId);
+    const order = await orderRepo.getOrderByDriverId(lang, driverId);
+    const machine = await machinesRepo.getMachineById(lang, order.machineId);
 
-    // if (!driver) throw new Error('Driver not found');
+    const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
+      return {
+        ...rest,
+        amountType: { id: rest.amountType, text: getAmountTypeText(rest.amountType) },
+        status: { id: rest.status, text: getStatusText(rest.status) },
+        startHour: rest.startHour ? rest.startHour.toString() : null,
+        endHour: rest.endHour ? rest.endHour.toString() : null,
+        machine
+      }
+    }
 
-    return await orderRepo.getOrderByDriverId(driverId);
+    const orderFiltered = sanitizedOrders(order);
+
+    return formatResponseDates(orderFiltered);
+  } catch (error) {
+    throw error;
+  }
+}
+
+const getOrderByClientId = async (lang, clientId) => {
+  try {
+    const order = await orderRepo.getOrderByClientId(lang, clientId);
+    const machine = await machinesRepo.getMachineById(lang, order.machineId);
+
+    const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
+      return {
+        ...rest,
+        amountType: { id: rest.amountType, text: getAmountTypeText(rest.amountType) },
+        status: { id: rest.status, text: getStatusText(rest.status) },
+        startHour: rest.startHour ? rest.startHour.toString() : null,
+        endHour: rest.endHour ? rest.endHour.toString() : null,
+        machine
+      }
+    }
+
+    const orderFiltered = sanitizedOrders(order);
+
+    return formatResponseDates(orderFiltered);
   } catch (error) {
     throw error;
   }
@@ -162,5 +217,6 @@ export default {
   startOrder,
   endOrder,
   getOrderByDriverId,
+  getOrderByClientId,
   getNewOrderByDriverParams
 };

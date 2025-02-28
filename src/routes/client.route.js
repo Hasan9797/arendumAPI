@@ -9,6 +9,8 @@ router.get('/', clientController.getAll);
 
 router.get('/me', authentication, clientController.getMe);
 
+router.get('/process-order', authentication, clientController.getProcessOrder);
+
 router.get('/:id', clientController.getById);
 
 router.post('/create', clientController.create);

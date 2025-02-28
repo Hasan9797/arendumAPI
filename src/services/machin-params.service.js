@@ -108,7 +108,7 @@ const getParamsOptions = async (lang, machineId) => {
 
     const paramsFilters = await paramsFiltersService.getByMachineId(machineId);
 
-    const amount = await optionAmount(machineId);
+    // const amount = await optionAmount(machineId);
 
     return {
       fullAmount: machinePrice?.minAmount ?? 0,

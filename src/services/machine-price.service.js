@@ -18,9 +18,9 @@ const getPriceById = async (lang, id) => {
   return await machinePriceRepo.getMachinePriceById(lang, id);
 };
 
-const getPriceByMachineId = async (id) => {
+const getPriceByMachineId = async (machineId) => {
   try {
-    const result = await machinePriceRepo.getPriceByMachineId(id);
+    const result = await machinePriceRepo.getPriceByMachineId(machineId);
     if (!result) {
       return {};
     }

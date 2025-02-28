@@ -3,6 +3,7 @@ import {
   responseSuccess,
   responseError,
 } from '../../helpers/response.helper.js';
+import orderService from '../../services/order.service.js';
 
 const getAll = async (req, res) => {
   const query = {
@@ -77,11 +78,22 @@ const distroy = async (req, res) => {
   }
 };
 
+const getProcessOrder = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
+  try {
+    const order = await orderService.getOrderByDriverId(lang, req.user.id);
+    res.status(200).json(responseSuccess(order));
+  } catch (error) {
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
+
 export default {
   getAll,
   getById,
   create,
   update,
   distroy,
-  getMe
+  getMe,
+  getProcessOrder
 };

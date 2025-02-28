@@ -50,8 +50,9 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
-    const order = await orderService.getOrderById(parseInt(req.params.id));
+    const order = await orderService.getOrderById(lang, parseInt(req.params.id));
     res.status(200).json({
       success: true,
       data: order,
@@ -191,8 +192,9 @@ const getNewOrderByDriverParams = async (req, res) => {
 }
 
 const getOrderByDriverId = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
-    const orders = await orderService.getOrderByDriverId(Number(req.user.id));
+    const orders = await orderService.getOrderByDriverId(lang, Number(req.user.id));
     res.status(200).json({
       success: true,
       data: orders,

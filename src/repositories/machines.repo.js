@@ -63,50 +63,10 @@ const createMachine = async (newUser) => {
   }
 };
 
-const getMachineById = async (lang, id) => {
-  const machine = await prisma.machines.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      name: true,
-      nameRu: true,
-      nameUz: true,
-      nameEn: true,
-      img: true,
-      MachinePrice: {
-        select: {
-          id: true,
-          minAmount: true,
-          minimum: true,
-          machinePriceParams: {
-            select: {
-              id: true,
-              parameter: true,
-              parameterName: true,
-              unit: true,
-              type: true,
-            },
-          },
-        },
-      },
-    },
-  });
 
-
-  const adjustName = (obj) => {
-    const { nameRu, nameUz, nameEn, ...rest } = obj;
-    return {
-      ...rest,
-      name: lang === 'ru' ? nameRu : nameUz,
-    };
-  };
-
-  return adjustName(machine);
-};
-
-const deleteMachineById = async (id) => {
+const getOneById = async (id) => {
   try {
-    return await prisma.machines.delete({
+    return await prisma.machines.findUnique({
       where: { id },
     });
   } catch (error) {
@@ -120,11 +80,32 @@ const updateMachineById = async (id, machineData) => {
       where: { id },
       data: machineData,
     });
+
+    if (!updatedUser) {
+      throw new Error('Machine not found');
+    }
+
+    deleteMachineCache(id);
     return updatedUser;
   } catch (error) {
     throw error;
   }
 };
+
+const deleteMachineById = async (id) => {
+  try {
+    const result = await prisma.machines.delete({
+      where: { id },
+    });
+
+    deleteMachineCache(id);
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 const getMachinesIdAnName = async () => {
   return await prisma.machines.findMany({
@@ -135,22 +116,58 @@ const getMachinesIdAnName = async () => {
   });
 };
 
-const getOne = async (id) => {
+const getMachineByIdWithLanguage = async (lang, id) => {
   try {
-    return await prisma.machines.findUniqueOrThrow({
-      where: { id },
+    const cacheKey = `machine:${id}:${lang}`;
+    const cachedData = await redisClient.get(cacheKey);
+
+    if (cachedData) {
+      console.log('Cache hit!');
+      return JSON.parse(cachedData);
+    }
+
+    const machine = await prisma.machines.findUnique({
+      where: { id }
     });
+
+    if (!machine) {
+      throw new Error('Machine not found');
+    }
+
+    const adjustName = (obj) => {
+      const { nameRu, nameUz, nameEn, ...rest } = obj;
+      return {
+        ...rest,
+        name: lang === 'ru' ? nameRu : nameUz,
+      };
+    };
+
+    const result = adjustName(machine);
+    await redisClient.set(cacheKey, JSON.stringify(result), { EX: 3600 });
+
+    return result;
   } catch (error) {
     throw error;
   }
 };
 
+async function deleteMachineCache(id) {
+  const pattern = `machine:${id}:*`; // Barcha `machine:${id}:lang` kalitlarni topadi
+  const keys = await redisClient.keys(pattern); // Barcha mos kalitlarni qaytaradi
+
+  if (keys.length > 0) {
+    await redisClient.del(keys); // Topilgan kalitlarni o‘chiradi
+    console.log(`Deleted ${keys.length} cache entries for machine:${id}`);
+  }
+}
+
+
 export default {
   getMachines,
-  getMachineById,
   createMachine,
   updateMachineById,
   deleteMachineById,
   getMachinesIdAnName,
-  getOne,
+  getOneById,
+  getMachineByIdWithLanguage,
 };
