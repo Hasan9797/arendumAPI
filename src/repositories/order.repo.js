@@ -76,9 +76,9 @@ const create = async (data) => {
 
 const getById = async (id) => {
   try {
-    prisma.order.findUnique({
+    return await prisma.order.findUnique({
       where: {
-        id: 155
+        id,
       },
       include: {
         OrderPause: true,
