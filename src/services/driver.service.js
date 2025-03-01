@@ -21,6 +21,11 @@ const getById = async (id) => {
   return formatResponseDates(driver);
 };
 
+const getProfile = async (lang, id) => {
+  const driver = await driverRepository.getDriverProfile(id);
+  return formatResponseDates(driver);
+};
+
 const create = async (data) => {
   try {
     return await driverRepository.create(data);
@@ -67,6 +72,7 @@ const getDriversInClientStructure = async (structureId, orderParams, orderType, 
 export default {
   getAll,
   getById,
+  getProfile,
   create,
   updateById,
   deleteById,

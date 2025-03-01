@@ -40,8 +40,9 @@ const getById = async (req, res) => {
 };
 
 const getMe = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   try {
-    const driver = await driverService.getById(parseInt(req.user.id));
+    const driver = await driverService.getProfile(lang, parseInt(req.user.id));
     res.status(201).json(responseSuccess(driver));
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));

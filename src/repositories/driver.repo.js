@@ -164,6 +164,55 @@ const deleteById = async (id) => {
   }
 };
 
+const getDriverProfile = async (id) => {
+  const cacheKey = `driver_${id}`; // Redis kaliti
+
+  // 1. Avval Redis cache dan tekshirish
+  const cachedDriver = await redisClient.get(cacheKey);
+  if (cachedDriver) {
+    return JSON.parse(cachedDriver); // Cache'da bo‘lsa, JSON parse qilamiz
+  }
+
+  // 2. Agar cache'da bo‘lmasa, bazadan olish
+  const driver = await prisma.driver.findUnique({
+    where: { id },
+    include: {
+      region: {
+        select: {
+          id: true,
+          name: true,
+          nameUz: true,
+          nameRu: true,
+        },
+      },
+      structure: {
+        select: {
+          id: true,
+          name: true,
+          nameUz: true,
+          nameRu: true,
+        },
+      },
+      machine: {
+        select: {
+          id: true,
+          name: true,
+          nameUz: true,
+          nameRu: true,
+        },
+      },
+    }
+  });
+
+  // 3. Agar driver topilsa, Redis cache'ga 1 kunga saqlaymiz
+  if (driver) {
+    await redisClient.setEx(cacheKey, 86400, JSON.stringify(driver)); // 86400 soniya = 1 kun
+  }
+
+  return driver;
+};
+
+
 const getDriversByStructureIdForNotification = async (
   structureId,
   orderParams,
@@ -193,5 +242,6 @@ export default {
   create,
   updateById,
   deleteById,
+  getDriverProfile,
   getDriversByStructureIdForNotification,
 };
