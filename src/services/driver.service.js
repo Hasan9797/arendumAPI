@@ -23,7 +23,30 @@ const getById = async (id) => {
 
 const getProfile = async (lang, id) => {
   const driver = await driverRepository.getDriverProfile(id);
-  return formatResponseDates(driver);
+
+  if (!driver) throw new Error('Driver not found');
+
+  const formattedDriver = formatResponseDates(driver);
+
+  const adjustName = (obj) => {
+    if (!obj) return null;
+    const { nameRu, nameUz, ...relationRest } = obj;
+    return {
+      ...relationRest,
+      name: lang === 'ru' ? nameRu : nameUz,
+    };
+  };
+
+  const serializedDriver = ({ regionId, structureId, machineId, ...rest }) => {
+    return {
+      ...rest,
+      region: adjustName(rest.region),
+      structure: adjustName(rest.structure),
+      machine: adjustName(rest.machine),
+    };
+  };
+
+  return serializedDriver(formattedDriver);
 };
 
 const create = async (data) => {
