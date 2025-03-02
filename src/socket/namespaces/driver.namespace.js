@@ -72,7 +72,6 @@ export default (io) => {
 
         await redisSetHelper.stopNotificationForOrder(String(orderId));
       } catch (error) {
-        console.log(error);
         socket.emit('error', { message: error.message });
       }
     });

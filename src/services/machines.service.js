@@ -34,6 +34,11 @@ const getOptions = async () => {
   return await machinesRepo.getMachinesIdAnName();
 };
 
+const getOne = async (id) => {
+  return await machinesRepo.getOne(id);
+};
+
+
 export default {
   getMachines,
   getMachineById,
