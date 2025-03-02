@@ -152,8 +152,6 @@ const endOrder = async (orderId) => {
 
 const getNewOrderByDriverParams = async (driverParams, structureId) => {
   try {
-    console.log(driverParams, structureId);
-
     const orders = await orderRepo.getNewOrderByStructureId(structureId);
     if (!orders) return [];
 
@@ -164,7 +162,6 @@ const getNewOrderByDriverParams = async (driverParams, structureId) => {
 };
 
 function filterOrdersByDriverParams(orders, driverParams) {
-  // 1. Driver params'larni Map qilib olish
   if (!driverParams) return [];
 
   const driverMap = new Map(
@@ -173,16 +170,16 @@ function filterOrdersByDriverParams(orders, driverParams) {
       Array.isArray(d.params) ? d.params : [d.params],
     ])
   );
+  console.log(orders, driverMap);
+  
+  return orders.filter((order) => {
+    if (!order.params || !Array.isArray(order.params)) return false; // 🔹 order.params yo‘q bo‘lsa, o‘tib ketish
 
-  // 2. Orderlarni filter qilish
-  return orders.filter((order) =>
-    order.params.every((orderParam) => {
+    return order.params.every((orderParam) => {
       const driverValues = driverMap.get(orderParam.key);
-      // Har bir objectning key'ga mos driver params bor-yo‘qligini va
-      // param qiymati shu driver array ichida topilishini tekshirish
       return driverValues && driverValues.includes(orderParam.param);
-    })
-  );
+    });
+  });
 }
 
 const getOrderByDriverId = async (lang, driverId) => {
