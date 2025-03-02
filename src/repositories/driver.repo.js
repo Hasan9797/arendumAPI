@@ -143,7 +143,7 @@ const updateById = async (id, driverData) => {
     return updatedUser;
   } catch (error) {
     console.error('Error updating user:', error);
-    return null;
+    throw error;
   }
 };
 

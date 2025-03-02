@@ -1,7 +1,7 @@
 import prisma from '../config/prisma.js';
 import { buildWhereFilter } from '../helpers/where-filter-helper.js';
-import orderType from '../enums/order/order-type.enum.js'
-import { OrderStatus } from '../enums/order/order-status.enum.js'
+import orderType from '../enums/order/order-type.enum.js';
+import { OrderStatus } from '../enums/order/order-status.enum.js';
 
 const findAll = async (query) => {
   const { page, limit, sort, filters } = query;
@@ -63,16 +63,13 @@ const findAll = async (query) => {
 
 const create = async (data) => {
   try {
-
     return await prisma.order.create({
       data: data,
     });
-
   } catch (error) {
     throw error;
   }
 };
-
 
 const getById = async (id) => {
   try {
@@ -94,17 +91,17 @@ const getById = async (id) => {
           select: {
             id: true,
             fullName: true,
-            phone: true
-          }
+            phone: true,
+          },
         },
         driver: {
           select: {
             id: true,
             fullName: true,
-            phone: true
-          }
+            phone: true,
+          },
         },
-      }
+      },
     });
   } catch (error) {
     throw error;
@@ -138,7 +135,7 @@ const getNewOrderByStructureId = async (structureId) => {
     return await prisma.order.findMany({
       where: {
         structureId,
-        status: OrderStatus.NEW,
+        status: OrderStatus.SEARCHING,
       },
     });
   } catch (error) {
@@ -152,8 +149,12 @@ const getOrderByDriverId = async (lang, driverId) => {
       where: {
         driverId: driverId,
         status: {
-          in: [OrderStatus.ASSIGNED, OrderStatus.ARRIVED, OrderStatus.START_WORK]
-        }
+          in: [
+            OrderStatus.ASSIGNED,
+            OrderStatus.ARRIVED,
+            OrderStatus.START_WORK,
+          ],
+        },
       },
       include: {
         OrderPause: {
@@ -169,15 +170,14 @@ const getOrderByDriverId = async (lang, driverId) => {
           select: {
             id: true,
             fullName: true,
-            phone: true
-          }
+            phone: true,
+          },
         },
       },
       orderBy: {
         id: 'desc', // { id: 'desc' }
-      }
+      },
     });
-
   } catch (error) {
     throw error;
   }
@@ -189,8 +189,12 @@ const getOrderByClientId = async (clientId) => {
       where: {
         clientId,
         status: {
-          in: [OrderStatus.ASSIGNED, OrderStatus.ARRIVED, OrderStatus.START_WORK]
-        }
+          in: [
+            OrderStatus.ASSIGNED,
+            OrderStatus.ARRIVED,
+            OrderStatus.START_WORK,
+          ],
+        },
       },
       include: {
         OrderPause: {
@@ -206,20 +210,18 @@ const getOrderByClientId = async (clientId) => {
           select: {
             id: true,
             fullName: true,
-            phone: true
-          }
+            phone: true,
+          },
         },
       },
       orderBy: {
         id: 'desc', // { id: 'desc' }
-      }
+      },
     });
-
   } catch (error) {
     throw error;
   }
 };
-
 
 export default {
   findAll,
@@ -229,5 +231,5 @@ export default {
   deleteById,
   getOrderByDriverId,
   getOrderByClientId,
-  getNewOrderByStructureId
+  getNewOrderByStructureId,
 };
