@@ -71,7 +71,6 @@ const getMachineById = async (lang, id) => {
     const cachedData = await redisClient.get(cacheKey);
 
     if (cachedData) {
-      console.log('Cache hit!');
       return JSON.parse(cachedData);
     }
 
