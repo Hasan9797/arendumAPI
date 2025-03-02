@@ -1,9 +1,12 @@
 import orderRepo from '../repositories/order.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
-import { OrderStatus, getStatusText } from '../enums/order/order-status.enum.js';
+import {
+  OrderStatus,
+  getStatusText,
+} from '../enums/order/order-status.enum.js';
 import orderCalculateWorkHelper from '../helpers/order-calculate-work.helper.js';
 import orderType from '../enums/order/order-type.enum.js';
-import { getAmountTypeText } from '../enums/pay/payment-type.enum.js'
+import { getAmountTypeText } from '../enums/pay/payment-type.enum.js';
 import machinePriceService from './machine-price.service.js';
 import structureService from './structure.service.js';
 import machineService from './machines.service.js';
@@ -14,9 +17,12 @@ const getOrders = async (query) => {
 
     if (!orders) return [];
 
-    const sanitizedOrders = orders.data.map(order => ({
+    const sanitizedOrders = orders.data.map((order) => ({
       ...order,
-      amountType: { id: order.amountType, text: getAmountTypeText(order.amountType) },
+      amountType: {
+        id: order.amountType,
+        text: getAmountTypeText(order.amountType),
+      },
       status: { id: order.status, text: getStatusText(order.status) },
       startHour: order.startHour ? order.startHour.toString() : null,
       endHour: order.endHour ? order.endHour.toString() : null,
@@ -44,21 +50,32 @@ const getOrderById = async (lang, id) => {
     }
 
     const machine = await machineService.getMachineById(order.machineId, lang);
-    const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+    const machinePrice = await machinePriceService.getPriceByMachineId(
+      order.machineId
+    );
     const structure = await structureService.getById(order.structureId, lang);
 
-    const sanitizedOrders = ({ driverId, clientId, machineId, structureId, ...rest }) => {
+    const sanitizedOrders = ({
+      driverId,
+      clientId,
+      machineId,
+      structureId,
+      ...rest
+    }) => {
       return {
         ...rest,
-        amountType: { id: rest.amountType, text: getAmountTypeText(rest.amountType) },
+        amountType: {
+          id: rest.amountType,
+          text: getAmountTypeText(rest.amountType),
+        },
         status: { id: rest.status, text: getStatusText(rest.status) },
         startHour: rest.startHour ? rest.startHour.toString() : null,
         endHour: rest.endHour ? rest.endHour.toString() : null,
         machine,
         machinePrice,
-        structure
-      }
-    }
+        structure,
+      };
+    };
 
     const orderDateFormate = formatResponseDates(order);
     return sanitizedOrders(orderDateFormate);
@@ -88,12 +105,12 @@ const startOrder = async (orderId) => {
   try {
     return await orderRepo.updateById(orderId, {
       startHour: Math.floor(Date.now() / 1000),
-      status: OrderStatus.START_WORK
+      status: OrderStatus.START_WORK,
     });
   } catch (error) {
     throw error;
   }
-}
+};
 
 //End Order and Calculate Work (Time or Km) amount
 const endOrder = async (orderId) => {
@@ -101,7 +118,8 @@ const endOrder = async (orderId) => {
     if (!orderId) throw new Error('Order ID is required');
 
     const order = await orderRepo.getById(orderId);
-    if (!order || order.status != OrderStatus.START_WORK) throw new Error('Order is not started');
+    if (!order || order.status != OrderStatus.START_WORK)
+      throw new Error('Order is not started');
 
     // 1. Order Tukash vaqti (soniyalarda)
     const endHour = Math.floor(Date.now() / 1000);
@@ -110,7 +128,10 @@ const endOrder = async (orderId) => {
     // 1. Order type bo'yicha hisoblash
     switch (String(order.type)) {
       case orderType.hour:
-        updateData = orderCalculateWorkHelper.calculateWorkTimeAmount({ ...order, endHour });
+        updateData = orderCalculateWorkHelper.calculateWorkTimeAmount({
+          ...order,
+          endHour,
+        });
         break;
       case orderType.km:
         updateData = orderCalculateWorkHelper.calculateWorkKmAmount(order);
@@ -122,15 +143,17 @@ const endOrder = async (orderId) => {
     return await orderRepo.updateById(orderId, {
       endHour,
       orderStatus: OrderStatus.COMPLETED,
-      ...updateData
+      ...updateData,
     });
   } catch (error) {
     throw error;
   }
-}
+};
 
 const getNewOrderByDriverParams = async (driverParams, structureId) => {
   try {
+    console.log(driverParams, structureId);
+
     const orders = await orderRepo.getNewOrderByStructureId(structureId);
     if (!orders) return [];
 
@@ -138,21 +161,24 @@ const getNewOrderByDriverParams = async (driverParams, structureId) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 function filterOrdersByDriverParams(orders, driverParams) {
   // 1. Driver params'larni Map qilib olish
   if (!driverParams) return [];
 
   const driverMap = new Map(
-    driverParams.map(d => [d.key, Array.isArray(d.params) ? d.params : [d.params]])
+    driverParams.map((d) => [
+      d.key,
+      Array.isArray(d.params) ? d.params : [d.params],
+    ])
   );
 
   // 2. Orderlarni filter qilish
-  return orders.filter(order =>
-    order.params.every(orderParam => {
+  return orders.filter((order) =>
+    order.params.every((orderParam) => {
       const driverValues = driverMap.get(orderParam.key);
-      // Har bir objectning key'ga mos driver params bor-yo‘qligini va 
+      // Har bir objectning key'ga mos driver params bor-yo‘qligini va
       // param qiymati shu driver array ichida topilishini tekshirish
       return driverValues && driverValues.includes(orderParam.param);
     })
@@ -168,21 +194,26 @@ const getOrderByDriverId = async (lang, driverId) => {
     }
 
     const machine = await machineService.getMachineById(order.machineId, lang);
-    const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+    const machinePrice = await machinePriceService.getPriceByMachineId(
+      order.machineId
+    );
     const structure = await structureService.getById(order.structureId, lang);
 
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
       return {
         ...rest,
-        amountType: { id: rest.amountType, text: getAmountTypeText(rest.amountType) },
+        amountType: {
+          id: rest.amountType,
+          text: getAmountTypeText(rest.amountType),
+        },
         status: { id: rest.status, text: getStatusText(rest.status) },
         startHour: rest.startHour ? rest.startHour.toString() : null,
         endHour: rest.endHour ? rest.endHour.toString() : null,
         machine,
         machinePrice,
-        structure
-      }
-    }
+        structure,
+      };
+    };
 
     const orderFiltered = formatResponseDates(order);
 
@@ -190,7 +221,7 @@ const getOrderByDriverId = async (lang, driverId) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 const getOrderByClientId = async (lang, clientId) => {
   try {
@@ -201,30 +232,34 @@ const getOrderByClientId = async (lang, clientId) => {
     }
 
     const machine = await machineService.getMachineById(order.machineId, lang);
-    const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+    const machinePrice = await machinePriceService.getPriceByMachineId(
+      order.machineId
+    );
     const structure = await structureService.getById(order.structureId, lang);
 
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
       return {
         ...rest,
-        amountType: { id: rest.amountType, text: getAmountTypeText(rest.amountType) },
+        amountType: {
+          id: rest.amountType,
+          text: getAmountTypeText(rest.amountType),
+        },
         status: { id: rest.status, text: getStatusText(rest.status) },
         startHour: rest.startHour ? rest.startHour.toString() : null,
         endHour: rest.endHour ? rest.endHour.toString() : null,
         machine,
         machinePrice,
-        structure
-      }
-    }
+        structure,
+      };
+    };
 
-    const orderDateFormate = formatResponseDates(order);;
+    const orderDateFormate = formatResponseDates(order);
 
     return sanitizedOrders(orderDateFormate);
   } catch (error) {
     throw error;
   }
-}
-
+};
 
 export default {
   getOrders,
@@ -236,5 +271,5 @@ export default {
   endOrder,
   getOrderByDriverId,
   getOrderByClientId,
-  getNewOrderByDriverParams
+  getNewOrderByDriverParams,
 };
