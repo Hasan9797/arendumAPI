@@ -33,7 +33,9 @@ const register = async (req, res) => {
         .json({ message: 'Driver not found for Register', success: false });
     }
 
-    const machine = await machineService.getOne(parseInt(req.body.machineId));
+    const machine = await machineService.getMachineById(
+      parseInt(req.body.machineId)
+    );
 
     if (!machine) {
       throw new Error('Machine not found');
