@@ -55,12 +55,14 @@ const register = async (req, res) => {
       throw new Error('Structure not found');
     }
 
-    await driverService.updateById(req.user.id, {
+    console.log(req.body);
+    
+    const driver = await driverService.updateById(req.user.id, {
       status: DriverStatus.INACTIVE,
       ...req.body,
     });
 
-    res.status(201).json({ success: true, message: 'Driver registered' });
+    res.status(201).json({ success: true, message: 'Driver registered', data: driver });
   } catch (error) {
     res.status(500).json({
       success: false,
