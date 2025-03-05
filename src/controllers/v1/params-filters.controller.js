@@ -60,6 +60,7 @@ const create = async (req, res) => {
       filterParams: params,
       machineId: machineId,
     });
+    
     res.status(201).json(responseSuccess());
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));

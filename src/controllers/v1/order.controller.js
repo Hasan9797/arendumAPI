@@ -76,12 +76,13 @@ const create = async (req, res) => {
 
     if (!req.user.role == userRoleEnum.CLIENT) {
       const client = await clientService.getClientById(req.user.id);
+
       if (!client.status !== userStatus.ACTIVE) {
         throw new Error('User is inactive or User is not Client');
       }
     }
 
-    const order = await orderService.createOrder(req.body);
+    const order = await orderService.createOrder(req.body, client.id);
     res.status(201).json({
       success: true,
       data: order,

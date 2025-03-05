@@ -54,8 +54,6 @@ const register = async (req, res) => {
     if (!structure) {
       throw new Error('Structure not found');
     }
-
-    console.log(req.body);
     
     const driver = await driverService.updateById(req.user.id, {
       status: DriverStatus.INACTIVE,

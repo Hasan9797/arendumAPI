@@ -80,9 +80,9 @@ const getOrderById = async (id, lang = 'ru') => {
   }
 };
 
-const createOrder = async (data) => {
+const createOrder = async (data, clientId) => {
   try {
-    return await orderRepo.create(data);
+    return await orderRepo.create(data, clientId);
   } catch (error) {
     throw error;
   }
@@ -149,8 +149,12 @@ const endOrder = async (orderId) => {
 
 const getNewOrderByDriverParams = async (driverParams, structureId) => {
   try {
-    const orders = await orderRepo.getNewOrderByStructureId(structureId);
+    let orders = await orderRepo.getNewOrderByStructureId(structureId);
     if (!orders) return [];
+
+    orders.forEach(order => {
+      order.amountType = getAmountTypeText(order.amountType)
+    });
 
     return filterOrdersByDriverParams(orders, driverParams);
   } catch (error) {
@@ -167,7 +171,6 @@ function filterOrdersByDriverParams(orders, driverParams) {
       Array.isArray(d.params) ? d.params : [d.params],
     ])
   );
-  console.log(orders, driverMap);
 
   return orders.filter((order) => {
     if (!order.params || !Array.isArray(order.params)) return false; // 🔹 order.params yo‘q bo‘lsa, o‘tib ketish

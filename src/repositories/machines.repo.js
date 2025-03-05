@@ -147,7 +147,6 @@ async function deleteMachineCache(id) {
 
   if (keys.length > 0) {
     await redisClient.del(keys); // Topilgan kalitlarni o‘chiradi
-    console.log(`Deleted ${keys.length} cache entries for machine:${id}`);
   }
 }
 

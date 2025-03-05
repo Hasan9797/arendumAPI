@@ -61,10 +61,10 @@ const findAll = async (query) => {
   }
 };
 
-const create = async (data) => {
+const create = async (data, clientId) => {
   try {
     return await prisma.order.create({
-      data: data,
+      data: {clientId, ...data},
     });
   } catch (error) {
     throw error;
@@ -137,6 +137,15 @@ const getNewOrderByStructureId = async (structureId) => {
         structureId,
         status: OrderStatus.SEARCHING,
       },
+      include: {
+        client: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        }
+      }
     });
   } catch (error) {
     throw error;
