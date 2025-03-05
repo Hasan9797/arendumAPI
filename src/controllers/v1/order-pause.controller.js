@@ -17,7 +17,7 @@ const startPauseTime = async (req, res) => {
 
 
 const endPauseTime = async (req, res) => {
-    const orderId = parseInt(req.query.id);
+    const orderId = parseInt(req.query.id) ?? 0;
     try {
         await pauseOrderService.endPauseTime(orderId);
         res.status(201).json(responseSuccess());

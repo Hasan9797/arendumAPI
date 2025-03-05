@@ -82,22 +82,22 @@ const optionSelectParams = async (lang, machinId) => {
   }
 };
 
-const optionAmount = async (machineId) => {
-  try {
-    const data = await machineParamsRepo.getParamsOption(machineId);
+// const optionAmount = async (machineId) => {
+//   try {
+//     const data = await machineParamsRepo.getParamsOption(machineId);
 
-    if (!data) return [];
+//     if (!data) return [];
 
-    return data.flatMap(({ key, params }) =>
-      params.map((item) => ({
-        [key]: item.param,
-        amount: item.amount,
-      }))
-    );
-  } catch (error) {
-    throw error;
-  }
-};
+//     return data.flatMap(({ key, params }) =>
+//       params.map((item) => ({
+//         [key]: item.param,
+//         amount: item.amount,
+//       }))
+//     );
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 const getParamsOptions = async (lang, machineId) => {
   try {
