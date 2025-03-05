@@ -83,7 +83,7 @@ const create = async (req, res) => {
     }
     console.log(client.id);
     
-    const order = await orderService.createOrder(req.body, parseInt(client.id));
+    const order = await orderService.createOrder(req.body);
     res.status(201).json({
       success: true,
       data: order,

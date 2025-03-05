@@ -61,7 +61,7 @@ const findAll = async (query) => {
   }
 };
 
-const create = async (data, userId) => {
+const create = async (data) => {
   try {
     return await prisma.order.create({
       data: data,
