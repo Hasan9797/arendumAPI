@@ -64,7 +64,7 @@ const findAll = async (query) => {
 const create = async (data, userId) => {
   try {
     return await prisma.order.create({
-      data: { clientId: userId, ...data },
+      data: data,
     });
   } catch (error) {
     throw error;
