@@ -14,8 +14,8 @@ export const sendNotification = async (fcmToken, title, body, data) => {
       token: fcmToken,
     };
 
-    await messaging.send(message);
-    console.log("✅ Notification sent successfully.");
+    const result = await messaging.send(message);
+    console.log("✅ Notification sent successfully. ", result);
   } catch (error) {
     if (error.code === "messaging/invalid-argument") {
       console.warn("⚠️ Warning: Invalid FCM token, skipping notification.");
