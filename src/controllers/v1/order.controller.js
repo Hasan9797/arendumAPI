@@ -63,6 +63,8 @@ const getById = async (req, res) => {
       success: false,
       error: {
         message: error.message,
+        file: error.file,
+        line: error.line,
         code: 500,
       },
     });
