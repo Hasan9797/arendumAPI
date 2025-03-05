@@ -187,10 +187,15 @@ CREATE TABLE "Order" (
     "amount" INTEGER NOT NULL,
     "amount_type" INTEGER NOT NULL DEFAULT 1,
     "status" INTEGER NOT NULL DEFAULT 1,
-    "start_hour" TIMESTAMP(3),
-    "end_hour" TIMESTAMP(3),
+    "start_hour" TEXT,
+    "end_hour" TEXT,
+    "total_work_hour" INTEGER,
+    "total_work_minut" INTEGER,
+    "total_pause_hour" INTEGER,
+    "total_pause_minut" INTEGER,
     "hour_count" INTEGER,
     "km_count" INTEGER,
+    "total_amount" INTEGER,
     "type" TEXT NOT NULL,
     "count" INTEGER NOT NULL DEFAULT 1,
     "params" JSONB NOT NULL DEFAULT '[]',
@@ -209,9 +214,10 @@ CREATE TABLE "Order" (
 CREATE TABLE "OrderPause" (
     "id" SERIAL NOT NULL,
     "order_id" INTEGER NOT NULL,
-    "start_pause" TIMESTAMP(3),
-    "end_pause" TIMESTAMP(3),
-    "status" BOOLEAN NOT NULL DEFAULT false,
+    "start_pause" BIGINT NOT NULL,
+    "end_pause" BIGINT,
+    "total_time" BIGINT,
+    "status" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -267,6 +273,18 @@ CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Merchant_phone_key" ON "Merchant"("phone");
+
+-- CreateIndex
+CREATE INDEX "Order_status_idx" ON "Order"("status");
+
+-- CreateIndex
+CREATE INDEX "Order_structure_id_idx" ON "Order"("structure_id");
+
+-- CreateIndex
+CREATE INDEX "Order_client_id_idx" ON "Order"("client_id");
+
+-- CreateIndex
+CREATE INDEX "Order_driver_id_idx" ON "Order"("driver_id");
 
 -- AddForeignKey
 ALTER TABLE "Driver" ADD CONSTRAINT "Driver_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE SET NULL ON UPDATE CASCADE;
