@@ -76,9 +76,10 @@ const getOrderById = async (lang, id) => {
         structure,
       };
     };
-    console.log(sanitizedOrders(orderDateFormate));
 
     const orderDateFormate = formatResponseDates(order);
+    console.log(sanitizedOrders(orderDateFormate));
+
     return sanitizedOrders(orderDateFormate);
   } catch (error) {
     throw error;
