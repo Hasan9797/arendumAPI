@@ -123,7 +123,7 @@ const endOrder = async (orderId) => {
 
     // 1. Order Tukash vaqti (soniyalarda)
     const endHour = Math.floor(Date.now() / 1000);
-    let updateData;
+    let updateData = { totalAmount: order.amount };
 
     // 1. Order type bo'yicha hisoblash
     switch (String(order.type)) {
@@ -137,12 +137,12 @@ const endOrder = async (orderId) => {
         updateData = orderCalculateWorkHelper.calculateWorkKmAmount(order);
         break;
       default:
-        updateData = { totalAmount: order.amount };
+        updateData;
     }
 
     return await orderRepo.updateById(orderId, {
       endHour,
-      orderStatus: OrderStatus.COMPLETED,
+      status: OrderStatus.COMPLETED,
       ...updateData,
     });
   } catch (error) {
@@ -171,7 +171,7 @@ function filterOrdersByDriverParams(orders, driverParams) {
     ])
   );
   console.log(orders, driverMap);
-  
+
   return orders.filter((order) => {
     if (!order.params || !Array.isArray(order.params)) return false; // 🔹 order.params yo‘q bo‘lsa, o‘tib ketish
 
