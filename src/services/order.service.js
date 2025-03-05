@@ -44,7 +44,7 @@ const getOrders = async (query) => {
 const getOrderById = async (lang, id) => {
   try {
     const order = await orderRepo.getById(id);
-    
+
     if (!order) {
       throw new Error('Order not found');
     }
@@ -69,13 +69,14 @@ const getOrderById = async (lang, id) => {
           text: getAmountTypeText(rest.amountType),
         },
         status: { id: rest.status, text: getStatusText(rest.status) },
-        startHour: rest.startHour ? rest.startHour.toString() : null,
-        endHour: rest.endHour ? rest.endHour.toString() : null,
+        startHour: rest.startHour ? JSON.stringify(bigNumber.toString()) : null,
+        endHour: rest.endHour ? JSON.stringify(bigNumber.toString()) : null,
         machine,
         machinePrice,
         structure,
       };
     };
+    console.log(sanitizedOrders(orderDateFormate));
 
     const orderDateFormate = formatResponseDates(order);
     return sanitizedOrders(orderDateFormate);
