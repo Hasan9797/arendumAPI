@@ -101,8 +101,7 @@ const optionSelectParams = async (lang, machinId) => {
 
 const getParamsOptions = async (lang, machineId) => {
   try {
-    const machinePrice =
-      await machinePriceService.getPriceByMachineId(machineId);
+    const machinePrice = await machinePriceService.getPriceByMachineId(machineId);
 
     const selectParamsOptions = await optionSelectParams(lang, machineId);
 

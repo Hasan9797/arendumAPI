@@ -131,6 +131,7 @@ const getById = async (id) => {
 const updateById = async (id, driverData) => {
   try {
     const cacheKey = `driver_${id}`;
+    const cacheKeyProfile = `driver_profile_${id}`;
 
     const updatedUser = await prisma.driver.update({
       where: { id },
@@ -139,6 +140,7 @@ const updateById = async (id, driverData) => {
 
     // 2. Redis cache'dan o‘chirish (agar bo‘lsa)
     await redisClient.del(cacheKey);
+    await redisClient.del(cacheKeyProfile);
 
     return updatedUser;
   } catch (error) {
@@ -165,7 +167,7 @@ const deleteById = async (id) => {
 };
 
 const getDriverProfile = async (id) => {
-  const cacheKey = `driver_${id}`; // Redis kaliti
+  const cacheKey = `driver_profile_${id}`; // Redis kaliti
 
   // 1. Avval Redis cache dan tekshirish
   const cachedDriver = await redisClient.get(cacheKey);

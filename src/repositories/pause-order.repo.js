@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 
 const createStartPause = async (orderId) => {
     try {
-        const startPause = Math.floor(Date.now() / 1000); // Hozirgi vaqt soniyalarda
+        const startPause = String(Math.floor(Date.now() / 1000)); // Hozirgi vaqt soniyalarda String
 
         const orderPause = await prisma.orderPause.create({
             data: {
@@ -41,7 +41,7 @@ const updateEndPause = async (orderId) => {
         const currentUnixTimestamp = Math.floor(Date.now() / 1000); // Hozirgi vaqt soniyalarda
 
         // 3. totalTime = endPause - startPause
-        const totalTime = currentUnixTimestamp - pause.startPause;
+        const totalTime = currentUnixTimestamp - Number(pause.startPause);
 
         if (totalTime < 0) {
             throw new Error('Invalid pause time: endPause is earlier than startPause');
@@ -51,8 +51,8 @@ const updateEndPause = async (orderId) => {
         await prisma.orderPause.update({
             where: { id: pause.id },
             data: {
-                endPause: currentUnixTimestamp,
-                totalTime: totalTime,
+                endPause: String(currentUnixTimestamp),
+                totalTime: String(totalTime),
                 status: false, // Pause tugadi
             },
         });

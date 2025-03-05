@@ -61,8 +61,7 @@ const getById = async (id) => {
 
 const getByMachineId = async (machineId) => {
   try {
-    const result =
-      await machineParamsFilterRepo.getParamsFilterByMachineId(machineId);
+    const result = await machineParamsFilterRepo.getParamsFilterByMachineId(machineId);
 
     return formatResponseDates(result) ?? {};
   } catch (error) {
@@ -77,10 +76,12 @@ const createParamsFilter = async (data) => {
     if (!machineParams) throw new Error('Machine params not found');
 
     const updatedParams = updateParamsWithTotalAmount(data.filterParams, machineParams);
+    
     return await machineParamsFilterRepo.create({
       filterParams: updatedParams,
       machineId: data.machineId,
     });
+    
   } catch (error) {
     throw error;
   }
