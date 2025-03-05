@@ -81,8 +81,9 @@ const create = async (req, res) => {
         throw new Error('User is inactive or User is not Client');
       }
     }
-
-    const order = await orderService.createOrder(req.body, client.id);
+    console.log(client.id);
+    
+    const order = await orderService.createOrder(req.body, parseInt(client.id));
     res.status(201).json({
       success: true,
       data: order,
