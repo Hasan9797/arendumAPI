@@ -36,7 +36,6 @@ export default (io) => {
       socket.on('joinRoom', (orderId) => {
         socket.join(`order_room_${orderId}`);
         socket.emit('orderStatus', { status: true, orderId });
-        console.log('client joined room: ' + orderId);
       });
 
       //room ga qo'shish
@@ -44,7 +43,6 @@ export default (io) => {
         if (!orderId || typeof orderId !== 'number') {
           throw new Error('orderId is required');
         }
-        console.log('client created order');
 
         socket.orderId = orderId;
 
@@ -69,8 +67,6 @@ export default (io) => {
           orderId: String(orderId),
         };
         
-        console.log(drivers);
-        
         await redisSetHelper.startNotificationForOrder(String(orderId));
 
         for (const driver of drivers) {
@@ -80,13 +76,14 @@ export default (io) => {
           );
 
           if (orderExists === true) break;
-
+          console.log(driver);
+          
+          // Send notification to driver
           await sendNotification(driver?.fcmToken, title, body, data);
-          let count = 1;
+
           // 5 soniya kutish
           await new Promise((resolve) => setTimeout(resolve, 5000));
-          console.log('Send notification: ' + count);
-          count++
+
           // Yana Redis'ni tekshiramiz, agar order o‘chgan bo‘lsa, notification to‘xtaydi
           const stillExists = await redisSetHelper.isNotificationStopped(
             String(orderId)
