@@ -44,10 +44,11 @@ const getOrders = async (query) => {
 const getOrderById = async (lang, id) => {
   try {
     const order = await orderRepo.getById(id);
-
+    
     if (!order) {
       throw new Error('Order not found');
     }
+    console.log(order);
 
     const machine = await machineService.getMachineById(order.machineId, lang);
     const machinePrice = await machinePriceService.getPriceByMachineId(
