@@ -24,8 +24,6 @@ const getOrders = async (query) => {
         text: getAmountTypeText(order.amountType),
       },
       status: { id: order.status, text: getStatusText(order.status) },
-      startHour: order.startHour ? order.startHour.toString() : null,
-      endHour: order.endHour ? order.endHour.toString() : null,
     }));
 
     const data = sanitizedOrders.map(
@@ -41,7 +39,7 @@ const getOrders = async (query) => {
   }
 };
 
-const getOrderById = async (lang, id) => {
+const getOrderById = async (id, lang = 'ru') => {
   try {
     const order = await orderRepo.getById(id);
 
@@ -69,15 +67,14 @@ const getOrderById = async (lang, id) => {
           text: getAmountTypeText(rest.amountType),
         },
         status: { id: rest.status, text: getStatusText(rest.status) },
-        startHour: rest.startHour ? rest.startHour.toString() : null,
-        endHour: rest.endHour ? rest.endHour.toString() : null,
         machine,
         machinePrice,
         structure,
       };
     };
 
-    return formatResponseDates(sanitizedOrders(order));
+    const formattedOrders = formatResponseDates(order);
+    return sanitizedOrders(formattedOrders)
   } catch (error) {
     throw error;
   }
@@ -103,7 +100,7 @@ const deleteOrder = async (id) => {
 const startOrder = async (orderId) => {
   try {
     return await orderRepo.updateById(orderId, {
-      startHour: Math.floor(Date.now() / 1000),
+      startHour: String(Math.floor(Date.now() / 1000)),
       status: OrderStatus.START_WORK,
     });
   } catch (error) {
@@ -117,8 +114,9 @@ const endOrder = async (orderId) => {
     if (!orderId) throw new Error('Order ID is required');
 
     const order = await orderRepo.getById(orderId);
-    if (!order || order.status != OrderStatus.START_WORK)
+    if (!order || order.status != OrderStatus.START_WORK) {
       throw new Error('Order is not started');
+    }
 
     // 1. Order Tukash vaqti (soniyalarda)
     const endHour = Math.floor(Date.now() / 1000);

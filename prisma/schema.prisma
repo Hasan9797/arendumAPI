@@ -188,8 +188,8 @@ model Order {
   amount          Int
   amountType      Int          @default(1) @map("amount_type")
   status          Int          @default(1)
-  startHour       BigInt?      @map("start_hour")
-  endHour         BigInt?      @map("end_hour")
+  startHour       String?      @map("start_hour")
+  endHour         String?      @map("end_hour")
   totalWorkHour   Int?         @map("total_work_hour")
   totalWorkMinut  Int?         @map("total_work_minut")
   totalPauseHour  Int?         @map("total_pause_hour")
