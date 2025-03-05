@@ -5,11 +5,12 @@ const calculateWorkTimeAmount = (order) => {
         ? order.OrderPause.reduce((total, pause) => total + (pause.totalTime || 0), 0)
         : 0;
 
-    // 2. String Unixtimestump ni numberga o'girish (soniyalarda), endHour db dan kelmayabdi shuning uchun type number
+    // 2. String Unixtimestump ni numberga o'girish (soniyalarda)
     const startHour = order.startHour ? Number(order.startHour) : 0;
+    const endHour = order.endHour ? Number(order.endHour) : 0;
 
     // 3. Total work time hisoblash (soniyalarda)
-    const totalWorkInSeconds = (order.endHour - startHour) - totalPauseTimeInSeconds;
+    const totalWorkInSeconds = (endHour - startHour) - totalPauseTimeInSeconds;
     if (totalWorkInSeconds < 0) throw new Error('Invalid work time calculation');
 
     // 4. Ish vaqtini soat va minutlarga aylantirish

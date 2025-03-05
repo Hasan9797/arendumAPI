@@ -119,7 +119,7 @@ const endOrder = async (orderId) => {
     }
 
     // 1. Order Tukash vaqti (soniyalarda)
-    const endHour = Math.floor(Date.now() / 1000);
+    const endHour = String(Math.floor(Date.now() / 1000));
     let updateData = { totalAmount: order.amount };
 
     // 1. Order type bo'yicha hisoblash
