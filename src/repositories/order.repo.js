@@ -61,10 +61,10 @@ const findAll = async (query) => {
   }
 };
 
-const create = async (data, clientId) => {
+const create = async (data, userId) => {
   try {
     return await prisma.order.create({
-      data: {clientId, ...data},
+      data: { clientId: userId, ...data },
     });
   } catch (error) {
     throw error;
