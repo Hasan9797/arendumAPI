@@ -76,6 +76,7 @@ export default (io) => {
           );
 
           if (orderExists === true) break;
+
           console.log(driver);
           
           // Send notification to driver
