@@ -74,7 +74,7 @@ export default (io) => {
           message: 'You accepted the order',
         });
         console.log('acceptedOrder ', driverPhone);
-        
+
         await redisSetHelper.stopNotificationForOrder(String(orderId));
       } catch (error) {
         socket.emit('error', { message: error.message });

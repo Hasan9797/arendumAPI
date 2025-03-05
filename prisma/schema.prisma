@@ -26,6 +26,7 @@ model Driver {
   phone                   String    @unique
   machineId               Int?      @map("machine_id")
   email                   String?   @unique
+  img                     String?
   status                  Int       @default(0)
   photoTexPassport        Json      @default("[]") @map("photo_tex_passport")
   photoPassport           Json      @default("[]") @map("photo_passport")
@@ -62,6 +63,7 @@ model Client {
   phone       String     @unique
   legal       Boolean    @default(false)
   email       String?    @unique
+  img         String?
   status      Int        @default(0)
   long        Decimal?   @default(0)
   lat         Decimal?   @default(0)
