@@ -44,7 +44,7 @@ export default (io) => {
           String(orderId)
         );
 
-        console.log('Order accepted successfully');
+        console.log('Redis Set: ', stillExists);
 
         if (stillExists === true) {
           socket.emit('orderPicked', {
