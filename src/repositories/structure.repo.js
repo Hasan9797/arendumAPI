@@ -50,7 +50,11 @@ const getById = async (lang, id) => {
   const structure = await prisma.structure.findUnique({
     where: { id },
   });
-
+  
+  if (!structure) {
+    throw new Error('Structure not found');
+  }
+  
   const adjustName = ({ nameRu, nameUz, nameEn, ...res }) => {
     return {
       ...res,
