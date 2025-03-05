@@ -69,18 +69,15 @@ const getOrderById = async (lang, id) => {
           text: getAmountTypeText(rest.amountType),
         },
         status: { id: rest.status, text: getStatusText(rest.status) },
-        startHour: rest.startHour ? JSON.stringify(bigNumber.toString()) : null,
-        endHour: rest.endHour ? JSON.stringify(bigNumber.toString()) : null,
+        startHour: rest.startHour ? rest.startHour.toString() : null,
+        endHour: rest.endHour ? rest.endHour.toString() : null,
         machine,
         machinePrice,
         structure,
       };
     };
 
-    const orderDateFormate = formatResponseDates(order);
-    console.log(sanitizedOrders(orderDateFormate));
-
-    return sanitizedOrders(orderDateFormate);
+    return formatResponseDates(sanitizedOrders(order));
   } catch (error) {
     throw error;
   }
