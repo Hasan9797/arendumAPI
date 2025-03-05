@@ -52,7 +52,7 @@ const getById = async (lang, id) => {
   });
   
   if (!structure) {
-    throw new Error('Structure not found');
+    return {};
   }
   
   const adjustName = ({ nameRu, nameUz, nameEn, ...res }) => {
