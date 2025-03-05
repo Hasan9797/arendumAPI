@@ -68,7 +68,9 @@ export default (io) => {
           key: 'new_order',
           orderId: String(orderId),
         };
-
+        
+        console.log(drivers);
+        
         await redisSetHelper.startNotificationForOrder(String(orderId));
 
         for (const driver of drivers) {
