@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Order" ALTER COLUMN "start_hour" SET DATA TYPE TEXT,
-ALTER COLUMN "end_hour" SET DATA TYPE TEXT;
