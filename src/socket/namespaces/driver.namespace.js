@@ -51,12 +51,12 @@ export default (io) => {
             success: false,
             message: 'Order has been accepted by another driver',
           });
-          console.log('Order accepted');
+          console.log('Order has been accepted by another driver');
           return;
         }
 
         socket.join(`order_room_${orderId}`);
-        console.log(`driver join room ${driverName}`);
+        console.log(`driver join room ${driverPhone}`);
 
         await orderService.updateOrder(orderId, {
           driverId: parseInt(socket.userId),
@@ -73,7 +73,8 @@ export default (io) => {
           success: true,
           message: 'You accepted the order',
         });
-
+        console.log('acceptedOrder ', driverPhone);
+        
         await redisSetHelper.stopNotificationForOrder(String(orderId));
       } catch (error) {
         socket.emit('error', { message: error.message });
