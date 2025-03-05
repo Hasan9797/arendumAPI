@@ -80,9 +80,9 @@ const getOrderById = async (id, lang = 'ru') => {
   }
 };
 
-const createOrder = async (data, clientId) => {
+const createOrder = async (data) => {
   try {
-    return await orderRepo.create(data, clientId);
+    return await orderRepo.create(data);
   } catch (error) {
     throw error;
   }
