@@ -43,7 +43,9 @@ export default (io) => {
         const stillExists = await redisSetHelper.isNotificationStopped(
           String(orderId)
         );
+
         console.log('Order accepted successfully');
+
         if (stillExists === true) {
           socket.emit('orderPicked', {
             success: false,
@@ -54,8 +56,8 @@ export default (io) => {
         }
 
         socket.join(`order_room_${orderId}`);
-        console.log('driver join room');
-        
+        console.log(`driver join room ${driverName}`);
+
         await orderService.updateOrder(orderId, {
           driverId: parseInt(socket.userId),
           status: OrderStatus.ASSIGNED,
@@ -92,13 +94,13 @@ export default (io) => {
         status: OrderStatus.ARRIVED,
       });
       console.log('driver arrived');
-      
+
       io.of('/client').to(`order_room_${orderId}`).emit('driverArrived', {
         success: true,
         message: 'Driver arrived to client',
       });
     });
 
-    socket.on('disconnect', async () => {});
+    socket.on('disconnect', async () => { });
   });
 };
