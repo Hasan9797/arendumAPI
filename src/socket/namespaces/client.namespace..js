@@ -3,6 +3,7 @@ import driverService from '../../services/driver.service.js';
 import { verifyToken } from '../../helpers/jwt-token.helper.js';
 import redisSetHelper from '../../helpers/redis-set-helper.js';
 import orderService from '../../services/order.service.js';
+import { OrderStatus } from '../../enums/order/order-status.enum.js';
 
 export default (io) => {
   const clientNamespace = io.of('/client');
