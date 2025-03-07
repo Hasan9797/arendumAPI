@@ -2,6 +2,7 @@ import { sendNotification } from '../../helpers/send-notification.helper.js';
 import driverService from '../../services/driver.service.js';
 import { verifyToken } from '../../helpers/jwt-token.helper.js';
 import redisSetHelper from '../../helpers/redis-set-helper.js';
+import orderService from '../../services/order.service.js';
 
 export default (io) => {
   const clientNamespace = io.of('/client');
@@ -45,6 +46,11 @@ export default (io) => {
         }
 
         socket.orderId = orderId;
+        
+        await orderService.updateOrder(orderId, {
+          status: OrderStatus.SEARCHING,
+        });
+
 
         socket.join(`order_room_${orderId}`);
 
