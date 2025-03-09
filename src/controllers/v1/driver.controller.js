@@ -89,6 +89,15 @@ const getProcessOrder = async (req, res) => {
   }
 };
 
+const acceptOrder = async (req, res) => {
+  try {
+    const result = await orderService.acceptOrder(parseInt(req.query.id));
+    res.status(200).json(responseSuccess(result));
+  } catch (error) {
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
+
 export default {
   getAll,
   getById,
@@ -96,5 +105,6 @@ export default {
   update,
   distroy,
   getMe,
-  getProcessOrder
+  acceptOrder,
+  getProcessOrder,
 };

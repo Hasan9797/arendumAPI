@@ -3,10 +3,18 @@ import redisSetHelper from '../../helpers/redis-set-helper.js';
 import orderService from '../../services/order.service.js';
 import { verifyToken } from '../../helpers/jwt-token.helper.js';
 
-export default (io) => {
-  const driverNamespace = io.of('/driver');
+class DriverSocketHandler {
+  constructor(io) {
+    this.io = io;
+    this.driverNamespace = io.of('/driver');
 
-  driverNamespace.use((socket, next) => {
+    this.driverNamespace.use(this.authMiddleware);
+
+    this.driverNamespace.on('connection', this.onConnection);
+  }
+
+  // Authentication middleware
+  authMiddleware(socket, next) {
     try {
       const token = socket.handshake.headers['auth'];
 
@@ -28,23 +36,26 @@ export default (io) => {
       console.log(error);
       socket.emit('error', { message: error.message });
     }
-  });
+  }
 
-  driverNamespace.on('connection', (socket) => {
+  // Connection event
+  async onConnection(socket) {
     console.log(`Socket connected: ${socket.id}`);
 
+    // Driver room'ga qo'shilishi
     socket.on('joinRoom', (orderId) => {
       socket.join(`order_room_${orderId}`);
       socket.emit('orderStatus', { status: true, orderId });
     });
 
+    // Buyurtmani qabul qilish
     socket.on('acceptOrder', async ({ orderId, driverName, driverPhone }) => {
       try {
         const stillExists = await redisSetHelper.isNotificationStopped(
           String(orderId)
         );
 
-        console.log('Redis Set: ', stillExists);
+        console.log('Redis Set:', stillExists);
 
         if (stillExists === true) {
           socket.emit('orderPicked', {
@@ -61,11 +72,14 @@ export default (io) => {
           status: OrderStatus.ASSIGNED,
         });
 
-        io.of('/client').to(`order_room_${orderId}`).emit('orderAccepted', {
-          success: true,
-          driverName,
-          driverPhone,
-        });
+        this.io
+          .of('/client')
+          .to(`order_room_${orderId}`)
+          .emit('orderAccepted', {
+            success: true,
+            driverName,
+            driverPhone,
+          });
 
         socket.emit('acceptedOrder', {
           success: true,
@@ -78,25 +92,39 @@ export default (io) => {
       }
     });
 
-    // Dreiver Location Send
+    // Driver lokatsiyasini yuborish
     socket.on('updateLocation', async ({ orderId, log, lat }) => {
-      io.of('/client')
+      this.io
+        .of('/client')
         .to(`order_room_${orderId}`)
         .emit('driverLocation', { orderId, log, lat });
     });
 
-    // Driver arrived to client
+    // Driver mijozga yetib kelgani haqida xabar yuborish
     socket.on('icame', async ({ orderId }) => {
       await orderService.updateOrder(orderId, {
         status: OrderStatus.ARRIVED,
       });
 
-      io.of('/client').to(`order_room_${orderId}`).emit('driverArrived', {
+      this.io.of('/client').to(`order_room_${orderId}`).emit('driverArrived', {
         success: true,
         message: 'Driver arrived to client',
       });
     });
 
-    socket.on('disconnect', async () => { });
-  });
-};
+    // Ulanish uzilganda
+    socket.on('disconnect', async () => {
+      console.log(`Driver ${socket.id} disconnected`);
+    });
+  }
+
+  static sendOrderAcceptedToClient(orderId, driverName, driverPhone) {
+    this.io.of('/client').to(`order_room_${orderId}`).emit('orderAccepted', {
+      success: true,
+      driverName,
+      driverPhone,
+    });
+  }
+}
+
+export default DriverSocketHandler;
