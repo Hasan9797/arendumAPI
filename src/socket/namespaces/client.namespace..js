@@ -10,6 +10,8 @@ class ClientSocketHandler {
     this.io = io;
     this.clientNamespace = io.of('/client');
 
+    this.authMiddleware = this.authMiddleware.bind(this);
+    this.onConnection = this.onConnection.bind(this);
     this.clientNamespace.use(this.authMiddleware);
 
     this.clientNamespace.on('connection', this.onConnection.bind(this));

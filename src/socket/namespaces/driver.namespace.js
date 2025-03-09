@@ -8,8 +8,9 @@ class DriverSocketHandler {
     this.io = io;
     this.driverNamespace = io.of('/driver');
 
+    this.authMiddleware = this.authMiddleware.bind(this);
+    this.onConnection = this.onConnection.bind(this);
     this.driverNamespace.use(this.authMiddleware);
-
     this.driverNamespace.on('connection', this.onConnection);
   }
 
