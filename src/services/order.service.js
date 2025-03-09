@@ -295,7 +295,7 @@ const acceptOrder = async (orderId) => {
     }
 
     const result = await orderRepo.updateById(orderId, {
-      status: OrderStatus.SEARCHING,
+      status: OrderStatus.ASSIGNED,
     });
 
     if (!result) {
