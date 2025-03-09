@@ -1,12 +1,9 @@
-import clientNamespace from './namespaces/client.namespace..js';
-import driverNamespace from './namespaces/driver.namespace.js';
+import ClientSocketHandler from './namespaces/client.namespace..js';
+import DriverSocketHandler from './namespaces/driver.namespace.js';
 
-const socketServer = (io) => {
-  clientNamespace(io);
-  driverNamespace(io);
-
-  // adminNamespace(io);
-  // chatNamespace(io);
+const socketHandler = (io) => {
+  new ClientSocketHandler(io);
+  new DriverSocketHandler(io);
 };
 
-export default socketServer;
+export default socketHandler;

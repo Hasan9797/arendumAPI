@@ -16,6 +16,8 @@ router.get('/me', authentication, driverController.getMe);
 
 router.get('/process-order', authentication, driverController.getProcessOrder);
 
+router.get('/accept-order', driverController.acceptOrder); // query params: order ID
+
 router.get('/:id', driverController.getById);
 
 router.post('/create', driverController.create);
@@ -23,5 +25,6 @@ router.post('/create', driverController.create);
 router.put('/update/:id', driverController.update);
 
 router.delete('/delete/:id', driverController.distroy);
+
 
 export default router;

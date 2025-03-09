@@ -10,6 +10,9 @@ import { getAmountTypeText } from '../enums/pay/payment-type.enum.js';
 import machinePriceService from './machine-price.service.js';
 import structureService from './structure.service.js';
 import machineService from './machines.service.js';
+import redisSetHelper from '../helpers/redis-set-helper.js';
+import SocketHandler from '../socket/index.js';
+import DriverSocketHandler from '../socket/namespaces/driver.namespace.js';
 
 const getOrders = async (query) => {
   try {
@@ -107,10 +110,16 @@ const startOrder = async (orderId) => {
       throw new Error('Order is not new');
     }
 
-    return await orderRepo.updateById(orderId, {
+    const result = await orderRepo.updateById(orderId, {
       startHour: String(Math.floor(Date.now() / 1000)),
       status: OrderStatus.START_WORK,
     });
+
+    if (result) {
+      SocketHandler.sendOrderAcceptedToClient(orderId);
+    }
+
+    return result;
   } catch (error) {
     throw error;
   }
@@ -266,6 +275,38 @@ const getOrderByClientId = async (lang, clientId) => {
   }
 };
 
+const acceptOrder = async (orderId) => {
+  try {
+    const order = await orderRepo.getById(orderId);
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+    
+    const result = await orderRepo.updateById(orderId, {
+      status: OrderStatus.SEARCHING,
+    });
+
+    if (!result) {
+      throw new Error('Order update error');
+    }
+
+    await redisSetHelper.stopNotificationForOrder(String(orderId));
+    DriverSocketHandler.sendOrderAcceptedToClient(
+      orderId,
+      'Feruz Bek',
+      '+998901234567'
+    );
+
+    return {
+      success: true,
+      orderId,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getOrders,
   getOrderById,
@@ -274,6 +315,7 @@ export default {
   deleteOrder,
   startOrder,
   endOrder,
+  acceptOrder,
   getOrderByDriverId,
   getOrderByClientId,
   getNewOrderByDriverParams,
