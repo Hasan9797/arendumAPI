@@ -4,6 +4,7 @@ import orderService from '../../services/order.service.js';
 import { verifyToken } from '../../helpers/jwt-token.helper.js';
 
 class DriverSocketHandler {
+  static io;
   constructor(io) {
     this.io = io;
     this.driverNamespace = io.of('/driver');
@@ -73,7 +74,7 @@ class DriverSocketHandler {
           status: OrderStatus.ASSIGNED,
         });
 
-        this.io
+        DriverSocketHandler.io
           .of('/client')
           .to(`order_room_${orderId}`)
           .emit('orderAccepted', {
@@ -95,7 +96,7 @@ class DriverSocketHandler {
 
     // Driver lokatsiyasini yuborish
     socket.on('updateLocation', async ({ orderId, log, lat }) => {
-      this.io
+      DriverSocketHandler.io
         .of('/client')
         .to(`order_room_${orderId}`)
         .emit('driverLocation', { orderId, log, lat });
@@ -107,7 +108,7 @@ class DriverSocketHandler {
         status: OrderStatus.ARRIVED,
       });
 
-      this.io.of('/client').to(`order_room_${orderId}`).emit('driverArrived', {
+      DriverSocketHandler.io.of('/client').to(`order_room_${orderId}`).emit('driverArrived', {
         success: true,
         message: 'Driver arrived to client',
       });
@@ -120,7 +121,7 @@ class DriverSocketHandler {
   }
 
   static sendOrderAcceptedToClient(orderId, driverName, driverPhone) {
-    this.io.of('/client').to(`order_room_${orderId}`).emit('orderAccepted', {
+    DriverSocketHandler.io.of('/client').to(`order_room_${orderId}`).emit('orderAccepted', {
       success: true,
       driverName,
       driverPhone,

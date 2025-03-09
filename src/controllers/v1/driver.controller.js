@@ -91,7 +91,7 @@ const getProcessOrder = async (req, res) => {
 
 const acceptOrder = async (req, res) => {
   try {
-    const result = await orderService.acceptOrder(parseInt(req.query.id));
+    const result = await orderService.acceptOrder(Number(req.query.id));
     res.status(200).json(responseSuccess(result));
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));

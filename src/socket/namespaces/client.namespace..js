@@ -6,6 +6,7 @@ import orderService from '../../services/order.service.js';
 import { OrderStatus } from '../../enums/order/order-status.enum.js';
 
 class ClientSocketHandler {
+  static io;
   constructor(io) {
     this.io = io;
     this.clientNamespace = io.of('/client');
@@ -120,15 +121,7 @@ class ClientSocketHandler {
       );
 
       socket.on('disconnect', async () => {
-        if (socket.orderId) {
-          this.io.to(`order_room_${socket.orderId}`).emit('orderAccepted', {
-            success: false,
-            message:
-              'The client has disconnected. If they need to rejoin an active room, use joinRoom to reconnect!',
-          });
-        } else {
-          console.log('Client disconnected');
-        }
+        console.log('Client disconnected');
       });
     } catch (error) {
       console.log(error);
@@ -137,10 +130,13 @@ class ClientSocketHandler {
   }
 
   static sendOrderPauseToClient(orderId) {
-    this.io.of('/client').to(`order_room_${orderId}`).emit('orderPaused', {
-      success: true,
-      message: 'Order paused',
-    });
+    ClientSocketHandler.io
+      .of('/client')
+      .to(`order_room_${orderId}`)
+      .emit('orderPaused', {
+        success: true,
+        message: 'Order paused',
+      });
   }
 }
 
