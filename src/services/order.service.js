@@ -74,7 +74,7 @@ const getOrderById = async (id, lang = 'ru') => {
     };
 
     const formattedOrders = formatResponseDates(order);
-    return sanitizedOrders(formattedOrders)
+    return sanitizedOrders(formattedOrders);
   } catch (error) {
     throw error;
   }
@@ -102,6 +102,11 @@ const deleteOrder = async (id) => {
 //Start Order
 const startOrder = async (orderId) => {
   try {
+    const order = await orderRepo.getById(orderId);
+    if (!order || order.status !== OrderStatus.ARRIVED) {
+      throw new Error('Order is not new');
+    }
+
     return await orderRepo.updateById(orderId, {
       startHour: String(Math.floor(Date.now() / 1000)),
       status: OrderStatus.START_WORK,
@@ -155,8 +160,8 @@ const getNewOrderByDriverParams = async (driverParams, structureId) => {
     let orders = await orderRepo.getNewOrderByStructureId(structureId);
     if (!orders) return [];
 
-    orders.forEach(order => {
-      order.amountType = getAmountTypeText(order.amountType)
+    orders.forEach((order) => {
+      order.amountType = getAmountTypeText(order.amountType);
     });
 
     return filterOrdersByDriverParams(orders, driverParams);
