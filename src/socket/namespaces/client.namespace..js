@@ -6,15 +6,11 @@ import orderService from '../../services/order.service.js';
 import { OrderStatus } from '../../enums/order/order-status.enum.js';
 
 class ClientSocketHandler {
-  static io;
   constructor(io) {
     this.io = io;
+    this.driverNamespace = io.of('/driver');
     this.clientNamespace = io.of('/client');
-
-    this.authMiddleware = this.authMiddleware.bind(this);
-    this.onConnection = this.onConnection.bind(this);
-    this.clientNamespace.use(this.authMiddleware);
-
+    this.clientNamespace.use(this.authMiddleware.bind(this));
     this.clientNamespace.on('connection', this.onConnection.bind(this));
   }
 
@@ -130,13 +126,10 @@ class ClientSocketHandler {
   }
 
   static sendOrderPauseToClient(orderId) {
-    ClientSocketHandler.io
-      .of('/client')
-      .to(`order_room_${orderId}`)
-      .emit('orderPaused', {
-        success: true,
-        message: 'Order paused',
-      });
+    this.clientNamespace.to(`order_room_${orderId}`).emit('orderPaused', {
+      success: true,
+      message: 'Order paused',
+    });
   }
 }
 

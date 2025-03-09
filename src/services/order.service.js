@@ -11,8 +11,7 @@ import machinePriceService from './machine-price.service.js';
 import structureService from './structure.service.js';
 import machineService from './machines.service.js';
 import redisSetHelper from '../helpers/redis-set-helper.js';
-import SocketHandler from '../socket/index.js';
-import DriverSocketHandler from '../socket/namespaces/driver.namespace.js';
+import SocketService from '../socket/index.js';
 
 const getOrders = async (query) => {
   try {
@@ -116,7 +115,12 @@ const startOrder = async (orderId) => {
     });
 
     if (result) {
-      SocketHandler.sendOrderAcceptedToClient(orderId);
+      const clientSocket = SocketService.getSocket('client');
+
+      clientSocket.to(`order_room_${orderId}`).emit('orderStarted', {
+        success: true,
+        message: 'Order started',
+      });
     }
 
     return result;
@@ -153,6 +157,13 @@ const endOrder = async (orderId) => {
       default:
         updateData;
     }
+
+    const clientSocket = SocketService.getSocket('client');
+
+    clientSocket.to(`order_room_${orderId}`).emit('endOrder', {
+      success: true,
+      message: 'Order completed',
+    });
 
     return await orderRepo.updateById(orderId, {
       endHour,
@@ -282,7 +293,7 @@ const acceptOrder = async (orderId) => {
     if (!order) {
       throw new Error('Order not found');
     }
-    
+
     const result = await orderRepo.updateById(orderId, {
       status: OrderStatus.SEARCHING,
     });
@@ -292,11 +303,13 @@ const acceptOrder = async (orderId) => {
     }
 
     await redisSetHelper.stopNotificationForOrder(String(orderId));
-    DriverSocketHandler.sendOrderAcceptedToClient(
-      orderId,
-      'Feruz Bek',
-      '+998901234567'
-    );
+    const clientSocket = SocketService.getSocket('client');
+
+    clientSocket.to(`order_room_${orderId}`).emit('orderAccepted', {
+      success: true,
+      driverName: 'Ali',
+      driverPhone: '+998901234567',
+    });
 
     return {
       success: true,

@@ -2,43 +2,35 @@ import { OrderStatus } from '../../enums/order/order-status.enum.js';
 import redisSetHelper from '../../helpers/redis-set-helper.js';
 import orderService from '../../services/order.service.js';
 import { verifyToken } from '../../helpers/jwt-token.helper.js';
+import userRoleEnum from '../../enums/user/user-role.enum.js';
 
 class DriverSocketHandler {
-  static staticIO = null;
   constructor(io) {
     this.io = io;
-    DriverSocketHandler.staticIO = io;
-
     this.driverNamespace = io.of('/driver');
-
-    this.authMiddleware = this.authMiddleware.bind(this);
-    this.onConnection = this.onConnection.bind(this);
-    this.driverNamespace.use(this.authMiddleware);
-    this.driverNamespace.on('connection', this.onConnection);
+    this.clientNamespace = io.of('/client');
+    this.driverNamespace.use(this.authMiddleware.bind(this));
+    this.driverNamespace.on('connection', this.onConnection.bind(this));
   }
 
   // Authentication middleware
   authMiddleware(socket, next) {
     try {
       const token = socket.handshake.headers['auth'];
-
-      if (!token) {
-        return next(new Error('Access denied, no token provided'));
-      }
+      if (!token) return next(new Error('Access denied, no token provided'));
 
       const user = verifyToken(token);
+      if (!user) return next(new Error('User error'));
 
-      if (!user) {
-        return next(new Error('User error'));
-      }
+      if (user.role !== userRoleEnum.DRIVER)
+        return next(new Error('Role error')); // Qo‘shildi
 
       socket.userId = user.id;
       socket.role = user.role;
-
       next();
     } catch (error) {
       console.log(error);
-      socket.emit('error', { message: error.message });
+      next(error);
     }
   }
 
@@ -76,14 +68,11 @@ class DriverSocketHandler {
           status: OrderStatus.ASSIGNED,
         });
 
-        this.io
-          .of('/client')
-          .to(`order_room_${orderId}`)
-          .emit('orderAccepted', {
-            success: true,
-            driverName,
-            driverPhone,
-          });
+        this.clientNamespace.to(`order_room_${orderId}`).emit('orderAccepted', {
+          success: true,
+          driverName,
+          driverPhone,
+        });
 
         socket.emit('acceptedOrder', {
           success: true,
@@ -98,8 +87,7 @@ class DriverSocketHandler {
 
     // Driver lokatsiyasini yuborish
     socket.on('updateLocation', async ({ orderId, log, lat }) => {
-      this.io
-        .of('/client')
+      this.clientNamespace
         .to(`order_room_${orderId}`)
         .emit('driverLocation', { orderId, log, lat });
     });
@@ -110,13 +98,10 @@ class DriverSocketHandler {
         status: OrderStatus.ARRIVED,
       });
 
-      DriverSocketHandler.staticIO
-        .of('/client')
-        .to(`order_room_${orderId}`)
-        .emit('driverArrived', {
-          success: true,
-          message: 'Driver arrived to client',
-        });
+      this.clientNamespace.to(`order_room_${orderId}`).emit('driverArrived', {
+        success: true,
+        message: 'Driver arrived to client',
+      });
     });
 
     // Ulanish uzilganda
@@ -125,15 +110,12 @@ class DriverSocketHandler {
     });
   }
 
-  static sendOrderAcceptedToClient(orderId, driverName, driverPhone) {
-    DriverSocketHandler.staticIO
-      .of('/client')
-      .to(`order_room_${orderId}`)
-      .emit('orderAccepted', {
-        success: true,
-        driverName,
-        driverPhone,
-      });
+  sendOrderAcceptedToClient(orderId, driverName, driverPhone) {
+    this.clientNamespace.to(`order_room_${orderId}`).emit('orderAccepted', {
+      success: true,
+      driverName,
+      driverPhone,
+    });
   }
 }
 

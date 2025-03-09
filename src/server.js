@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import http from 'http';
 import cors from 'cors';
-import socketHandler from './socket/index.js';
+import SocketService from './socket/index.js';
 import { Server } from 'socket.io';
 
 dotenv.config();
@@ -12,12 +12,13 @@ dotenv.config();
 const app = express();
 app.use(cors());
 
-// Socket.IO Server creation
-const server = http.createServer(app);
-const io = new Server(server);
+// HTTP server
+const server = http.createServer();
 
-// Namespace Socket IO
-socketHandler(io);
+// Socket server setup
+const io = new Server();
+export const socketService = new SocketService(io);
+io.attach(server);
 
 // Middleware
 app.use(express.json());
@@ -58,7 +59,6 @@ app.use('/api/structure', structureRoute);
 app.use('/api/machine-price', machinePriceRoute);
 app.use('/api/static', staticRoute);
 app.use('/api/order', orderRoute);
-
 
 // Error handler
 
