@@ -51,12 +51,10 @@ export default (io) => {
             success: false,
             message: 'Order has been accepted by another driver',
           });
-          console.log('Order has been accepted by another driver');
           return;
         }
 
         socket.join(`order_room_${orderId}`);
-        console.log(`driver join room ${driverPhone}`);
 
         await orderService.updateOrder(orderId, {
           driverId: parseInt(socket.userId),
@@ -73,7 +71,6 @@ export default (io) => {
           success: true,
           message: 'You accepted the order',
         });
-        console.log('acceptedOrder ', driverPhone);
 
         await redisSetHelper.stopNotificationForOrder(String(orderId));
       } catch (error) {
@@ -83,7 +80,6 @@ export default (io) => {
 
     // Dreiver Location Send
     socket.on('updateLocation', async ({ orderId, log, lat }) => {
-      console.log('Send Location');
       io.of('/client')
         .to(`order_room_${orderId}`)
         .emit('driverLocation', { orderId, log, lat });
@@ -94,7 +90,6 @@ export default (io) => {
       await orderService.updateOrder(orderId, {
         status: OrderStatus.ARRIVED,
       });
-      console.log('driver arrived');
 
       io.of('/client').to(`order_room_${orderId}`).emit('driverArrived', {
         success: true,
