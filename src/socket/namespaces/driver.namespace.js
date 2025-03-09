@@ -4,25 +4,41 @@ import orderService from '../../services/order.service.js';
 import { verifyToken } from '../../helpers/jwt-token.helper.js';
 
 class DriverSocketHandler {
-  static io = null; // static methodlar uchun
-
+  static staticIO = null;
   constructor(io) {
-    this.io = io; // Obyekt metodlari uchun
-    DriverSocketHandler.io = io; // Static methodlar uchun ham saqlash
+    this.io = io;
+    DriverSocketHandler.staticIO = io;
 
     this.driverNamespace = io.of('/driver');
 
     this.authMiddleware = this.authMiddleware.bind(this);
     this.onConnection = this.onConnection.bind(this);
-
     this.driverNamespace.use(this.authMiddleware);
     this.driverNamespace.on('connection', this.onConnection);
   }
 
-  // Static metodda `io` ni to‘g‘ri o‘rnatish
-  static init(io) {
-    if (!this.io) {
-      this.io = io;
+  // Authentication middleware
+  authMiddleware(socket, next) {
+    try {
+      const token = socket.handshake.headers['auth'];
+
+      if (!token) {
+        return next(new Error('Access denied, no token provided'));
+      }
+
+      const user = verifyToken(token);
+
+      if (!user) {
+        return next(new Error('User error'));
+      }
+
+      socket.userId = user.id;
+      socket.role = user.role;
+
+      next();
+    } catch (error) {
+      console.log(error);
+      socket.emit('error', { message: error.message });
     }
   }
 
@@ -30,16 +46,20 @@ class DriverSocketHandler {
   async onConnection(socket) {
     console.log(`Socket connected: ${socket.id}`);
 
+    // Driver room'ga qo'shilishi
     socket.on('joinRoom', (orderId) => {
       socket.join(`order_room_${orderId}`);
       socket.emit('orderStatus', { status: true, orderId });
     });
 
+    // Buyurtmani qabul qilish
     socket.on('acceptOrder', async ({ orderId, driverName, driverPhone }) => {
       try {
         const stillExists = await redisSetHelper.isNotificationStopped(
           String(orderId)
         );
+
+        console.log('Redis Set:', stillExists);
 
         if (stillExists === true) {
           socket.emit('orderPicked', {
@@ -56,7 +76,7 @@ class DriverSocketHandler {
           status: OrderStatus.ASSIGNED,
         });
 
-        DriverSocketHandler.io
+        this.io
           .of('/client')
           .to(`order_room_${orderId}`)
           .emit('orderAccepted', {
@@ -76,19 +96,21 @@ class DriverSocketHandler {
       }
     });
 
+    // Driver lokatsiyasini yuborish
     socket.on('updateLocation', async ({ orderId, log, lat }) => {
-      DriverSocketHandler.io
+      this.io
         .of('/client')
         .to(`order_room_${orderId}`)
         .emit('driverLocation', { orderId, log, lat });
     });
 
+    // Driver mijozga yetib kelgani haqida xabar yuborish
     socket.on('icame', async ({ orderId }) => {
       await orderService.updateOrder(orderId, {
         status: OrderStatus.ARRIVED,
       });
 
-      DriverSocketHandler.io
+      DriverSocketHandler.staticIO
         .of('/client')
         .to(`order_room_${orderId}`)
         .emit('driverArrived', {
@@ -97,18 +119,14 @@ class DriverSocketHandler {
         });
     });
 
+    // Ulanish uzilganda
     socket.on('disconnect', async () => {
       console.log(`Driver ${socket.id} disconnected`);
     });
   }
 
   static sendOrderAcceptedToClient(orderId, driverName, driverPhone) {
-    if (!DriverSocketHandler.io) {
-      console.error('❌ Error: Socket.IO not initialized');
-      throw new Error('Socket.IO not initialized');
-    }
-
-    DriverSocketHandler.io
+    DriverSocketHandler.staticIO
       .of('/client')
       .to(`order_room_${orderId}`)
       .emit('orderAccepted', {
