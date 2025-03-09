@@ -12,13 +12,12 @@ dotenv.config();
 const app = express();
 app.use(cors());
 
-// HTTP server
-const server = http.createServer();
+// Socket.IO Server creation
+const server = http.createServer(app);
+const io = new Server(server);
 
-// Socket server setup
-const io = new Server();
-export const socketService = new SocketService(io);
-io.attach(server);
+// Namespace Socket IO
+new SocketService(io);
 
 // Middleware
 app.use(express.json());
