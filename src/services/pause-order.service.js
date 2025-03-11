@@ -1,6 +1,6 @@
 import orderPauseRepo from '../repositories/pause-order.repo.js';
 import orderService from '../services/order.service.js';
-import SocketHandler from '../socket/index.js';
+import SocketService from '../socket/index.js';
 
 const startPauseTime = async (orderId) => {
   try {
@@ -10,7 +10,13 @@ const startPauseTime = async (orderId) => {
       throw new Error('Order not found');
     }
 
-    SocketHandler.sendOrderPauseToClient(orderId);
+    const clientSocket = SocketService.getSocket('client');
+
+    clientSocket.to(`order_room_${orderId}`).emit('startOrderPause', {
+      success: true,
+      message: 'Start order pause',
+    });
+
     return await orderPauseRepo.createStartPause(orderId);
   } catch (error) {
     throw error;
@@ -23,6 +29,13 @@ const endPauseTime = async (orderId) => {
   if (!order) {
     throw new Error('Order not found');
   }
+
+  const clientSocket = SocketService.getSocket('client');
+
+  clientSocket.to(`order_room_${orderId}`).emit('endOrderPause', {
+    success: true,
+    message: 'End order pause',
+  });
 
   return await orderPauseRepo.updateEndPause(orderId);
 };
