@@ -143,11 +143,11 @@ const orderStartWork = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    res.status(error.code).json({
+    res.status(500).json({
       success: false,
       error: {
         message: error.message,
-        code: error.code || 500,
+        code: 500,
       },
     });
   }
@@ -165,7 +165,7 @@ const orderEndWork = async (req, res) => {
       success: false,
       error: {
         message: error.message,
-        code: error.code || 500,
+        code: 500,
       },
     });
   }
