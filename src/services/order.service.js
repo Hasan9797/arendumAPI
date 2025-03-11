@@ -106,7 +106,7 @@ const startOrder = async (orderId) => {
   try {
     const order = await orderRepo.getById(orderId);
     if (!order || order.status !== OrderStatus.ARRIVED) {
-      throw new Error('Order is not new');
+      throw new Error('Order not found or driver is not arrived', 403);
     }
 
     const result = await orderRepo.updateById(orderId, {
