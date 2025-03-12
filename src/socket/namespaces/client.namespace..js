@@ -80,7 +80,13 @@ class ClientSocketHandler {
           const body = 'You have a new order';
           const data = {
             key: 'new_order',
-            orderId: String(orderId),
+            order: JSON.stringify({
+              orderId,
+              orderType,
+              amountType,
+              structureId,
+              params,
+            }),
           };
 
           await redisSetHelper.startNotificationForOrder(String(orderId));
