@@ -320,6 +320,37 @@ const acceptOrder = async (orderId) => {
   }
 };
 
+const driverArrived = async (orderId) => {
+  try {
+    const order = await orderRepo.getById(orderId);
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    const result = await orderRepo.updateById(orderId, {
+      status: OrderStatus.ARRIVED,
+    });
+
+    if (!result) {
+      throw new Error('Order update error');
+    }
+
+    const clientSocket = SocketService.getSocket('client');
+
+    clientSocket.to(`order_room_${orderId}`).emit('driverArrived', {
+      success: true,
+    }); // 🔹 driverArrived eventi
+
+    return {
+      success: true,
+      orderId,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getOrders,
   getOrderById,
@@ -329,6 +360,7 @@ export default {
   startOrder,
   endOrder,
   acceptOrder,
+  driverArrived,
   getOrderByDriverId,
   getOrderByClientId,
   getNewOrderByDriverParams,
