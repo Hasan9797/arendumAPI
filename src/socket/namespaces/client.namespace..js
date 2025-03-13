@@ -75,6 +75,9 @@ class ClientSocketHandler {
           socket.emit('driverNotFound', { message: 'Driver not found' });
           return;
         }
+        console.log('drivers', drivers);
+        
+        console.log(order);
 
         const title = 'New Order';
         const body = 'You have a new order';
