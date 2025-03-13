@@ -92,18 +92,6 @@ class DriverSocketHandler {
         .emit('driverLocation', { orderId, log, lat });
     });
 
-    // Driver mijozga yetib kelgani haqida xabar yuborish
-    socket.on('icame', async ({ orderId }) => {
-      await orderService.updateOrder(orderId, {
-        status: OrderStatus.ARRIVED,
-      });
-
-      this.clientNamespace.to(`order_room_${orderId}`).emit('driverArrived', {
-        success: true,
-        message: 'Driver arrived to client',
-      });
-    });
-
     // Ulanish uzilganda
     socket.on('disconnect', async () => {
       console.log(`Driver ${socket.id} disconnected`);

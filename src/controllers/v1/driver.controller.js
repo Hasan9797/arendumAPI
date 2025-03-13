@@ -98,6 +98,15 @@ const acceptOrder = async (req, res) => {
   }
 };
 
+const driveCame = async (req, res) => {
+  try {
+    const result = await orderService.driverArrived(Number(req.query.id));
+    res.status(200).json(responseSuccess(result));
+  } catch (error) {
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
+
 export default {
   getAll,
   getById,
@@ -106,5 +115,6 @@ export default {
   distroy,
   getMe,
   acceptOrder,
+  driveCame,
   getProcessOrder,
 };
