@@ -6,20 +6,20 @@ function updateParamsWithTotalAmount(filterParams, machineParams) {
   // machineParams ma'lumotlarini tezkor qidiruv uchun xarita (Map) shaklida tuzish
   const paramsMap = new Map();
 
-  machineParams.forEach(item => {
+  machineParams.forEach((item) => {
     const key = String(item.key);
     paramsMap.set(key, item.params);
   });
 
   // filterParamsni qayta ishlash, tegishli amountlar yig'indisini qo'shish
-  return filterParams.map(param => {
+  return filterParams.map((param) => {
     let totalAmount = 0;
 
     for (const key in param) {
       const mappedParams = paramsMap.get(String(key)); // Map'dan tezkor qidiruv
 
       if (mappedParams) {
-        mappedParams.forEach(element => {
+        mappedParams.forEach((element) => {
           if (Number(element.param) === Number(param[key])) {
             totalAmount += Number(element.amount);
           }
@@ -30,8 +30,6 @@ function updateParamsWithTotalAmount(filterParams, machineParams) {
     return { ...param, amount: totalAmount };
   });
 }
-
-
 
 const getParamsFilters = async (query) => {
   try {
@@ -61,7 +59,8 @@ const getById = async (id) => {
 
 const getByMachineId = async (machineId) => {
   try {
-    const result = await machineParamsFilterRepo.getParamsFilterByMachineId(machineId);
+    const result =
+      await machineParamsFilterRepo.getParamsFilterByMachineId(machineId);
 
     return formatResponseDates(result) ?? {};
   } catch (error) {
@@ -71,17 +70,18 @@ const getByMachineId = async (machineId) => {
 
 const createParamsFilter = async (data) => {
   try {
-    const machineParams = await machineParamsRepo.getByMachineId(parseInt(data.machineId));
+    // const machineParams = await machineParamsRepo.getByMachineId(
+    //   parseInt(data.machineId)
+    // );
 
-    if (!machineParams) throw new Error('Machine params not found');
+    // if (!machineParams) throw new Error('Machine params not found');
 
-    const updatedParams = updateParamsWithTotalAmount(data.filterParams, machineParams);
-    
-    return await machineParamsFilterRepo.create({
-      filterParams: updatedParams,
-      machineId: data.machineId,
-    });
-    
+    // const updatedParams = updateParamsWithTotalAmount(
+    //   data.filterParams,
+    //   machineParams
+    // );
+
+    return await machineParamsFilterRepo.create(data);
   } catch (error) {
     throw error;
   }
@@ -99,6 +99,29 @@ const deleteParamsFilter = async (id) => {
   return await machineParamsFilterRepo.distroy(id);
 };
 
+const getParamsAmountsFiltersByMachineId = async (machineId) => {
+  const machineParams = await machineParamsRepo.getByMachineId(machineId);
+
+  if (!machineParams) throw new Error('Machine params not found');
+
+  const filters =
+    await machineParamsFilterRepo.getParamsFilterByMachineId(machineId);
+
+  if (!filters) throw new Error('Filter params not found');
+
+  // `filters.filterParams` ni tekshirib, arrayga o‘girish
+  const filterParamsArray = Array.isArray(filters.filterParams)
+    ? filters.filterParams
+    : [filters.filterParams];
+
+  const updatedParams = updateParamsWithTotalAmount(
+    filterParamsArray,
+    machineParams
+  );
+
+  return updatedParams;
+};
+
 export default {
   getParamsFilters,
   getById,
@@ -106,4 +129,5 @@ export default {
   createParamsFilter,
   updateParamsFilter,
   deleteParamsFilter,
+  getParamsAmountsFiltersByMachineId,
 };

@@ -5,7 +5,9 @@ import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 function convertToUnderscoreFormat(str) {
   let trimmedStr = str.trim();
-  return trimmedStr.includes(' ') ? trimmedStr.replace(/\s+/g, '_') : trimmedStr;
+  return trimmedStr.includes(' ')
+    ? trimmedStr.replace(/\s+/g, '_')
+    : trimmedStr;
 }
 
 const getMachineParams = async (lang, query) => {
@@ -45,7 +47,7 @@ const createMachineParam = async (data) => {
       ...rest,
       nameEn,
       key: convertToUnderscoreFormat(nameEn),
-    }
+    };
     return await machineParamsRepo.create(convertData);
   } catch (error) {
     throw error;
@@ -101,11 +103,13 @@ const optionSelectParams = async (lang, machinId) => {
 
 const getParamsOptions = async (lang, machineId) => {
   try {
-    const machinePrice = await machinePriceService.getPriceByMachineId(machineId);
+    const machinePrice =
+      await machinePriceService.getPriceByMachineId(machineId);
 
     const selectParamsOptions = await optionSelectParams(lang, machineId);
 
-    const paramsFilters = await paramsFiltersService.getByMachineId(machineId);
+    const paramsFilters =
+      await paramsFiltersService.getParamsAmountsFiltersByMachineId(machineId);
 
     // const amount = await optionAmount(machineId);
 
