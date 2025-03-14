@@ -82,6 +82,8 @@ class ClientSocketHandler {
           order: JSON.stringify(order),
         };
 
+        console.log(order);
+        
         await redisSetHelper.startNotificationForOrder(String(order.id));
 
         for (const driver of drivers) {

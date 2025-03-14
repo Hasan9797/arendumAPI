@@ -123,6 +123,7 @@ model MachineParamsFilters {
 model BankCard {
   id        Int      @id @default(autoincrement())
   name      String
+  number    String
   expire    String
   userId    Int      @map("user_id")
   status    Int      @default(0)
@@ -254,6 +255,12 @@ model MachinePriceParams {
   machinePrice   MachinePrice @relation("MachinePriceParams", fields: [machinePriceId], references: [id], onDelete: Cascade)
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
+}
+
+model UsersBalance {
+  id      Int    @id @default(autoincrement())
+  userId  Int    @map("user_id")
+  balance String
 }
 
 // model Transaction {
