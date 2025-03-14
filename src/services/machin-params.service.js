@@ -116,7 +116,7 @@ const getParamsOptions = async (lang, machineId) => {
     return {
       fullAmount: machinePrice?.minAmount ?? 0,
       paramsOptions: selectParamsOptions,
-      filters: paramsFilters.filterParams,
+      filters: paramsFilters,
       // amount,
     };
   } catch (error) {
