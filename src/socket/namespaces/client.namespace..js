@@ -63,6 +63,7 @@ class ClientSocketHandler {
         });
 
         socket.join(`order_room_${order.id}`);
+        console.log('structureId: ', order.structure.id);
 
         const drivers = await driverService.getDriversInClientStructure(
           order.structure.id,
@@ -76,7 +77,7 @@ class ClientSocketHandler {
           return;
         }
         console.log('drivers', drivers);
-        
+
         console.log(order);
 
         const title = 'New Order';
