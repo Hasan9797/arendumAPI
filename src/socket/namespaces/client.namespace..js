@@ -50,11 +50,11 @@ class ClientSocketHandler {
       });
 
       socket.on('createOrder', async (order) => {
+
         if (!order || typeof order.id !== 'number') {
           throw new Error('orderId is required');
         }
 
-        console.log('new order: ', order);
         socket.orderId = order.id;
 
         await orderService.updateOrder(order.id, {
@@ -69,7 +69,6 @@ class ClientSocketHandler {
           order.type,
           order.amountType
         );
-        console.log(drivers);
 
         if (drivers.length === 0) {
           socket.emit('driverNotFound', { message: 'Driver not found' });
@@ -82,8 +81,6 @@ class ClientSocketHandler {
           key: 'new_order',
           order: JSON.stringify(order),
         };
-
-        console.log(order);
 
         await redisSetHelper.startNotificationForOrder(String(order.id));
 
