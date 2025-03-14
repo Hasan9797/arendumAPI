@@ -50,7 +50,6 @@ class ClientSocketHandler {
       });
 
       socket.on('createOrder', async (order) => {
-        console.log(order);
 
         if (!order || typeof order.id !== 'number') {
           throw new Error('orderId is required');
@@ -63,7 +62,6 @@ class ClientSocketHandler {
         });
 
         socket.join(`order_room_${order.id}`);
-        console.log('structureId: ', order.structure.id);
 
         const drivers = await driverService.getDriversInClientStructure(
           order.structure.id,
@@ -76,9 +74,6 @@ class ClientSocketHandler {
           socket.emit('driverNotFound', { message: 'Driver not found' });
           return;
         }
-        console.log('drivers', drivers);
-
-        console.log(order);
 
         const title = 'New Order';
         const body = 'You have a new order';
