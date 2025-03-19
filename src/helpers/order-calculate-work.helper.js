@@ -29,7 +29,7 @@ async function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
 
   // Haydovchi kelgan vaqt va buyurtma boshlangan vaqt farqini hisoblash (daqiqalarda)
   const calculateTime = Math.floor(
-    (Number(order.driverArrivedTime) - Number(order.startHour)) / 60
+    (parseInt(order.driverArrivedTime) - parseInt(order.startHour)) / 60
   );
 
   // Agar hisoblangan vaqt `waitingTime` dan kichik bo‘lsa, 0 bo‘lishi kerak
@@ -56,7 +56,7 @@ async function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
     );
 
     return {
-      waitingPaid,
+      waitingPaid: waitingPaid * finalWaitingTime,
       waitingTime: finalWaitingTime,
       totalWorkHour,
       totalWorkMinut,
@@ -69,23 +69,18 @@ async function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
   };
 }
 
-const formatAmount = (amount) => {
-  return new Intl.NumberFormat('de-DE', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
-};
-
 // ⏳ **Vaqtni `hh:mm:ss` formatga o‘girish uchun yordamchi funksiya**
-const formatTime = (seconds) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
+const formatTime = (minutes) => {
+  const totalSeconds = minutes * 60; // Daqiqani sekundga aylantirish
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
 
   // **Har doim 2 xonali qilish (`padStart(2, '0')`)**
   return [
     hours.toString().padStart(2, '0'),
-    minutes.toString().padStart(2, '0'),
+    mins.toString().padStart(2, '0'),
     secs.toString().padStart(2, '0'),
   ].join(':');
 };
@@ -132,9 +127,6 @@ const calculateWorkTimeAmount = async (order) => {
   const { waitingPaid, waitingTime, totalWorkHour, totalWorkMinut } =
     await calculateWaitingAmountAndTime(order, totalWorkInSeconds);
 
-  const totalWaitingAmount = waitingPaid * waitingTime;
-  console.log('totalWaitingAmount: ', totalWaitingAmount);
-
   // 5. Pause vaqtini soat va minutlarga aylantirish
   const totalPauseHour = Math.floor(totalPauseTimeInSeconds / 3600);
   const totalPauseMinut = Math.floor((totalPauseTimeInSeconds % 3600) / 60);
@@ -143,7 +135,7 @@ const calculateWorkTimeAmount = async (order) => {
   const amountPerMinute = order.amount / 60;
   // Umumiy narx hisoblash
   totalAmount = Math.round(
-    (totalWorkHour * 60 + totalWorkMinut) * amountPerMinute + totalWaitingAmount
+    (totalWorkHour * 60 + totalWorkMinut) * amountPerMinute + waitingPaid
   );
 
   console.log('totalAmount: ', totalAmount);
