@@ -96,7 +96,13 @@ const getProcessOrder = async (req, res) => {
 
 const acceptOrder = async (req, res) => {
   try {
-    const result = await orderService.acceptOrder(Number(req.query.id));
+    const driverId = req.user.id;
+    
+    const result = await orderService.acceptOrder(
+      Number(req.query.id),
+      driverId
+    );
+
     if (result == null) {
       return res.status(404).json({ message: 'Order not found', data: null });
     }

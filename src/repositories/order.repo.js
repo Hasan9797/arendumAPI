@@ -144,8 +144,8 @@ const getNewOrderByStructureId = async (structureId) => {
             fullName: true,
             phone: true,
           },
-        }
-      }
+        },
+      },
     });
   } catch (error) {
     throw error;
@@ -162,6 +162,7 @@ const getOrderByDriverId = async (lang, driverId) => {
             OrderStatus.ASSIGNED,
             OrderStatus.ARRIVED,
             OrderStatus.START_WORK,
+            OrderStatus.PAUSE_WORK,
           ],
         },
       },

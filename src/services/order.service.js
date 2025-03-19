@@ -297,7 +297,7 @@ const getOrderByClientId = async (lang, clientId) => {
   }
 };
 
-const acceptOrder = async (orderId) => {
+const acceptOrder = async (orderId, driverId) => {
   try {
     const order = await orderRepo.getById(orderId);
 
@@ -312,6 +312,7 @@ const acceptOrder = async (orderId) => {
 
     const result = await orderRepo.updateById(orderId, {
       status: OrderStatus.ASSIGNED,
+      driverId,
     });
 
     if (!result) {
