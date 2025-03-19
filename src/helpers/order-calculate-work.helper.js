@@ -1,7 +1,9 @@
 import machinePriceService from '../services/machine-price.service.js';
 
-function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
-  const machinePrice = machinePriceService.getPriceByMachineId(order.machineId);
+async function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
+  const machinePrice = await machinePriceService.getPriceByMachineId(
+    order.machineId
+  );
   console.log('machinePrice: ', machinePrice);
 
   if (!machinePrice) return { waitingPaid: 0, waitingTime: 0 };
@@ -67,6 +69,13 @@ function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
   };
 }
 
+const formatAmount = (amount) => {
+  return new Intl.NumberFormat('de-DE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+};
+
 // ⏳ **Vaqtni `hh:mm:ss` formatga o‘girish uchun yordamchi funksiya**
 const formatTime = (seconds) => {
   const hours = Math.floor(seconds / 3600);
@@ -131,10 +140,15 @@ const calculateWorkTimeAmount = (order) => {
   const totalPauseMinut = Math.floor((totalPauseTimeInSeconds % 3600) / 60);
 
   // 6. Total amount hisoblash: order.amount soatlik narx sifatida
-  const amountPerMinute = order.amount / 60; // 1 minut uchun to'g'ri keladigan narx
-  totalAmount = totalWorkHour * order.amount + totalWorkMinut * amountPerMinute;
+  const amountPerMinute = order.amount / 60;
+  // Umumiy narx hisoblash
+  const totalWorkMinutes = totalWorkInSeconds / 60;
 
-  if (totalWaitingAmount > 0) totalAmount += totalWaitingAmount;
+  // Jami summa hisoblash
+  totalAmount = Math.round(
+    totalWorkMinutes * amountPerMinute + totalWaitingAmount
+  );
+
   console.log('totalAmount: ', totalAmount);
 
   return {
