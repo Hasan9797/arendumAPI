@@ -31,6 +31,7 @@ function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
 
   // Agar hisoblangan vaqt `waitingTime` dan kichik bo‘lsa, 0 bo‘lishi kerak
   const finalWaitingTime = calculateTime > waitingTime ? calculateTime : 0;
+  console.log('finalWaitingTime: ', finalWaitingTime);
 
   if (totalWorkInSeconds > 0) {
     const minmumSeconds = machinePrice.minimum * 3600;
@@ -43,6 +44,12 @@ function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
       totalWorkHour = Math.floor(minmumSeconds / 3600);
       totalWorkMinut = Math.floor((minmumSeconds % 3600) / 60);
     }
+    console.log(
+      'totalWorkHour: ',
+      totalWorkHour,
+      'totalWorkMinut: ',
+      totalWorkMinut
+    );
 
     return {
       waitingPaid,
