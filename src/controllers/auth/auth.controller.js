@@ -42,20 +42,19 @@ const login = async (req, res) => {
 
     const accessToken = generateAccessToken(payload);
 
-    const refreshToken = generateRefreshToken(payload);
+    // const refreshToken = generateRefreshToken(payload);
 
-    const userToken = {
-      token: refreshToken,
-      userId: user.id,
-      expire: '7d',
-    };
+    // const userToken = {
+    //   token: refreshToken,
+    //   userId: user.id,
+    //   expire: '7d',
+    // };
 
-    await updateOrCreateUserToken(userToken);
+    // await updateOrCreateUserToken(userToken);
 
     return res.status(200).json({
       message: 'Login successful',
       accessToken,
-      refreshToken,
       role: {
         number: user.role,
         name: ROLE_NAME[user.role],
@@ -88,7 +87,10 @@ const refreshToken = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const newAccessToken = generateAccessToken({ id: decoded.id, role: decoded.role });
+    const newAccessToken = generateAccessToken({
+      id: decoded.id,
+      role: decoded.role,
+    });
 
     return res
       .status(200)

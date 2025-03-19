@@ -10,7 +10,6 @@ import {
 } from '../../helpers/response.helper.js';
 
 const getAll = async (req, res) => {
-
   let query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 20,
@@ -24,9 +23,17 @@ const getAll = async (req, res) => {
   const user = req.user;
 
   if (user.role == userRoleEnum.CLIENT) {
-    query.filters.push({ column: 'clientId', operator: 'equals', value: user.id });
+    query.filters.push({
+      column: 'clientId',
+      operator: 'equals',
+      value: user.id,
+    });
   } else if (user.role == userRoleEnum.DRIVER) {
-    query.filters.push({ column: 'driverId', operator: 'equals', value: user.id });
+    query.filters.push({
+      column: 'driverId',
+      operator: 'equals',
+      value: user.id,
+    });
   }
 
   try {
@@ -52,7 +59,10 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
-    const order = await orderService.getOrderById(parseInt(req.params.id), lang);
+    const order = await orderService.getOrderById(
+      parseInt(req.params.id),
+      lang
+    );
     res.status(200).json({
       success: true,
       data: order,
@@ -73,7 +83,6 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-
     if (!req.user.role == userRoleEnum.CLIENT) {
       const client = await clientService.getClientById(req.user.id);
 
@@ -81,7 +90,7 @@ const create = async (req, res) => {
         throw new Error('User is inactive or User is not Client');
       }
     }
-    
+
     const order = await orderService.createOrder(req.body);
     res.status(201).json({
       success: true,
@@ -156,10 +165,8 @@ const orderStartWork = async (req, res) => {
 const orderEndWork = async (req, res) => {
   const orderId = Number(req.query.id);
   try {
-    await orderService.endOrder(orderId);
-    res.status(200).json({
-      success: true,
-    });
+    const result = await orderService.endOrder(orderId);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -171,14 +178,17 @@ const orderEndWork = async (req, res) => {
   }
 };
 
-// Driver lar uchun yangi (status driver SEARCHING) qo'shilgan orderlarni chiqarish, 
+// Driver lar uchun yangi (status driver SEARCHING) qo'shilgan orderlarni chiqarish,
 // driver params ga moslarini
 const getNewOrderByDriverParams = async (req, res) => {
   try {
     const driver = await driverService.getById(req.user.id);
     if (!driver) throw new Error('Driver not found');
 
-    const orders = await orderService.getNewOrderByDriverParams(driver?.params, Number(driver?.structureId));
+    const orders = await orderService.getNewOrderByDriverParams(
+      driver?.params,
+      Number(driver?.structureId)
+    );
     res.status(200).json({
       success: true,
       data: orders,
@@ -192,7 +202,7 @@ const getNewOrderByDriverParams = async (req, res) => {
       },
     });
   }
-}
+};
 
 export default {
   getAll,
@@ -202,5 +212,5 @@ export default {
   distroy,
   orderStartWork,
   orderEndWork,
-  getNewOrderByDriverParams
+  getNewOrderByDriverParams,
 };

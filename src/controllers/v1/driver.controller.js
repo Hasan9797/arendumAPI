@@ -83,9 +83,11 @@ const getProcessOrder = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
     const order = await orderService.getOrderByDriverId(lang, req.user.id);
+
     if (order == null) {
-      return res.status(404).json({ message: 'Order not found', data: null });
+      return res.status(200).json({ message: 'Order not found', data: null });
     }
+
     res.status(200).json(responseSuccess(order));
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
@@ -95,6 +97,16 @@ const getProcessOrder = async (req, res) => {
 const acceptOrder = async (req, res) => {
   try {
     const result = await orderService.acceptOrder(Number(req.query.id));
+    if (result == null) {
+      return res.status(404).json({ message: 'Order not found', data: null });
+    }
+
+    if (result == false) {
+      return res
+        .status(400)
+        .json({ message: 'Order already accepted', data: null });
+    }
+
     res.status(200).json(responseSuccess(result));
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));

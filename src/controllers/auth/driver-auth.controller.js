@@ -54,13 +54,15 @@ const register = async (req, res) => {
     if (!structure) {
       throw new Error('Structure not found');
     }
-    
+
     const driver = await driverService.updateById(req.user.id, {
       status: DriverStatus.INACTIVE,
       ...req.body,
     });
 
-    res.status(201).json({ success: true, message: 'Driver registered', data: driver });
+    res
+      .status(201)
+      .json({ success: true, message: 'Driver registered', data: driver });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -132,6 +134,21 @@ const verifySmsCode = async (req, res) => {
 
     if (!user) {
       throw new Error('User not found', 400);
+    }
+
+    const drivers = await prisma.driver.findMany({
+      where: { structureId: user.structureId },
+    });
+
+    const currentDriver = drivers.find(
+      (driver) => String(driver.fcmToken).trim() === String(fcmToken).trim()
+    );
+
+    if (currentDriver) {
+      await prisma.driver.update({
+        where: { id: currentDriver.id },
+        data: { fcmToken: 'remove' },
+      });
     }
 
     await prisma.driver.update({
