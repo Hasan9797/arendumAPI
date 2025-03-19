@@ -215,7 +215,7 @@ const getOrderByDriverId = async (lang, driverId) => {
     const order = await orderRepo.getOrderByDriverId(lang, driverId);
 
     if (!order) {
-      throw new Error('Order not found');
+      return null;
     }
 
     const machine = await machineService.getMachineById(order.machineId, lang);

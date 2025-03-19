@@ -83,6 +83,9 @@ const getProcessOrder = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
     const order = await orderService.getOrderByDriverId(lang, req.user.id);
+    if (order == null) {
+      return res.status(404).json({ message: 'Order not found', data: null });
+    }
     res.status(200).json(responseSuccess(order));
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
@@ -98,7 +101,7 @@ const acceptOrder = async (req, res) => {
   }
 };
 
-const driveCame = async (req, res) => {
+const driverCame = async (req, res) => {
   try {
     const result = await orderService.driverArrived(Number(req.query.id));
     res.status(200).json(responseSuccess(result));
@@ -115,6 +118,6 @@ export default {
   distroy,
   getMe,
   acceptOrder,
-  driveCame,
+  driverCame,
   getProcessOrder,
 };
