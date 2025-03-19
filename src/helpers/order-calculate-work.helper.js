@@ -100,18 +100,12 @@ const calculateWorkTimeAmount = (order) => {
   const tashkentTimeZone = 'Asia/Tashkent';
 
   // Toshkent vaqtiga o‘girilgan timestamplar
-  const startHourTashkent = new Date(order.startHour * 1000).toLocaleString(
-    'en-US',
-    {
-      timeZone: tashkentTimeZone,
-    }
-  );
-  const endHourTashkent = new Date(order.endHour * 1000).toLocaleString(
-    'en-US',
-    {
-      timeZone: tashkentTimeZone,
-    }
-  );
+  const startHourTashkent = new Date(startHour * 1000).toLocaleString('en-US', {
+    timeZone: tashkentTimeZone,
+  });
+  const endHourTashkent = new Date(endHour * 1000).toLocaleString('en-US', {
+    timeZone: tashkentTimeZone,
+  });
 
   // Unix timestampga qayta o‘girish (millisekund formatda)
   const startUnixTashkent = new Date(startHourTashkent).getTime() / 1000;
