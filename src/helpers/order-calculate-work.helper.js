@@ -2,6 +2,7 @@ import machinePriceService from '../services/machine-price.service.js';
 
 function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
   const machinePrice = machinePriceService.getPriceByMachineId(order.machineId);
+  console.log('machinePrice: ', machinePrice);
 
   if (!machinePrice) return { waitingPaid: 0, waitingTime: 0 };
 
@@ -99,25 +100,7 @@ const calculateWorkTimeAmount = (order) => {
   console.log('endHour: ', endHour);
 
   // 3. Total work time hisoblash (soniyalarda)
-  const tashkentTimeZone = 'Asia/Tashkent';
-
-  // Toshkent vaqtiga o‘girilgan timestamplar
-  const startHourTashkent = new Date(startHour * 1000).toLocaleString('en-US', {
-    timeZone: tashkentTimeZone,
-  });
-  const endHourTashkent = new Date(endHour * 1000).toLocaleString('en-US', {
-    timeZone: tashkentTimeZone,
-  });
-
-  // Unix timestampga qayta o‘girish (millisekund formatda)
-  const startUnixTashkent = new Date(startHourTashkent).getTime() / 1000;
-  const endUnixTashkent = new Date(endHourTashkent).getTime() / 1000;
-
-  console.log('startHourTashkent: ', startUnixTashkent);
-  console.log('endHourTashkent: ', endUnixTashkent);
-
-  const totalWorkInSeconds =
-    endUnixTashkent - startUnixTashkent - totalPauseTimeInSeconds;
+  const totalWorkInSeconds = endHour - startHour - totalPauseTimeInSeconds;
 
   console.log('totalWorkInSeconds: ', totalWorkInSeconds);
 
