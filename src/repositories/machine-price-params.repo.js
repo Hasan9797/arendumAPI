@@ -59,6 +59,12 @@ const getMachinePriceParamsById = async (id) => {
   });
 };
 
+const getByMachineId = async (machineId) => {
+  return await prisma.machinePriceParams.findFirst({
+    where: { machineId },
+  });
+};
+
 const createMachinePriceParams = async (newUser) => {
   return await prisma.machinePriceParams.create({
     data: newUser,
@@ -91,6 +97,7 @@ const deleteMachinePriceParamsById = async (id) => {
 export default {
   getMachinesPriceParams,
   getMachinePriceParamsById,
+  getByMachineId,
   createMachinePriceParams,
   updateMachinePriceParamsById,
   deleteMachinePriceParamsById,

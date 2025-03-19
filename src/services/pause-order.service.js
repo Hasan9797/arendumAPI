@@ -1,3 +1,4 @@
+import { OrderStatus } from '../enums/order/order-status.enum.js';
 import orderPauseRepo from '../repositories/pause-order.repo.js';
 import orderService from '../services/order.service.js';
 import SocketService from '../socket/index.js';
@@ -10,6 +11,12 @@ const startPauseTime = async (orderId) => {
       throw new Error('Order not found');
     }
 
+    const orderPause = await orderPauseRepo.createStartPause(orderId);
+
+    await orderService.updateOrder(order.id, {
+      status: OrderStatus.PAUSE_WORK,
+    });
+
     const clientSocket = SocketService.getSocket('client');
 
     clientSocket.to(`order_room_${orderId}`).emit('startOrderPause', {
@@ -17,7 +24,7 @@ const startPauseTime = async (orderId) => {
       message: 'Start order pause',
     });
 
-    return await orderPauseRepo.createStartPause(orderId);
+    return orderPause;
   } catch (error) {
     throw error;
   }
@@ -30,6 +37,12 @@ const endPauseTime = async (orderId) => {
     throw new Error('Order not found');
   }
 
+  const orderPause = await orderPauseRepo.updateEndPause(orderId);
+
+  await orderService.updateOrder(order.id, {
+    status: OrderStatus.START_WORK,
+  });
+
   const clientSocket = SocketService.getSocket('client');
 
   clientSocket.to(`order_room_${orderId}`).emit('endOrderPause', {
@@ -37,7 +50,7 @@ const endPauseTime = async (orderId) => {
     message: 'End order pause',
   });
 
-  return await orderPauseRepo.updateEndPause(orderId);
+  return orderPause;
 };
 
 export default {

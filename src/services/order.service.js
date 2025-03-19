@@ -291,7 +291,12 @@ const acceptOrder = async (orderId) => {
     const order = await orderRepo.getById(orderId);
 
     if (!order) {
-      throw new Error('Order not found');
+      return null;
+    }
+
+    if (order.status !== OrderStatus.SEARCHING) {
+      // throw new Error('Order is not searching');
+      return false;
     }
 
     const result = await orderRepo.updateById(orderId, {
@@ -330,6 +335,7 @@ const driverArrived = async (orderId) => {
 
     const result = await orderRepo.updateById(orderId, {
       status: OrderStatus.ARRIVED,
+      driverArrivedTime: String(Math.floor(Date.now() / 1000)),
     });
 
     if (!result) {
