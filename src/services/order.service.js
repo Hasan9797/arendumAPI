@@ -13,7 +13,7 @@ import machineService from './machines.service.js';
 import redisSetHelper from '../helpers/redis-set-helper.js';
 import SocketService from '../socket/index.js';
 
-const getOrders = async (query) => {
+const getOrders = async (query, lang = 'ru') => {
   try {
     const orders = await orderRepo.findAll(query);
 
@@ -29,7 +29,16 @@ const getOrders = async (query) => {
     }));
 
     const data = sanitizedOrders.map(
-      ({ driverId, clientId, machineId, ...rest }) => rest
+      ({ driverId, clientId, machineId, machine, ...rest }) => {
+        return {
+          ...rest,
+          machine: {
+            name: lang === 'ru' ? machine.nameRu : machine.nameUz,
+            id: machine.id,
+            img: machine.img,
+          },
+        };
+      }
     );
 
     return {
