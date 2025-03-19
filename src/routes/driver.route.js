@@ -17,7 +17,7 @@ router.get('/me', authentication, driverController.getMe);
 router.get('/process-order', authentication, driverController.getProcessOrder);
 
 router.get('/accept-order', driverController.acceptOrder); // query params: order ID
-router.get('/drive-came', driverController.driveCame); // query params: order ID
+router.get('/drive-came', driverController.driverCame); // query params: order ID
 
 router.get('/:id', driverController.getById);
 
