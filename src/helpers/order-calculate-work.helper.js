@@ -142,11 +142,8 @@ const calculateWorkTimeAmount = (order) => {
   // 6. Total amount hisoblash: order.amount soatlik narx sifatida
   const amountPerMinute = order.amount / 60;
   // Umumiy narx hisoblash
-  const totalWorkMinutes = totalWorkInSeconds / 60;
-
-  // Jami summa hisoblash
   totalAmount = Math.round(
-    totalWorkMinutes * amountPerMinute + totalWaitingAmount
+    (totalWorkHour * 60 + totalWorkMinut) * amountPerMinute + totalWaitingAmount
   );
 
   console.log('totalAmount: ', totalAmount);
