@@ -35,6 +35,7 @@ function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
 
   if (totalWorkInSeconds > 0) {
     const minmumSeconds = machinePrice.minimum * 3600;
+    console.log('minmumSeconds: ', minmumSeconds);
 
     // Ish vaqtini soat va minutlarga aylantirish, agar minimum vaqtdan kichik bo‘lsa, minimum vaqtga o‘tish
     let totalWorkHour = Math.floor(totalWorkInSeconds / 3600);
@@ -92,8 +93,21 @@ const calculateWorkTimeAmount = (order) => {
   const startHour = order.startHour ? Number(order.startHour) : 0;
   const endHour = order.endHour ? Number(order.endHour) : 0;
 
+  console.log('startHour: ', startHour);
+  console.log('endHour: ', endHour);
+
   // 3. Total work time hisoblash (soniyalarda)
-  const totalWorkInSeconds = endHour - startHour - totalPauseTimeInSeconds;
+  const startHourTashkent = Math.floor(
+    new Date(startHour * 1000).getTime() / 1000
+  );
+  const endHourTashkent = Math.floor(new Date(endHour * 1000).getTime() / 1000);
+
+  console.log('startHourTashkent: ', startHourTashkent);
+  console.log('endHourTashkent: ', endHourTashkent);
+
+  const totalWorkInSeconds =
+    endHourTashkent - startHourTashkent - totalPauseTimeInSeconds;
+
   console.log('totalWorkInSeconds: ', totalWorkInSeconds);
 
   if (totalWorkInSeconds <= 0) {
