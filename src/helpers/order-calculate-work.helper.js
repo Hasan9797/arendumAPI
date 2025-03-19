@@ -6,7 +6,11 @@ function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
   if (!machinePrice) return { waitingPaid: 0, waitingTime: 0 };
 
   // Parametrlarni filter va reduce bilan olish
-  const { waitingTime, waitingPaid } = machinePrice.machinePriceParams.reduce(
+  const { waitingTime, waitingPaid } = (
+    Array.isArray(machinePrice.machinePriceParams)
+      ? machinePrice.machinePriceParams
+      : []
+  ).reduce(
     (acc, param) => {
       if (param.type === 'waiting_time')
         acc.waitingTime = Number(param.parameter ?? 0);
