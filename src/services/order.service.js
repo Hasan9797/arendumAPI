@@ -174,10 +174,12 @@ const endOrder = async (orderId) => {
       message: 'Order completed',
     });
 
+    console.log('updateData: ', updateData);
+
     return await orderRepo.updateById(orderId, {
+      ...updateData,
       endHour,
       status: OrderStatus.COMPLETED,
-      ...updateData,
     });
   } catch (error) {
     throw error;
