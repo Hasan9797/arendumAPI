@@ -89,6 +89,8 @@ const calculateWorkTimeAmount = (order) => {
       )
     : 0;
 
+  console.log('totalPauseTimeInSeconds: ', totalPauseTimeInSeconds);
+
   // 2. String Unixtimestump ni numberga o'girish (soniyalarda)
   const startHour = order.startHour ? Number(order.startHour) : 0;
   const endHour = order.endHour ? Number(order.endHour) : 0;
@@ -115,9 +117,11 @@ const calculateWorkTimeAmount = (order) => {
   console.log('endHourTashkent: ', endUnixTashkent);
 
   const totalWorkInSeconds =
-    endHourTashkent - startHourTashkent - totalPauseTimeInSeconds;
+    endUnixTashkent - startUnixTashkent - totalPauseTimeInSeconds;
 
   console.log('totalWorkInSeconds: ', totalWorkInSeconds);
+
+  console.log('order amount: ', order.amount);
 
   if (totalWorkInSeconds <= 0) {
     return {
