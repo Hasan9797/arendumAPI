@@ -21,6 +21,9 @@ function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
     { waitingTime: 0, waitingPaid: 0 }
   );
 
+  console.log('waitingPaid: ', waitingPaid);
+  console.log('waitingTime: ', waitingTime);
+
   // Haydovchi kelgan vaqt va buyurtma boshlangan vaqt farqini hisoblash (daqiqalarda)
   const calculateTime = Math.floor(
     (Number(order.driverArrivedTime) - Number(order.startHour)) / 60
@@ -84,6 +87,8 @@ const calculateWorkTimeAmount = (order) => {
 
   // 3. Total work time hisoblash (soniyalarda)
   const totalWorkInSeconds = endHour - startHour - totalPauseTimeInSeconds;
+  console.log('totalWorkInSeconds: ', totalWorkInSeconds);
+
   if (totalWorkInSeconds <= 0) {
     return {
       totalWorkHour: 0,
@@ -102,6 +107,7 @@ const calculateWorkTimeAmount = (order) => {
     calculateWaitingAmountAndTime(order, totalWorkInSeconds);
 
   const totalWaitingAmount = waitingPaid * waitingTime;
+  console.log('totalWaitingAmount: ', totalWaitingAmount);
 
   // 5. Pause vaqtini soat va minutlarga aylantirish
   const totalPauseHour = Math.floor(totalPauseTimeInSeconds / 3600);
@@ -112,6 +118,7 @@ const calculateWorkTimeAmount = (order) => {
   totalAmount = totalWorkHour * order.amount + totalWorkMinut * amountPerMinute;
 
   if (totalWaitingAmount > 0) totalAmount += totalWaitingAmount;
+  console.log('totalAmount: ', totalAmount);
 
   return {
     totalWorkHour,
