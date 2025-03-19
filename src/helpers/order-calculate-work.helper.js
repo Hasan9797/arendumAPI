@@ -97,13 +97,22 @@ const calculateWorkTimeAmount = (order) => {
   console.log('endHour: ', endHour);
 
   // 3. Total work time hisoblash (soniyalarda)
-  const startHourTashkent = Math.floor(
-    new Date(startHour * 1000).getTime() / 1000
-  );
-  const endHourTashkent = Math.floor(new Date(endHour * 1000).getTime() / 1000);
+  const tashkentTimeZone = 'Asia/Tashkent';
 
-  console.log('startHourTashkent: ', startHourTashkent);
-  console.log('endHourTashkent: ', endHourTashkent);
+  // Toshkent vaqtiga o‘girilgan timestamplar
+  const startHourTashkent = new Date(startHour * 1000).toLocaleString('en-US', {
+    timeZone: tashkentTimeZone,
+  });
+  const endHourTashkent = new Date(endHour * 1000).toLocaleString('en-US', {
+    timeZone: tashkentTimeZone,
+  });
+
+  // Unix timestampga qayta o‘girish (millisekund formatda)
+  const startUnixTashkent = new Date(startHourTashkent).getTime() / 1000;
+  const endUnixTashkent = new Date(endHourTashkent).getTime() / 1000;
+
+  console.log('startHourTashkent: ', startUnixTashkent);
+  console.log('endHourTashkent: ', endUnixTashkent);
 
   const totalWorkInSeconds =
     endHourTashkent - startHourTashkent - totalPauseTimeInSeconds;
