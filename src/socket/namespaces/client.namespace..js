@@ -50,7 +50,6 @@ class ClientSocketHandler {
       });
 
       socket.on('createOrder', async (order) => {
-
         if (!order || typeof order.id !== 'number') {
           throw new Error('orderId is required');
         }
@@ -65,6 +64,7 @@ class ClientSocketHandler {
 
         const drivers = await driverService.getDriversInClientStructure(
           order.structure.id,
+          order.machineId,
           order.params,
           order.type,
           order.amountType

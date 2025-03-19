@@ -1,4 +1,4 @@
-import machinePriceService from '../services/machine-price.service';
+import machinePriceService from '../services/machine-price.service.js';
 
 function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
   const machinePrice = machinePriceService.getPriceByMachineId(order.machineId);
