@@ -155,13 +155,13 @@ const endOrder = async (orderId) => {
     // 1. Order type bo'yicha hisoblash
     switch (String(order.type)) {
       case orderType.hour:
-        updateData = orderCalculateWorkHelper.calculateWorkTimeAmount({
+        updateData = await orderCalculateWorkHelper.calculateWorkTimeAmount({
           ...order,
           endHour,
         });
         break;
       case orderType.km:
-        updateData = orderCalculateWorkHelper.calculateWorkKmAmount(order);
+        updateData = await orderCalculateWorkHelper.calculateWorkKmAmount(order);
         break;
       default:
         updateData;

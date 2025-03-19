@@ -90,7 +90,7 @@ const formatTime = (seconds) => {
   ].join(':');
 };
 
-const calculateWorkTimeAmount = (order) => {
+const calculateWorkTimeAmount = async (order) => {
   // 1. Total pause time hisoblash (soniyalarda)
   const totalPauseTimeInSeconds = Array.isArray(order?.OrderPause)
     ? order.OrderPause.reduce(
@@ -130,7 +130,7 @@ const calculateWorkTimeAmount = (order) => {
   let totalAmount = 0;
 
   const { waitingPaid, waitingTime, totalWorkHour, totalWorkMinut } =
-    calculateWaitingAmountAndTime(order, totalWorkInSeconds);
+    await calculateWaitingAmountAndTime(order, totalWorkInSeconds);
 
   const totalWaitingAmount = waitingPaid * waitingTime;
   console.log('totalWaitingAmount: ', totalWaitingAmount);
@@ -159,8 +159,9 @@ const calculateWorkTimeAmount = (order) => {
   };
 };
 
-const calculateWorkKmAmount = (order) => {
-  const { waitingPaid, waitingTime } = calculateWaitingAmountAndTime(order);
+const calculateWorkKmAmount = async (order) => {
+  const { waitingPaid, waitingTime } =
+    await calculateWaitingAmountAndTime(order);
 
   const totalWaitingAmount = waitingPaid * waitingTime;
 
