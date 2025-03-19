@@ -160,7 +160,7 @@ const deleteById = async (id) => {
     // 2. Redis cache'dan o‘chirish (agar bo‘lsa)
     await redisClient.del(cacheKey);
 
-    return
+    return;
   } catch (error) {
     throw error;
   }
@@ -203,7 +203,7 @@ const getDriverProfile = async (id) => {
           nameRu: true,
         },
       },
-    }
+    },
   });
 
   // 3. Agar driver topilsa, Redis cache'ga 1 kunga saqlaymiz
@@ -214,16 +214,16 @@ const getDriverProfile = async (id) => {
   return driver;
 };
 
-
 const getDriversByStructureIdForNotification = async (
   structureId,
+  machineId,
   orderParams,
   orderType,
-  amountType,
+  amountType
 ) => {
   try {
     return await prisma.driver.findMany({
-      where: { structureId },
+      where: { structureId, machineId },
       select: {
         id: true,
         fullName: true,
