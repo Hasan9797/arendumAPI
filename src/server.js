@@ -41,6 +41,9 @@ import structureRoute from './routes/structure.route.js';
 import machinePriceRoute from './routes/machine-price.route.js';
 import staticRoute from './routes/static.route.js';
 import orderRoute from './routes/order.route.js';
+// ATMOS API TEST
+import payRoute from './routes/pay.route.js';
+app.use('/api/pay', payRoute);
 
 // File uploads route
 app.use('/api/file-upload', uploadRoute);
