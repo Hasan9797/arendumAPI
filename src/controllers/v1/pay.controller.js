@@ -3,18 +3,18 @@ import axios from 'axios';
 const getAtmosToken = async (req, res) => {
   try {
     // .env faylidan username va password olish
-    const username = process.env.ATMOS_USERNAME;
-    const password = process.env.ATMOS_PASSWORD;
+    const consumerKey = process.env.CONSUMER_KEY;
+    const consumerSecret = process.env.CONSUMER_SECRET;
 
     // Username va password mavjudligini tekshirish
-    if (!username || !password) {
-      throw new Error('Username yoki Password mavjud emas!');
+    if (!consumerKey || !consumerSecret) {
+      throw new Error('Consumer key or secret not found!');
     }
 
     // Base64 kodlash: username:password
-    const credentials = Buffer.from(`${username}:${password}`).toString(
-      'base64'
-    );
+    const credentials = Buffer.from(
+      `${consumerKey}:${consumerSecret}`
+    ).toString('base64');
 
     console.log('Sending request to Atmos API with credentials:', {
       username,
