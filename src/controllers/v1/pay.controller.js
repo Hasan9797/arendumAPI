@@ -19,13 +19,13 @@ const getAtmosToken = async (req, res) => {
 
     const response = await axios.post(
       'https://partner.atmos.uz/token',
-      'grant_type=8032',
+      new URLSearchParams({ grant_type: '8032' }), // Form-data yuborish
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Basic ${credentials}`,
         },
-        timeout: 5000,
+        timeout: 15000,
       }
     );
 
