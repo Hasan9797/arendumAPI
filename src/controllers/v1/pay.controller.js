@@ -7,11 +7,20 @@ const authAtmosAPI = async (req, res) => {
       process.env.CONSUMER_SECRET || 'your_consumer_secret';
     const atmosAPIUrl = process.env.ATMOS_API_URL || 'your_atmos_api_url';
 
+    console.log('Atmos API URL:', atmosAPIUrl);
+
+    if (!consumerKey || !consumerSecret || !atmosAPIUrl) {
+      return res
+        .status(500)
+        .json({ error: 'Atmos API autentifikatsiya muvaffaqiyatsiz.' });
+    }
+
     // Basic Authentication uchun `consumerKey:consumerSecret` ni Base64 formatga o‘girish
     const credentials = Buffer.from(
       `${consumerKey}:${consumerSecret}`
     ).toString('base64');
 
+    console.log('Atmos API Consumer Key:', consumerKey);
     // Axios orqali so‘rov yuborish
     const response = await axios.post(
       `${atmosAPIUrl}/token`,
