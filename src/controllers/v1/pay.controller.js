@@ -2,38 +2,38 @@ import axios from 'axios';
 
 const getAtmosToken = async (req, res) => {
   try {
-    const consumerKey = process.env.CONSUMER_KEY;
-    const consumerSecret = process.env.CONSUMER_SECRET;
+    // .env faylidan username va password olish
+    const username = process.env.ATMOS_USERNAME;
+    const password = process.env.ATMOS_PASSWORD;
 
-    if (!consumerKey || !consumerSecret) {
-      throw new Error('Consumer Key yoki Secret mavjud emas!');
+    // Username va password mavjudligini tekshirish
+    if (!username || !password) {
+      throw new Error('Username yoki Password mavjud emas!');
     }
 
-    // Base64 kodlash (curl bilan bir xil)
-    const credentials = Buffer.from(
-      `${consumerKey}:${consumerSecret}`
-    ).toString('base64');
-
-    // Form-data (curl bilan bir xil)
-    const requestData = new URLSearchParams();
-    requestData.append('grant_type', 'client_credentials');
+    // Base64 kodlash: username:password
+    const credentials = Buffer.from(`${username}:${password}`).toString(
+      'base64'
+    );
 
     console.log('Sending request to Atmos API with credentials:', {
-      consumerKey,
-      consumerSecret,
+      username,
+      password,
     });
 
-    // Axios so‘rovi (curl bilan moslashtirildi)
+    // Axios so‘rovi
     const response = await axios.post(
-      'https://partner.atmos.uz/token',
-      requestData.toString(),
+      'https://apigw.atmos.uz/token?grant_type=client_credentials', // Yangi URL
+      null, // Body kerak emas
       {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${credentials}`,
-          'User-Agent': 'curl/8.4.0', // curl'dagi User-Agent'ni qo‘shdim (agar server shunga qarab filtrlasa)
+          Authorization: `Basic ${credentials}`, // Base64 kodlangan credentials
+          'Content-Type': 'application/x-www-form-urlencoded', // Hujjatda talab qilinmasa ham, odatiy qo‘shildi
         },
-        timeout: 10000, // 10 soniya (curl’da tez ishlagan bo‘lsa ham, xavfsizlik uchun oshirildi)
+        timeout: 15000, // 15 soniya
+        // httpsAgent: new https.Agent({
+        //   rejectUnauthorized: false, // SSL muammosi bo‘lsa, test uchun
+        // }),
       }
     );
 
