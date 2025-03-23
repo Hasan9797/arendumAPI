@@ -9,9 +9,12 @@ const getAtmosToken = async (req, res) => {
       throw new Error('Consumer Key yoki Secret mavjud emas!');
     }
 
+    // Base64 kodlash (curl bilan bir xil)
     const credentials = Buffer.from(
       `${consumerKey}:${consumerSecret}`
     ).toString('base64');
+
+    // Form-data (curl bilan bir xil)
     const requestData = new URLSearchParams();
     requestData.append('grant_type', 'client_credentials');
 
@@ -20,6 +23,7 @@ const getAtmosToken = async (req, res) => {
       consumerSecret,
     });
 
+    // Axios so‘rovi (curl bilan moslashtirildi)
     const response = await axios.post(
       'https://partner.atmos.uz/token',
       requestData.toString(),
@@ -27,19 +31,24 @@ const getAtmosToken = async (req, res) => {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Basic ${credentials}`,
+          'User-Agent': 'curl/8.4.0', // curl'dagi User-Agent'ni qo‘shdim (agar server shunga qarab filtrlasa)
         },
-        timeout: 15000,
+        timeout: 10000, // 10 soniya (curl’da tez ishlagan bo‘lsa ham, xavfsizlik uchun oshirildi)
         httpsAgent: new https.Agent({
-          rejectUnauthorized: false, // Test uchun (keyin o‘chiriladi)
+          rejectUnauthorized: false, // SSL muammosini chetlab o‘tish uchun (test uchun)
         }),
       }
     );
 
+    console.log('Atmos API response:', response.data);
     res.status(200).json(response.data);
   } catch (error) {
     console.error('Axios Error:', {
       message: error.message,
       code: error.code,
+      errno: error.errno,
+      syscall: error.syscall,
+      hostname: error.hostname,
       config: error.config,
       response: error.response?.data,
     });
