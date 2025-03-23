@@ -29,9 +29,7 @@ const fetchAtmosToken = async () => {
 
     return data; // { access_token, scope, token_type, expires_in }
   } catch (error) {
-    throw new Error(
-      `Token olishda xato: ${error.response?.data?.error || error.message}`
-    );
+    throw error;
   }
 };
 
@@ -41,7 +39,16 @@ const getAtmosToken = async (req, res) => {
     const tokenData = await fetchAtmosToken();
     res.status(200).json(tokenData);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Axios Error:', {
+      message: error.message,
+      code: error.code,
+      config: error.config,
+      response: error.response?.data,
+    });
+    res.status(500).json({
+      message: 'Token olishda xatolik yuz berdi',
+      error: error.message,
+    });
   }
 };
 
