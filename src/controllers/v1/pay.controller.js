@@ -15,6 +15,8 @@ const getAtmosToken = async (req, res) => {
       `${consumerKey}:${consumerSecret}`
     ).toString('base64');
 
+    console.log('Auth base64:', credentials);
+
     const response = await axios.post(
       'https://partner.atmos.uz/token',
       'grant_type=8032',
@@ -23,7 +25,7 @@ const getAtmosToken = async (req, res) => {
           'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Basic ${credentials}`,
         },
-        timeout: 15000, // Timeoutni oshiramiz
+        timeout: 5000,
       }
     );
 
