@@ -17,8 +17,8 @@ const getAtmosToken = async (req, res) => {
     ).toString('base64');
 
     console.log('Sending request to Atmos API with credentials:', {
-      username,
-      password,
+      consumerKey,
+      consumerSecret,
     });
 
     // Axios so‘rovi
