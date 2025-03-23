@@ -28,12 +28,9 @@ const getAtmosToken = async (req, res) => {
       {
         headers: {
           Authorization: `Basic ${credentials}`, // Base64 kodlangan credentials
-          'Content-Type': 'application/x-www-form-urlencoded', // Hujjatda talab qilinmasa ham, odatiy qo‘shildi
+          // 'Content-Type': 'application/x-www-form-urlencoded',
         },
         timeout: 15000, // 15 soniya
-        // httpsAgent: new https.Agent({
-        //   rejectUnauthorized: false, // SSL muammosi bo‘lsa, test uchun
-        // }),
       }
     );
 
