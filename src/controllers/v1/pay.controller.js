@@ -17,7 +17,7 @@ const getAtmosToken = async (req, res) => {
 
     const response = await axios.post(
       'https://partner.atmos.uz/token',
-      'grant_type=T7Lv51Yp3OHUejneKDY1rL9QnBka',
+      'grant_type=8032',
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
