@@ -34,9 +34,6 @@ const getAtmosToken = async (req, res) => {
           'User-Agent': 'curl/8.4.0', // curl'dagi User-Agent'ni qo‘shdim (agar server shunga qarab filtrlasa)
         },
         timeout: 10000, // 10 soniya (curl’da tez ishlagan bo‘lsa ham, xavfsizlik uchun oshirildi)
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: false, // SSL muammosini chetlab o‘tish uchun (test uchun)
-        }),
       }
     );
 
