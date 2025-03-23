@@ -17,15 +17,20 @@ const getAtmosToken = async (req, res) => {
 
     console.log('Auth base64:', credentials);
 
+    const requestData = new URLSearchParams();
+    requestData.append('grant_type', '8032'); // ✅ To‘g‘ri grant_type
+
     const response = await axios.post(
       'https://partner.atmos.uz/token',
-      new URLSearchParams({ grant_type: '8032' }), // Form-data yuborish
+      requestData.toString(), // ✅ Form-data string shaklida yuboriladi
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Basic ${credentials}`,
+          Host: 'partner.atmos.uz', // ✅ Host qo‘shildi
+          'Content-Length': requestData.toString().length, // ✅ Content-Length hisoblandi
         },
-        timeout: 15000,
+        timeout: 15000, // ✅ Timeout
       }
     );
 
