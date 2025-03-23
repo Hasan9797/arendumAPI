@@ -26,7 +26,7 @@ const getAtmosToken = async (req, res) => {
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${credentials}`,
+          auth: `Basic ${credentials}`,
           Host: 'partner.atmos.uz', // ✅ Host qo‘shildi
           'Content-Length': requestData.toString().length, // ✅ Content-Length hisoblandi
         },
