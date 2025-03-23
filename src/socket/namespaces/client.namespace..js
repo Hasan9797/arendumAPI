@@ -34,7 +34,7 @@ class ClientSocketHandler {
 
       next();
     } catch (error) {
-      console.log(error);
+      console.log('Client Socket error message:', error.message);
       socket.emit('error', { message: error.message });
     }
   }
