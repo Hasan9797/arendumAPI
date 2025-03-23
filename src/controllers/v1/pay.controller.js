@@ -8,16 +8,18 @@ const fetchAtmosToken = async () => {
     throw new Error('Consumer Key yoki Secret topilmadi');
   }
 
-  const authString = Buffer.from(`${consumerKey}:${consumerSecret}`).toString(
-    'base64'
-  );
-  const formData = new URLSearchParams({ grant_type: 8032 });
+  const authString = Buffer.from(
+    'hWKDdQ8KNX5m_znpI4fwo2sQRS8a:p9_IC549SOF0nMCt1qMqEyEBaAka'
+  ).toString('base64');
+
+  const requestData = new URLSearchParams();
+  requestData.append('grant_type', '8032');
 
   try {
     const { data } = await axios({
       method: 'POST',
       url: 'https://partner.atmos.uz/token',
-      data: formData,
+      data: requestData,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Basic ${authString}`,
