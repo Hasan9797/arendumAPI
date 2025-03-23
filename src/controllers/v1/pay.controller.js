@@ -5,18 +5,25 @@ const getAtmosToken = async (req, res) => {
     const consumerKey = process.env.CONSUMER_KEY;
     const consumerSecret = process.env.CONSUMER_SECRET;
 
+    if (!consumerKey || !consumerSecret) {
+      throw new Error('Consumer Key yoki Secret mavjud emas!');
+    }
+
+    console.log("Auth uchun ma'lumotlar:", consumerKey, consumerSecret);
+
     const credentials = Buffer.from(
       `${consumerKey}:${consumerSecret}`
     ).toString('base64');
 
     const response = await axios.post(
       'https://partner.atmos.uz/token',
-      'grant_type=client_credentials',
+      'grant_type=T7Lv51Yp3OHUejneKDY1rL9QnBka',
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Basic ${credentials}`,
         },
+        timeout: 15000, // Timeoutni oshiramiz
       }
     );
 
