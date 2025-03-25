@@ -143,8 +143,13 @@ const endOrder = async (orderId) => {
   try {
     if (!orderId) throw new Error('Order ID is required');
 
+    const proseccStatus = [
+      OrderStatus.START_WORK,
+      OrderStatus.PAUSE_WORK,
+    ];
+
     const order = await orderRepo.getById(orderId);
-    if (!order || order.status != OrderStatus.START_WORK) {
+    if (!order || !proseccStatus.includes(order.status)) {
       throw new Error('Order is not started');
     }
 
