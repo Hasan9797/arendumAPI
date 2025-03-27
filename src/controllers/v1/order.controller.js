@@ -53,8 +53,7 @@ const getAll = async (req, res) => {
       error: {
         message: error.message,
         code: 500,
-        file,
-        line
+        stack: error.stack
       },
     });
   }
