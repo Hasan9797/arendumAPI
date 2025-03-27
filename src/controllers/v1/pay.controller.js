@@ -27,7 +27,7 @@ const getAtmosToken = async (req, res) => {
 
     // Axios so‘rovi
     const response = await axios.post(
-      'https://partner.atmos.uz/tokens',
+      'https://partner.atmos.uz/token',
       formData,
       {
         headers: {
