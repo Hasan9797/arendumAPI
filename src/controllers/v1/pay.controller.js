@@ -31,10 +31,10 @@ const getAtmosToken = async (req, res) => {
       formData,
       {
         headers: {
-          Authorization: `Basic ${credentials}`, // Base64 kodlangan credentials
-          // 'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Basic ${credentials}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        timeout: 15000, // 15 soniya
+        timeout: 5000, // 5 soniya
       }
     );
 
