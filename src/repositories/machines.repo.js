@@ -67,6 +67,10 @@ const createMachine = async (newUser) => {
 
 const getMachineById = async (lang, id) => {
   try {
+    if (!id) {
+      throw new Error("Machine ID is required");
+    }
+
     const cacheKey = `machine:${id}:${lang}`;
     const cachedData = await redisClient.get(cacheKey);
 

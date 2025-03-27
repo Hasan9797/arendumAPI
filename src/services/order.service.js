@@ -60,10 +60,14 @@ const getOrderById = async (id, lang = 'ru') => {
       throw new Error('Order not found');
     }
 
-    const machine = await machineService.getMachineById(order.machineId, lang);
-    const machinePrice = await machinePriceService.getPriceByMachineId(
-      order.machineId
-    );
+    let machine = {};
+    let machinePrice = {};
+
+    if (order?.machineId && order.machineId > 0) {
+      machine = await machineService.getMachineById(order.machineId, lang);
+      machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+    }
+
     const structure = await structureService.getById(order.structureId, lang);
 
     const sanitizedOrders = ({
