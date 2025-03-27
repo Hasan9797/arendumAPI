@@ -46,8 +46,8 @@ const getAtmosToken = async (req, res) => {
       code: error.code
     });
     res.status(500).json({
-      message: 'Token olishda xatolik yuz berdi',
-      error: error.message,
+      message: error.message,
+      error: error,
     });
   }
 };
