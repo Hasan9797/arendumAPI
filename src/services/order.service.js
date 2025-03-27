@@ -32,11 +32,13 @@ const getOrders = async (query, lang = 'ru') => {
       ({ driverId, clientId, machineId, machine, ...rest }) => {
         return {
           ...rest,
-          machine: {
-            name: lang === 'ru' ? machine.nameRu : machine.nameUz,
-            id: machine.id,
-            img: machine.img,
-          },
+          machine: machine
+            ? {
+              name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
+              id: machine?.id || null,
+              img: machine?.img || null,
+            }
+            : null,
         };
       }
     );
