@@ -2,19 +2,21 @@ import axios from 'axios';
 import AtmosTokenService from './atmos-token.service.js';
 
 class AtmosApiService extends AtmosTokenService {
-  #methodUrl = '';
+  #routeUrl = '';
 
   #token = '';
 
   #params = {};
+
+  #response = {};
 
   constructor() {
     super();
     this.#initToken();
   }
 
-  setMethodUrl(url) {
-    this.#methodUrl = url;
+  setRouteUrl(route) {
+    this.#routeUrl = route;
   }
 
   async #initToken() {
@@ -25,12 +27,25 @@ class AtmosApiService extends AtmosTokenService {
     this.#params = params;
   }
 
-  getMethodUrl() {}
-
-  getParams() {}
+  getResponse() {
+    return this.#response;
+  }
 
   async send() {
     try {
-    } catch (error) {}
+      const response = await axios({
+        method: 'post',
+        url: this.#routeUrl,
+        headers: {
+          Authorization: `Bearer ${this.#token}`,
+        },
+        data: this.#params,
+      });
+      this.response = response.data;
+    } catch (error) {
+      throw error;
+     }
   }
 }
+
+export default AtmosApiService;
