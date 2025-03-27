@@ -21,10 +21,14 @@ const getAtmosToken = async (req, res) => {
       consumerSecret,
     });
 
+    const formData = new URLSearchParams({
+      grant_type: 'client_credentials'
+    });
+
     // Axios so‘rovi
     const response = await axios.post(
-      'https://apigw.atmos.uz/token?grant_type=client_credentials', // Yangi URL
-      null, // Body kerak emas
+      'https://partner.atmos.uz/tokens',
+      formData,
       {
         headers: {
           Authorization: `Basic ${credentials}`, // Base64 kodlangan credentials
@@ -39,12 +43,7 @@ const getAtmosToken = async (req, res) => {
   } catch (error) {
     console.error('Axios Error:', {
       message: error.message,
-      code: error.code,
-      errno: error.errno,
-      syscall: error.syscall,
-      hostname: error.hostname,
-      config: error.config,
-      response: error.response?.data,
+      code: error.code
     });
     res.status(500).json({
       message: 'Token olishda xatolik yuz berdi',
@@ -53,6 +52,6 @@ const getAtmosToken = async (req, res) => {
   }
 };
 
-const payAtmosAPI = async (req, res) => {};
+const payAtmosAPI = async (req, res) => { };
 
 export default { getAtmosToken, payAtmosAPI };
