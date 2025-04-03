@@ -40,7 +40,7 @@ model Driver {
   machineColor            String?
   machineNumber           String?
   companyName             String?   @map("company_name")
-  companyInn              String?
+  companyInn              String?   @map("company_inn")
   legal                   Boolean   @default(false)
   merchantId              Int?      @map("merchant_id")
   machine                 Machines? @relation("MachineDrivers", fields: [machineId], references: [id])
