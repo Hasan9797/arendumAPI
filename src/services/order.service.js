@@ -32,11 +32,13 @@ const getOrders = async (query, lang = 'ru') => {
       ({ driverId, clientId, machineId, machine, ...rest }) => {
         return {
           ...rest,
-          machine: {
-            name: lang === 'ru' ? machine.nameRu : machine.nameUz,
-            id: machine.id,
-            img: machine.img,
-          },
+          machine: machine
+            ? {
+              name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
+              id: machine?.id || null,
+              img: machine?.img || null,
+            }
+            : null,
         };
       }
     );
@@ -58,10 +60,14 @@ const getOrderById = async (id, lang = 'ru') => {
       throw new Error('Order not found');
     }
 
-    const machine = await machineService.getMachineById(order.machineId, lang);
-    const machinePrice = await machinePriceService.getPriceByMachineId(
-      order.machineId
-    );
+    let machine = {};
+    let machinePrice = {};
+
+    if (order?.machineId && order.machineId > 0) {
+      machine = await machineService.getMachineById(order.machineId, lang);
+      machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+    }
+
     const structure = await structureService.getById(order.structureId, lang);
 
     const sanitizedOrders = ({
@@ -143,8 +149,13 @@ const endOrder = async (orderId) => {
   try {
     if (!orderId) throw new Error('Order ID is required');
 
+    const proseccStatus = [
+      OrderStatus.START_WORK,
+      OrderStatus.PAUSE_WORK,
+    ];
+
     const order = await orderRepo.getById(orderId);
-    if (!order || order.status != OrderStatus.START_WORK) {
+    if (!order || !proseccStatus.includes(order.status)) {
       throw new Error('Order is not started');
     }
 
