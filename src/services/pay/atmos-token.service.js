@@ -5,8 +5,8 @@ class AtmosTokenService {
   async getPayToken() {
 
     // .env faylidan username va password olish
-    const consumerKey = process.env.CONSUMER_KEY;
-    const consumerSecret = process.env.CONSUMER_SECRET;
+    const consumerKey =  "hWKDdQ8KNX5m_znpI4fwo2sQRS8a" //process.env.CONSUMER_KEY;
+    const consumerSecret = "p9_IC549SOF0nMCt1qMqEyEBaAka" //process.env.CONSUMER_SECRET;
 
     // Username va password mavjudligini tekshirish
     if (!consumerKey || !consumerSecret) {
