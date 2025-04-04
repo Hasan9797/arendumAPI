@@ -5,7 +5,7 @@ class AtmosTokenService {
   async getPayToken() {
 
     // .env faylidan username va password olish
-    const consumerKey =  "hWKDdQ8KNX5m_znpI4fwo2sQRS8a" //process.env.CONSUMER_KEY;
+    const consumerKey = "hWKDdQ8KNX5m_znpI4fwo2sQRS8a" //process.env.CONSUMER_KEY;
     const consumerSecret = "p9_IC549SOF0nMCt1qMqEyEBaAka" //process.env.CONSUMER_SECRET;
 
     // Username va password mavjudligini tekshirish
@@ -51,11 +51,12 @@ class AtmosTokenService {
 
     try {
       const response = await axios.post(
-        'https://apigw.atmos.uz/token?grant_type=client_credentials',
-        null,
+        'https://partner.atmos.uz/token',
+        formData,
         {
           headers: {
-            Authorization: credentials,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${credentials}`,
           },
           timeout: 5000,
         }
