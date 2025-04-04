@@ -1,9 +1,10 @@
 import axios from 'axios';
+import AtmosTokenService from '../../services/pay/atmos-token.service.js';
 
-const addClientCard = async (req, res) => {
+const test = async (req, res) => {
   try {
-    
-    res.status(200).json(response.data);
+    const token = await AtmosTokenService.getPayToken();
+    res.status(200).json(token);
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -15,6 +16,6 @@ const addClientCard = async (req, res) => {
 const payAtmosAPI = async (req, res) => { };
 
 export default {
-  addClientCard,
+  test,
   payAtmosAPI
 };

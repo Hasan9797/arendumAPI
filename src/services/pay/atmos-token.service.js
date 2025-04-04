@@ -30,7 +30,7 @@ class AtmosTokenService {
             'Content-Type': 'application/x-www-form-urlencoded',
             Authorization: `Basic ${credentials}`,
           },
-          timeout: 15000, // Timeoutni oshiramiz
+          timeout: 5000,
         }
       );
       return response.data;
@@ -48,12 +48,11 @@ class AtmosTokenService {
 
     try {
       const response = await axios.post(
-        'https://partner.atmos.uz/token',
+        'https://apigw.atmos.uz/token?grant_type=client_credentials',
         null,
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${credentials}`,
+            Authorization: credentials,
           },
           timeout: 5000,
         }

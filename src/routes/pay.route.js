@@ -8,7 +8,7 @@ import {
 
 const router = Router();
 
-router.get('/auth', payController.addClientCard);
+router.get('/auth', payController.test);
 
 // router.post('/add-card', payController.create);
 
