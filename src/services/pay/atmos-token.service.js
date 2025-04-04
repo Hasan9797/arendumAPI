@@ -51,12 +51,11 @@ class AtmosTokenService {
 
     try {
       const response = await axios.post(
-        'https://partner.atmos.uz/token',
-        formData,
+        'https://apigw.atmos.uz/token?grant_type=client_credentials',
+        null,
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${credentials}`,
+            Authorization: `Basic ${credentials}`, // <-- BU YER MUHIM
           },
           timeout: 5000,
         }
