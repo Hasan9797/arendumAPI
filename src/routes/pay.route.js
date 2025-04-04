@@ -8,7 +8,7 @@ import {
 
 const router = Router();
 
-router.get('/auth', payController.getAtmosToken);
+router.get('/auth', payController.test);
 
 // router.post('/add-card', payController.create);
 

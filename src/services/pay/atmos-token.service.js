@@ -1,21 +1,85 @@
 import axios from 'axios';
 
-const credentials = Buffer.from(`${consumerKey}:${consumerSecret}`).toString(
-  'base64'
-);
-
 class AtmosTokenService {
-  async getAtmosToken() {
+
+  async getPayToken() {
+
+    // .env faylidan username va password olish
+    const consumerKey = process.env.CONSUMER_KEY;
+    const consumerSecret = process.env.CONSUMER_SECRET;
+
+    // Username va password mavjudligini tekshirish
+    if (!consumerKey || !consumerSecret) {
+      throw new Error('Consumer key or secret not found!');
+    }
+
+    const formData = new URLSearchParams({
+      grant_type: 'client_credentials'
+    });
+
+    const credentials = Buffer.from(
+      `${consumerKey}:${consumerSecret}`
+    ).toString('base64');
+
     try {
       const response = await axios.post(
         'https://partner.atmos.uz/token',
-        'grant_type=8032',
+        formData,
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             Authorization: `Basic ${credentials}`,
           },
-          timeout: 15000, // Timeoutni oshiramiz
+          timeout: 5000,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Auth Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+
+  async getDepositToken() {
+
+    const credentials = Buffer.from(
+      `${consumerKey}:${consumerSecret}`
+    ).toString('base64');
+
+    try {
+      const response = await axios.post(
+        'https://apigw.atmos.uz/token?grant_type=client_credentials',
+        null,
+        {
+          headers: {
+            Authorization: credentials,
+          },
+          timeout: 5000,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Auth Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+
+  async getRefreshToken(token) {
+    const formData = new URLSearchParams({
+      grant_type: 'client_credentials',
+      refresh_token: token
+    });
+
+    try {
+      const response = await axios.post(
+        'https://partner.atmos.uz/token',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${credentials}`,
+          },
+          timeout: 5000,
         }
       );
       return response.data;
