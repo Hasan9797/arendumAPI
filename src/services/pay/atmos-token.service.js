@@ -5,8 +5,8 @@ class AtmosTokenService {
   async getPayToken() {
 
     // .env faylidan username va password olish
-    const consumerKey =  "T7Lv51Yp3OHUejneKDY1rL9QnBka" //process.env.CONSUMER_KEY;
-    const consumerSecret = "Vh5i_MfgT3fkEOtpHwgA2qs681Qa" //process.env.CONSUMER_SECRET;
+    const consumerKey =  "hWKDdQ8KNX5m_znpI4fwo2sQRS8a" //process.env.CONSUMER_KEY;
+    const consumerSecret = "p9_IC549SOF0nMCt1qMqEyEBaAka" //process.env.CONSUMER_SECRET;
 
     // Username va password mavjudligini tekshirish
     if (!consumerKey || !consumerSecret) {
@@ -41,6 +41,9 @@ class AtmosTokenService {
   }
 
   async getDepositToken() {
+
+    const consumerKey = "T7Lv51Yp3OHUejneKDY1rL9QnBka" //process.env.CONSUMER_KEY;
+    const consumerSecret = "Vh5i_MfgT3fkEOtpHwgA2qs681Qa" //process.env.CONSUMER_SECRET;
 
     const credentials = Buffer.from(
       `${consumerKey}:${consumerSecret}`
