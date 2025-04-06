@@ -35,7 +35,7 @@ class AtmosApiService extends AtmosTokenService {
 
   async send() {
     try {
-      const { baseUrl, token } = await super.getBaseUrlAndTokenByRequestType(
+      const { baseUrl, token } = await this.getBaseUrlAndTokenByRequestType(
         this.#requestType
       );
 

@@ -74,53 +74,63 @@ const getAll = async (lang, query) => {
       },
     };
   } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users');
+    console.error('Error get all regions:', error);
+    throw error;
   }
 };
 
 const getById = async (lang, id) => {
-  const region = await prisma.region.findUnique({
-    where: { id },
-    include: {
-      structures: {
-        select: {
-          id: true,
-          name: true,
-          nameRu: true,
-          nameUz: true,
-          nameEn: true,
-          status: true,
+  try {
+    const region = await prisma.region.findUnique({
+      where: { id },
+      include: {
+        structures: {
+          select: {
+            id: true,
+            name: true,
+            nameRu: true,
+            nameUz: true,
+            nameEn: true,
+            status: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  const adjustName = (obj) => {
-    if (!obj) return {};
+    const adjustName = (obj) => {
+      if (!obj) return {};
 
-    const { nameRu, nameUz, nameEn, ...res } = obj;
-    return {
-      ...res,
-      name: lang === 'ru' ? nameRu : nameUz,
-      nameRu,
-      nameUz,
-      nameEn,
+      const { nameRu, nameUz, nameEn, ...res } = obj;
+      return {
+        ...res,
+        name: lang === 'ru' ? nameRu : nameUz,
+        nameRu,
+        nameUz,
+        nameEn,
+      };
     };
-  };
 
-  let serialazied = region ? adjustName(region) : {};
-  serialazied.structures = serialazied.structures.map((structure) =>
-    adjustName(structure)
-  );
+    let serialazied = region ? adjustName(region) : {};
+    serialazied.structures = serialazied.structures.map((structure) =>
+      adjustName(structure)
+    );
 
-  return serialazied;
+    return serialazied;
+  } catch (error) {
+    console.error('Error fetching region:', error);
+    throw error;
+  }
 };
 
 const createRegion = async (newUser) => {
-  return await prisma.region.create({
-    data: newUser,
-  });
+  try {
+    return await prisma.region.create({
+      data: newUser,
+    });
+  } catch (error) {
+    console.error('Error creating region:', error);
+    throw error;
+  }
 };
 
 const updateById = async (id, machineData) => {
@@ -131,8 +141,8 @@ const updateById = async (id, machineData) => {
     });
     return updatedUser;
   } catch (error) {
-    console.error('Error updating user:', error);
-    return null;
+    console.error('Error updating region:', error);
+    throw error;
   }
 };
 

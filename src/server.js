@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: false }));
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(path.join(__dirname, '../uploads')));
 
-// Routes
+// ROUTES
 import userRoute from './routes/user.route.js';
 import authRoute from './routes/auth.route.js';
 import machinesRoute from './routes/machines.route.js';
@@ -41,9 +41,9 @@ import structureRoute from './routes/structure.route.js';
 import machinePriceRoute from './routes/machine-price.route.js';
 import staticRoute from './routes/static.route.js';
 import orderRoute from './routes/order.route.js';
-// ATMOS API TEST
+// PAYMENT ROUTES
+import bankCardRoute from './routes/bank-card.route.js';
 import payRoute from './routes/pay.route.js';
-app.use('/api/pay', payRoute);
 
 // File uploads route
 app.use('/api/file-upload', uploadRoute);
@@ -61,6 +61,10 @@ app.use('/api/structure', structureRoute);
 app.use('/api/machine-price', machinePriceRoute);
 app.use('/api/static', staticRoute);
 app.use('/api/order', orderRoute);
+
+// PAYMENT API
+app.use('/api/bank-card', bankCardRoute);
+app.use('/api/pay', payRoute);
 
 // Error handler
 
