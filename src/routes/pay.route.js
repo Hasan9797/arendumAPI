@@ -8,7 +8,7 @@ import {
 
 const router = Router();
 
-// router.get('/auth', payController.test);
+router.get('/auth', payController.getToken);
 
 router.post('/card-init', payController.cardInit);
 router.post('/card-confirm', payController.cardConfirm);

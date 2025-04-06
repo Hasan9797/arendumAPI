@@ -1,5 +1,6 @@
 import CardInitRequest from '../../services/pay/requests/card-init.request.js';
 import CardConfirmRequest from '../../services/pay/requests/card-confirm.request.js';
+import AtmosTokenService from '../../services/pay/atmos-token.service.js';
 
 const accessToken = '';
 
@@ -37,9 +38,20 @@ const cardConfirm = async (req, res) => {
   }
 };
 
-const payAtmosAPI = async (req, res) => {};
+const getToken = async (req, res) => {
+  try {
+    const instance = new AtmosTokenService();
+    res.status(200).json(instance.getPayToken());
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      error: error,
+    });
+  }
+};
 
 export default {
   cardInit,
   cardConfirm,
+  getToken,
 };
