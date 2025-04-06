@@ -11,8 +11,10 @@ class AtmosTokenService {
   constructor() {
     this.#atmosPayBaseUrl = process.env.ATMOS_PAY_BASE_URL;
     this.#atmosDepositBaseUrl = process.env.ATMOS_DEPOSIT_BASE_URL;
+
     this.#payConsumerKey = process.env.PAY_CONSUMER_KEY;
     this.#payConsumerSecret = process.env.PAY_CONSUMER_SECRET;
+    
     this.#depositConsumerKey = process.env.DEPOSIT_CONSUMER_KEY;
     this.#depositConsumerSecret = process.env.DEPOSIT_CONSUMER_SECRET;
   }
