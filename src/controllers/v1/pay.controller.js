@@ -1,9 +1,8 @@
-import axios from 'axios';
 import AtmosTokenService from '../../services/pay/atmos-token.service.js';
 
 const test = async (req, res) => {
   try {
-    const token = await AtmosTokenService.getDepositToken();
+    const token = await AtmosTokenService.getPayToken();
     res.status(200).json(token);
   } catch (error) {
     res.status(500).json({
@@ -13,9 +12,9 @@ const test = async (req, res) => {
   }
 };
 
-const payAtmosAPI = async (req, res) => { };
+const payAtmosAPI = async (req, res) => {};
 
 export default {
   test,
-  payAtmosAPI
+  payAtmosAPI,
 };

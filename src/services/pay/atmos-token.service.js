@@ -1,38 +1,28 @@
 import axios from 'axios';
 
 class AtmosTokenService {
+  #atmosPayBaseUrl;
+  #atmosDepositBaseUrl;
+  #payConsumerKey;
+  #payConsumerSecret;
+  #depositConsumerKey;
+  #depositConsumerSecret;
 
-  async getPayToken() {
+  constructor() {
+    this.#atmosPayBaseUrl = process.env.ATMOS_PAY_BASE_URL;
+    this.#atmosDepositBaseUrl = process.env.ATMOS_DEPOSIT_BASE_URL;
+    this.#payConsumerKey = process.env.PAY_CONSUMER_KEY;
+    this.#payConsumerSecret = process.env.PAY_CONSUMER_SECRET;
+    this.#depositConsumerKey = process.env.DEPOSIT_CONSUMER_KEY;
+    this.#depositConsumerSecret = process.env.DEPOSIT_CONSUMER_SECRET;
+  }
 
-    // .env faylidan username va password olish
-    const consumerKey = "hWKDdQ8KNX5m_znpI4fwo2sQRS8a" //process.env.CONSUMER_KEY;
-    const consumerSecret = "p9_IC549SOF0nMCt1qMqEyEBaAka" //process.env.CONSUMER_SECRET;
-
-    // Username va password mavjudligini tekshirish
-    if (!consumerKey || !consumerSecret) {
-      throw new Error('Consumer key or secret not found!');
-    }
-
-    const formData = new URLSearchParams({
-      grant_type: 'client_credentials'
-    });
-
-    const credentials = Buffer.from(
-      `${consumerKey}:${consumerSecret}`
-    ).toString('base64');
-
+  async #makeAxiosPost(url, data, headers) {
     try {
-      const response = await axios.post(
-        'https://partner.atmos.uz/token',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${credentials}`,
-          },
-          timeout: 5000,
-        }
-      );
+      const response = await axios.post(url, data, {
+        headers,
+        timeout: 5000,
+      });
       return response.data;
     } catch (error) {
       console.error('Auth Error:', error.response?.data || error.message);
@@ -40,56 +30,57 @@ class AtmosTokenService {
     }
   }
 
-  async getDepositToken() {
-
-    const consumerKey = "T7Lv51Yp3OHUejneKDY1rL9QnBka" //process.env.CONSUMER_KEY;
-    const consumerSecret = "Vh5i_MfgT3fkEOtpHwgA2qs681Qa" //process.env.CONSUMER_SECRET;
+  async getPayToken() {
+    const formData = new URLSearchParams({
+      grant_type: 'client_credentials',
+    });
 
     const credentials = Buffer.from(
-      `${consumerKey}:${consumerSecret}`
+      `${this.#payConsumerKey}:${this.#payConsumerSecret}`
     ).toString('base64');
 
-    try {
-      const response = await axios.post(
-        'https://apigw.atmos.uz/token?grant_type=client_credentials',
-        null,
-        {
-          headers: {
-            Authorization: `Basic ${credentials}`, // <-- BU YER MUHIM
-          },
-          timeout: 5000,
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Auth Error:', error.response?.data || error.message);
-      throw error;
-    }
+    const headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${credentials}`,
+    };
+
+    const url = `${this.#atmosPayBaseUrl}/token`;
+
+    return this.#makeAxiosPost(url, formData, headers);
+  }
+
+  async getDepositToken() {
+    const credentials = Buffer.from(
+      `${this.#depositConsumerKey}:${this.#depositConsumerSecret}`
+    ).toString('base64');
+
+    const headers = {
+      Authorization: `Basic ${credentials}`,
+    };
+
+    const url = `${this.#atmosDepositBaseUrl}/token?grant_type=client_credentials`;
+
+    return this.#makeAxiosPost(url, null, headers);
   }
 
   async getRefreshToken(token) {
     const formData = new URLSearchParams({
       grant_type: 'client_credentials',
-      refresh_token: token
+      refresh_token: token,
     });
 
-    try {
-      const response = await axios.post(
-        'https://partner.atmos.uz/token',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${credentials}`,
-          },
-          timeout: 5000,
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Auth Error:', error.response?.data || error.message);
-      throw error;
-    }
+    const credentials = Buffer.from(
+      `${this.#payConsumerKey}:${this.#payConsumerSecret}`
+    ).toString('base64');
+
+    const headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${credentials}`,
+    };
+
+    const url = `${this.#atmosPayBaseUrl}/token`;
+
+    return this.#makeAxiosPost(url, formData, headers);
   }
 }
 
