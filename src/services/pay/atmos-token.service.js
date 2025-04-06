@@ -48,7 +48,21 @@ class AtmosTokenService {
 
     const url = `${this.#atmosPayBaseUrl}/token`;
 
-    return this.#makeAxiosPost(url, formData, headers);
+    const cacheKey = `atmos_pay_token`;
+
+    const cachedDriver = await redisClient.get(cacheKey);
+
+    if (cachedDriver) {
+      return JSON.parse(cachedDriver); // Cache'da bo‘lsa, JSON parse qilamiz
+    }
+
+    const response = await this.#makeAxiosPost(url, formData, headers);
+
+    if (response) {
+      await redisClient.setEx(cacheKey, 3600, JSON.stringify(token)); // 3600 soniya = 1 soat
+    }
+
+    return response;
   }
 
   async getDepositToken() {

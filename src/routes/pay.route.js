@@ -10,7 +10,8 @@ const router = Router();
 
 // router.get('/auth', payController.test);
 
-router.post('/add-card', payController.addCardClient);
+router.post('/card-init', payController.cardInit);
+router.post('/card-confirm', payController.cardConfirm);
 
 // router.put('/update/:id', payController.update);
 
