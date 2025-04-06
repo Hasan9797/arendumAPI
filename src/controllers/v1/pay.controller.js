@@ -41,7 +41,7 @@ const cardConfirm = async (req, res) => {
 const getToken = async (req, res) => {
   try {
     const instance = new AtmosTokenService();
-    res.status(200).json(instance.getPayToken());
+    res.status(200).json(await instance.getPayToken());
   } catch (error) {
     res.status(500).json({
       message: error.message,
