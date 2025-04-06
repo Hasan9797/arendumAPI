@@ -1,14 +1,13 @@
-import AtmosApiService from "../atmos-api.service.js";
+import AtmosApiService from '../atmos-api.service.js';
 
 class BindCardRequest extends AtmosApiService {
-    constructor(cardNumber, expiryDate) {
-        super();
-        this.setRouteUrl('partner/bind-card/init');
-        this.setParams({
-            card_number: cardNumber,
-            expiry: expiryDate
-        });
-    }
+  constructor(cardNumber, expiryDate) {
+    super();
+    this.setRoute('partner/bind-card/init').setParams({
+      card_number: cardNumber,
+      expiry: expiryDate,
+    });
+  }
 }
 
 export default BindCardRequest;

@@ -14,7 +14,7 @@ class AtmosTokenService {
 
     this.#payConsumerKey = process.env.PAY_CONSUMER_KEY;
     this.#payConsumerSecret = process.env.PAY_CONSUMER_SECRET;
-    
+
     this.#depositConsumerKey = process.env.DEPOSIT_CONSUMER_KEY;
     this.#depositConsumerSecret = process.env.DEPOSIT_CONSUMER_SECRET;
   }
@@ -84,6 +84,22 @@ class AtmosTokenService {
 
     return this.#makeAxiosPost(url, formData, headers);
   }
+
+  async getBaseUrlAndTokenByRequestType(type) {
+    switch (type) {
+      case 'deposit': {
+        const token = await this.getDepositToken();
+        return {
+          baseUrl: this.#atmosDepositBaseUrl,
+          token: token?.access_token,
+        };
+      }
+      default: {
+        const token = await this.getPayToken();
+        return { baseUrl: this.#atmosPayBaseUrl, token: token?.access_token };
+      }
+    }
+  }
 }
 
-export default new AtmosTokenService();
+export default AtmosTokenService;

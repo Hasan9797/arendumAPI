@@ -2,29 +2,31 @@ import axios from 'axios';
 import AtmosTokenService from './atmos-token.service.js';
 
 class AtmosApiService extends AtmosTokenService {
-  #routeUrl = '';
-
-  #token = '';
+  #route = '';
 
   #params = {};
 
   #response = {};
 
-  constructor() {
-    super();
-    this.#initToken();
+  #requestType = 'pay';
+
+  // constructor() {
+  //   super();
+  // }
+
+  setRequestType(type) {
+    this.#requestType = type;
+    return this;
   }
 
-  setRouteUrl(route) {
-    this.#routeUrl = route;
-  }
-
-  async #initToken() {
-    this.#token = await this.getAtmosToken();
+  setRoute(route) {
+    this.#route = route;
+    return this;
   }
 
   setParams(params) {
     this.#params = params;
+    return this;
   }
 
   getResponse() {
@@ -33,18 +35,23 @@ class AtmosApiService extends AtmosTokenService {
 
   async send() {
     try {
+      const { baseUrl, token } = await super.getBaseUrlAndTokenByRequestType(
+        this.#requestType
+      );
+
       const response = await axios({
         method: 'post',
-        url: this.#routeUrl,
+        url: `${baseUrl}/${this.#route}`,
         headers: {
-          Authorization: `Bearer ${this.#token}`,
+          Authorization: `Bearer ${token}`,
         },
         data: this.#params,
       });
-      this.response = response.data;
+      this.#response = response.data;
+      return this;
     } catch (error) {
       throw error;
-     }
+    }
   }
 }
 
