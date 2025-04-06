@@ -83,7 +83,11 @@ class AtmosTokenService {
 
     const url = `${this.#atmosPayBaseUrl}/token`;
 
-    return this.#makeAxiosPost(url, formData, headers);
+    try {
+      return this.#makeAxiosPost(url, formData, headers);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getBaseUrlAndTokenByRequestType(type) {
