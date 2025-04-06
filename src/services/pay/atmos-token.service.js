@@ -68,7 +68,7 @@ class AtmosTokenService {
   async getRefreshToken(token) {
     const formData = new URLSearchParams({
       grant_type: 'client_credentials',
-      refresh_token: token,
+      refresh_token: 'access_token',
     });
 
     const credentials = Buffer.from(
