@@ -5,7 +5,7 @@ const accessToken =
 const test = async (req, res) => {
   try {
     const instance = new AtmosTokenService();
-    const token = await instance.getRefreshToken(accessToken);
+    const token = await instance.getDepositToken();
     res.status(200).json(token);
   } catch (error) {
     res.status(500).json({
