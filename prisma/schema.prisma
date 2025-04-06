@@ -120,7 +120,7 @@ model MachineParamsFilters {
   updatedAt    DateTime @updatedAt @map("updated_at")
 }
 
-model BankCard {
+model UserCards {
   id        Int      @id @default(autoincrement())
   name      String
   number    String
