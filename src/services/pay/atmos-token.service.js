@@ -68,11 +68,12 @@ class AtmosTokenService {
   async getRefreshToken(token) {
     const formData = new URLSearchParams({
       grant_type: 'client_credentials',
-      // refresh_token: 'access_token',
+      refresh_token: token,
     });
 
     const credentials = Buffer.from(
-      `${this.#payConsumerKey}:${this.#payConsumerSecret}`
+      //   `${this.#payConsumerKey}:${this.#payConsumerSecret}`
+      `${this.#depositConsumerKey}:${this.#depositConsumerSecret}`
     ).toString('base64');
 
     const headers = {
