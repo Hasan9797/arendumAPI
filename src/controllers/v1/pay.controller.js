@@ -29,7 +29,12 @@ const cardConfirm = async (req, res) => {
     const response = await request.send();
 
     res.status(200).json(response.getResponse());
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      error: error,
+    });
+  }
 };
 
 const payAtmosAPI = async (req, res) => {};
