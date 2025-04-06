@@ -50,16 +50,16 @@ class AtmosTokenService {
 
     const cacheKey = `atmos_pay_token`;
 
-    const cachedDriver = await redisClient.get(cacheKey);
+    const cachedToken = await redisClient.get(cacheKey);
 
-    if (cachedDriver) {
-      return JSON.parse(cachedDriver); // Cache'da bo‘lsa, JSON parse qilamiz
+    if (cachedToken) {
+      return JSON.parse(cachedToken); // Cache'da bo‘lsa, JSON parse qilamiz
     }
 
     const response = await this.#makeAxiosPost(url, formData, headers);
 
     if (response) {
-      await redisClient.setEx(cacheKey, 3600, JSON.stringify(token)); // 3600 soniya = 1 soat
+      await redisClient.setEx(cacheKey, 3600, JSON.stringify(response)); // 3600 soniya = 1 soat
     }
 
     return response;
