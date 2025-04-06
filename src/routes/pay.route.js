@@ -8,9 +8,9 @@ import {
 
 const router = Router();
 
-router.get('/auth', payController.test);
+// router.get('/auth', payController.test);
 
-// router.post('/add-card', payController.create);
+router.post('/add-card', payController.addCardClient);
 
 // router.put('/update/:id', payController.update);
 

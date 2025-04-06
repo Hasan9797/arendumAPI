@@ -22,6 +22,6 @@ const addCardClient = async (req, res) => {
 const payAtmosAPI = async (req, res) => {};
 
 export default {
-  test,
+  addCardClient,
   payAtmosAPI,
 };
