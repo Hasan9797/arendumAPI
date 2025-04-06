@@ -36,34 +36,38 @@ class AtmosTokenService {
   async getPayToken() {
     const cacheKey = `atmos_pay_token`;
 
-    const cachedToken = await redisClient.get(cacheKey);
+    // const cachedToken = await redisClient.get(cacheKey);
 
-    if (cachedToken) {
-      return JSON.parse(cachedToken); // Cache'da bo‘lsa, JSON parse qilamiz
+    // if (cachedToken) {
+    //   return JSON.parse(cachedToken); // Cache'da bo‘lsa, JSON parse qilamiz
+    // }
+
+    try {
+      const formData = new URLSearchParams({
+        grant_type: 'client_credentials',
+      });
+
+      const credentials = Buffer.from(
+        `${this.#payConsumerKey}:${this.#payConsumerSecret}`
+      ).toString('base64');
+
+      const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${credentials}`,
+      };
+
+      const url = `${this.#atmosPayBaseUrl}/token`;
+
+      const response = await this.#makeAxiosPost(url, formData, headers);
+
+      if (response) {
+        await redisClient.setEx(cacheKey, 3600, JSON.stringify(response)); // 3600 soniya = 1 soat
+      }
+
+      return response;
+    } catch (error) {
+      throw error;
     }
-
-    const formData = new URLSearchParams({
-      grant_type: 'client_credentials',
-    });
-
-    const credentials = Buffer.from(
-      `${this.#payConsumerKey}:${this.#payConsumerSecret}`
-    ).toString('base64');
-
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${credentials}`,
-    };
-
-    const url = `${this.#atmosPayBaseUrl}/token`;
-
-    const response = await this.#makeAxiosPost(url, formData, headers);
-
-    if (response) {
-      await redisClient.setEx(cacheKey, 3600, JSON.stringify(response)); // 3600 soniya = 1 soat
-    }
-
-    return response;
   }
 
   async getDepositToken() {
