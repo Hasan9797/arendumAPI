@@ -72,7 +72,6 @@ class AtmosTokenService {
     });
 
     const credentials = Buffer.from(
-      //   `${this.#payConsumerKey}:${this.#payConsumerSecret}`
       `${this.#depositConsumerKey}:${this.#depositConsumerSecret}`
     ).toString('base64');
 
