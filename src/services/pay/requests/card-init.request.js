@@ -8,6 +8,8 @@ class CardInitRequest extends AtmosApiService {
       expiry: expiryDate,
     });
   }
+
+  
 }
 
 export default CardInitRequest;

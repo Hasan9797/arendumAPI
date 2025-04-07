@@ -1,5 +1,6 @@
 import bankCardRepo from '../repositories/bank-cards.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
+import CardInitRequest from '../services/pay/requests/card-init.request.js';
 
 const getAll = async (query) => {
   const bankCards = await bankCardRepo.getAll(query);
@@ -14,8 +15,14 @@ const getById = async (id) => {
   return formatResponseDates(bankCard);
 };
 
-const cardInit = async (data) => {
-  return await bankCardRepo.createBankCard(data);
+const cardInit = async (cardNumber, cardExpiry) => {
+  try {
+    const request = new CardInitRequest(cardNumber, cardExpiry);
+    const data = await request.send();
+    return await bankCardRepo.createBankCard(data);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const cardConfirm = async (data) => {
