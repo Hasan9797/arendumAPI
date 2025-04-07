@@ -49,17 +49,19 @@ class AtmosApiService extends AtmosTokenService {
   }
 
   async send() {
-    let logMessage = {
+    let logData = {
       requestType: this.#requestType,
       route: this.#route,
       params: this.#params,
       status: 'success',
     };
 
+    let response; // bu yerda tashqarida e'lon qilish kerak
+
     try {
       const { baseUrl, token } = await this.getBaseUrlAndTokenByRequestType(this.#requestType);
 
-      const response = await axios({
+      response = await axios({
         method: 'post',
         url: `${baseUrl}/${this.#route}`,
         headers: {
@@ -68,28 +70,30 @@ class AtmosApiService extends AtmosTokenService {
         data: this.#params,
       });
 
-      // Agar response bo'lmasa yoki data bo'lmasa, statusni 'error'ga o'zgartiring
       if (!response || !response.data) {
-        logMessage.status = 'error';
-        logMessage.error = 'No response or empty response';
+        logData.status = 'error';
+        logData.error = 'No response or empty response';
         throw new Error('Response is empty or no response');
       }
 
-      // Agar response'da error bo'lsa
       if (response.data.error) {
-        logMessage.status = 'error';
-        logMessage.error = response.data.error;
+        logData.status = 'error';
+        logData.error = response.data.error;
         throw new Error(`API Error: ${response.data.error.message}`);
       }
 
       this.#response = response.data;
-      logMessage.response = this.#response;
+      logData.response = this.#response;
+
       return this;
-    } finally {
-      // Logni har doim, xato yoki muvaffaqiyat bo'lsa ham yozing
-      logger.info(logMessage);
+
+    } catch (error) {
+      // Har doim log yoziladi
+      console.log(logData);
+      throw error;
     }
   }
+
 
 }
 
