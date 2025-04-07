@@ -18,8 +18,13 @@ const getById = async (id) => {
 const cardInit = async (cardNumber, cardExpiry) => {
   try {
     const request = new CardInitRequest(cardNumber, cardExpiry);
-    const data = await request.send();
-    return await bankCardRepo.createBankCard(data);
+    const response = await request.send();
+
+    if (response.isOk()) {
+      return response.getResult();
+    }
+
+    return response.getError();
   } catch (error) {
     throw error;
   }

@@ -49,8 +49,17 @@ const cardInit = async (req, res) => {
     const cardNumber = req.body.cardNumber;
     const cardExpiry = req.body.expiry;
 
-    const request = bankCardsService.cardInit(cardNumber, cardExpiry);
-  } catch (error) { }
+    const result = bankCardsService.cardInit(cardNumber, cardExpiry);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+      },
+    });
+  }
 };
 
 const cardConfirm = async (req, res) => { };
