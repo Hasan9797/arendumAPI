@@ -21,9 +21,12 @@ const cardInit = async (cardNumber, cardExpiry) => {
     const response = await request.send();
 
     if (response.isOk()) {
+      console.log('response keldi');
+      
       return response.getResult();
     }
 
+    console.log('response kelmadi');
     return response.getError();
   } catch (error) {
     throw error;

@@ -56,6 +56,8 @@ class AtmosApiService extends AtmosTokenService {
       status: 'success',
     };
 
+    console.log('Send Request');
+
     let response; // bu yerda tashqarida e'lon qilish kerak
 
     try {
