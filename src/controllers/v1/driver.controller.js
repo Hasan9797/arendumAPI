@@ -96,11 +96,11 @@ const getProcessOrder = async (req, res) => {
 
 const acceptOrder = async (req, res) => {
   try {
-    const driverId = req.user.id;
-    
+    const driver = await driverService.getById(req.user.id);
+
     const result = await orderService.acceptOrder(
       Number(req.query.id),
-      driverId
+      driver
     );
 
     if (result == null) {
