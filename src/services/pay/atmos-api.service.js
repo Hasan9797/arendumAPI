@@ -63,7 +63,7 @@ class AtmosApiService extends AtmosTokenService {
         method: 'post',
         url: `${baseUrl}/${this.#route}`,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: 'Bearer 4cafe683-b055-37e6-b7c0-159513d7782a',//`Bearer ${token}`,
         },
         data: this.#params,
       });
