@@ -19,10 +19,10 @@ const cardInit = async (cardNumber, cardExpiry) => {
   try {
     const request = new CardInitRequest(cardNumber, cardExpiry);
     const response = await request.send();
-
+    console.log('response: ', response.getResponse());
+    
     if (response.isOk()) {
       console.log('response keldi');
-      
       return response.getResult();
     }
 
