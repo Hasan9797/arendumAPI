@@ -52,6 +52,9 @@ class AtmosApiService extends AtmosTokenService {
     } catch (error) {
       throw error;
     }
+    finally {
+      // logger;
+    }
   }
 }
 

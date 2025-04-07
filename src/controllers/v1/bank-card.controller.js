@@ -29,10 +29,28 @@ const getAll = async (req, res) => {
   }
 };
 
-const getById = async (req, res) => { };
+const getById = async (req, res) => {
+  try {
+    const result = await bankCardsService.getById(parseInt(req.params.id));
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+      },
+    });
+  }
+};
 
 const cardInit = async (req, res) => {
-  try { } catch (error) { }
+  try {
+    const cardNumber = req.body.cardNumber;
+    const cardExpiry = req.body.expiry;
+
+    const request = bankCardsService.cardInit(cardNumber, cardExpiry);
+  } catch (error) { }
 };
 
 const cardConfirm = async (req, res) => { };
