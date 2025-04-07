@@ -63,7 +63,7 @@ app.use('/api/static', staticRoute);
 app.use('/api/order', orderRoute);
 
 // PAYMENT API
-app.use('/api/bank-card', bankCardRoute);
+app.use('/api/cards', bankCardRoute);
 app.use('/api/pay', payRoute);
 
 // Error handler
