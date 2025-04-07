@@ -58,12 +58,10 @@ class AtmosApiService extends AtmosTokenService {
 
     console.log('Send Request');
 
-    let response; // bu yerda tashqarida e'lon qilish kerak
-
     try {
       const { baseUrl, token } = await this.getBaseUrlAndTokenByRequestType(this.#requestType);
 
-      response = await axios({
+      const response = await axios({
         method: 'post',
         url: `${baseUrl}/${this.#route}`,
         headers: {
