@@ -34,17 +34,17 @@ class AtmosApiService extends AtmosTokenService {
   }
 
   isOk() {
-    return this.#response?.result?.code == 'OK' ? true : false;
+    return this.getResponse()?.result?.code == 'OK' ? true : false;
   }
 
   getResult() {
-    return this.#response?.result;
+    return this.getResponse()?.result;
   }
 
   getError() {
     return {
-      code: this.#response?.result?.code,
-      message: this.#response?.result?.description
+      code: this.getResponse()?.result?.code,
+      message: this.getResponse()?.result?.description
     };
   }
 
