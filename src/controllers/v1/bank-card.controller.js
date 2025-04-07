@@ -49,6 +49,8 @@ const cardInit = async (req, res) => {
     const cardNumber = req.body.cardNumber;
     const cardExpiry = req.body.expiry;
 
+    console.log(cardNumber, cardExpiry);
+    
     const result = bankCardsService.cardInit(cardNumber, cardExpiry);
     res.status(200).json(result);
   } catch (error) {
