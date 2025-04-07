@@ -308,7 +308,7 @@ const getOrderByClientId = async (lang, clientId) => {
   }
 };
 
-const acceptOrder = async (orderId, driverId) => {
+const acceptOrder = async (orderId, driver) => {
   try {
     const order = await orderRepo.getById(orderId);
 
@@ -323,7 +323,7 @@ const acceptOrder = async (orderId, driverId) => {
 
     const result = await orderRepo.updateById(orderId, {
       status: OrderStatus.ASSIGNED,
-      driverId,
+      driverId: driver.id,
     });
 
     if (!result) {
@@ -335,8 +335,7 @@ const acceptOrder = async (orderId, driverId) => {
 
     clientSocket.to(`order_room_${orderId}`).emit('orderAccepted', {
       success: true,
-      driverName: 'Ali',
-      driverPhone: '+998901234567',
+      driver,
     });
 
     return {

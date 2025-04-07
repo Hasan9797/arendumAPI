@@ -1,17 +1,51 @@
-const getAll = async (req, res) => {};
+import bankCardsService from "../../services/bank-cards.service.js";
 
-const getById = async (req, res) => {};
+const getAll = async (req, res) => {
+  const query = {
+    page: parseInt(req.query.page) || 1,
+    limit: parseInt(req.query.limit) || 10,
+    filters: req.query.filters || [],
+    sort: req.query.sort || {
+      column: 'id',
+      value: 'desc',
+    },
+  };
 
-const create = async (req, res) => {};
+  try {
+    const result = await bankCardsService.getAll(query);
+    res.status(200).json({
+      success: true,
+      data: result.data,
+      pagination: result.pagination,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+};
 
-const update = async (req, res) => {};
+const getById = async (req, res) => { };
 
-const distroy = async (req, res) => {};
+const cardInit = async (req, res) => {
+  try { } catch (error) { }
+};
+
+const cardConfirm = async (req, res) => { };
+
+const update = async (req, res) => { };
+
+const distroy = async (req, res) => { };
 
 export default {
   getAll,
   getById,
-  create,
+  cardInit,
+  cardConfirm,
   update,
   distroy,
 };

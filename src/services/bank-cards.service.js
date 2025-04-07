@@ -1,35 +1,40 @@
-import regionRepo from '../repositories/region.repo.js';
+import bankCardRepo from '../repositories/bank-cards.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
 
-const getRegions = async (lang, query) => {
-  const regions = await regionRepo.getAll(lang, query);
+const getAll = async (query) => {
+  const bankCards = await bankCardRepo.getAll(query);
   return {
-    data: formatResponseDates(regions.data),
-    pagination: regions.pagination,
+    data: formatResponseDates(bankCards.data),
+    pagination: bankCards.pagination,
   };
 };
 
-const getById = async (id, lang = 'ru') => {
-  const region = await regionRepo.getById(lang, id);
-  return formatResponseDates(region);
+const getById = async (id) => {
+  const bankCard = await bankCardRepo.getById(id);
+  return formatResponseDates(bankCard);
 };
 
-const createRegion = async (data) => {
-  return await regionRepo.createRegion(data);
+const cardInit = async (data) => {
+  return await bankCardRepo.createBankCard(data);
 };
 
-const updateRegion = async (id, data) => {
-  return await regionRepo.updateById(id, data);
+const cardConfirm = async (data) => {
+  return await bankCardRepo.createBankCard(data);
 };
 
-const deleteRegion = async (id) => {
-  return await regionRepo.deleteById(id);
+const update = async (id, data) => {
+  return await bankCardRepo.updateById(id, data);
+};
+
+const distroy = async (id) => {
+  return await bankCardRepo.deleteById(id);
 };
 
 export default {
-  getRegions,
+  getAll,
   getById,
-  createRegion,
-  updateRegion,
-  deleteRegion,
+  cardInit,
+  cardConfirm,
+  update,
+  distroy,
 };
