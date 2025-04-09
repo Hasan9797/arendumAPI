@@ -1,4 +1,4 @@
-import Roles, { ROLE_NAME } from '../enums/user/user-role.enum.js';
+import Roles, { ROLE_NAME } from '../enums/user/userRoleEnum.js';
 
 export function getRoleNameByNumber(roleNumber) {
   return ROLE_NAME[roleNumber] || 'Unknown Role';

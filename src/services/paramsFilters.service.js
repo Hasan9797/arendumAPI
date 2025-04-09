@@ -1,6 +1,6 @@
-import machineParamsFilterRepo from '../repositories/params-filter.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
-import machineParamsRepo from '../repositories/machine-params.repo.js';
+import machineParamsFilterRepo from '../repositories/paramsFilter.repo.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
+import machineParamsRepo from '../repositories/machineParams.repo.js';
 
 function updateParamsWithTotalAmount(filterParams, machineParams) {
   // machineParams ma'lumotlarini tezkor qidiruv uchun xarita (Map) shaklida tuzish

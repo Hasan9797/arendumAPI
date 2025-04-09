@@ -1,8 +1,8 @@
 import {
   responseError,
   responseSuccess,
-} from '../../helpers/response.helper.js';
-import paramsSettingsService from '../../services/params-filters.service.js';
+} from '../../helpers/responseHelper.js';
+import paramsSettingsService from '../../services/paramsFilters.service.js';
 
 const getAll = async (req, res) => {
   const query = {

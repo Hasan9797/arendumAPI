@@ -1,10 +1,10 @@
 import { Router } from 'express';
 
-import driverAuthController from '../controllers/auth/driver-auth.controller.js';
-import clientAuthController from '../controllers/auth/client-auth.controller.js';
+import driverAuthController from '../controllers/auth/driverAuth.controller.js';
+import clientAuthController from '../controllers/auth/clientAuth.controller.js';
 
 import authController from '../controllers/auth/auth.controller.js';
-import { authentication } from '../middlewares/auth.middleware.js';
+import { authentication } from '../middlewares/auth.js';
 
 const router = Router();
 

@@ -1,4 +1,4 @@
-import AtmosApiService from '../atmos-api.service.js';
+import AtmosApiService from '../atmosApi.service.js';
 
 class CardConfirmRequest extends AtmosApiService {
   constructor(transactionId, smsCode) {

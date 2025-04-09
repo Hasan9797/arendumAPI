@@ -1,6 +1,6 @@
-import { OrderStatus } from '../enums/order/order-status.enum.js';
-import orderPauseRepo from '../repositories/pause-order.repo.js';
-import orderService from '../services/order.service.js';
+import { OrderStatus } from '../enums/order/orderStatusEnum.js';
+import orderPauseRepo from '../repositories/pauseOrder.repo.js';
+import orderService from './order.service.js';
 import SocketService from '../socket/index.js';
 
 const startPauseTime = async (orderId) => {

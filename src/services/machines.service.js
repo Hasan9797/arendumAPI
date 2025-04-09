@@ -1,5 +1,5 @@
 import machinesRepo from '../repositories/machines.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 
 const getMachines = async (lang, query) => {
   try {

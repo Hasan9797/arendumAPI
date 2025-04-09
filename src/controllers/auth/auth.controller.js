@@ -4,10 +4,10 @@ import prisma from '../../config/prisma.js';
 import {
   generateAccessToken,
   generateRefreshToken,
-} from '../../helpers/jwt-token.helper.js';
+} from '../../helpers/jwtTokenHelper.js';
 
-import { ROLE_NAME } from '../../enums/user/user-role.enum.js';
-import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
+import { ROLE_NAME } from '../../enums/user/userRoleEnum.js';
+import { updateOrCreateUserToken } from '../../repositories/userToken.repo.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;

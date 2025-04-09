@@ -1,5 +1,5 @@
-import bankCardsService from "../../services/bank-cards.service.js";
-import userRoleEnum from "../../enums/user/user-role.enum.js";
+import bankCardsService from "../../services/bankCards.service.js";
+import userRoleEnum from "../../enums/user/userRoleEnum.js";
 
 const getAll = async (req, res) => {
   const query = {

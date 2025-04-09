@@ -1,5 +1,5 @@
 import redisClient from '../config/redis.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 
 export const saveSmsCode = async (phoneNumber, code, expiresIn) => {
   const key = `sms:${phoneNumber}`;

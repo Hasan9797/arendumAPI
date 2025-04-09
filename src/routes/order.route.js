@@ -1,14 +1,14 @@
 import { Router } from 'express';
 
 import orderController from '../controllers/v1/order.controller.js';
-import orderPauseController from '../controllers/v1/order-pause.controller.js';
+import orderPauseController from '../controllers/v1/orderPause.controller.js';
 
 import {
   authentication,
   authorization,
-} from '../middlewares/auth.middleware.js';
+} from '../middlewares/auth.js';
 
-import userRole from '../enums/user/user-role.enum.js';
+import userRole from '../enums/user/userRoleEnum.js';
 
 const router = Router();
 

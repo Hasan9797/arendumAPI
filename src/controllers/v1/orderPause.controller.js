@@ -1,9 +1,9 @@
-import pauseOrderService from '../../services/pause-order.service.js';
+import pauseOrderService from '../../services/pauseOrder.service.js';
 
 import {
     responseSuccess,
     responseError,
-} from '../../helpers/response.helper.js';
+} from '../../helpers/responseHelper.js';
 
 const startPauseTime = async (req, res) => {
     const orderId = parseInt(req.query.id);

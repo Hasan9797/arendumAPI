@@ -3,10 +3,10 @@ import { Router } from 'express';
 import {
   authentication,
   authorization,
-} from '../middlewares/auth.middleware.js';
+} from '../middlewares/auth.js';
 
-import UserRole from '../enums/user/user-role.enum.js';
-import paramsFiltersController from '../controllers/v1/params-filters.controller.js';
+import UserRole from '../enums/user/userRoleEnum.js';
+import paramsFiltersController from '../controllers/v1/paramsFilters.controller.js';
 
 const router = Router();
 

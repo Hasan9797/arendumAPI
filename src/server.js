@@ -6,6 +6,8 @@ import http from 'http';
 import cors from 'cors';
 import SocketService from './socket/index.js';
 import { Server } from 'socket.io';
+import errorHandler from './middlewares/errorHandler.js'
+import { ApiError } from './Errors/appErrors.js';
 
 dotenv.config();
 
@@ -31,18 +33,18 @@ app.use(express.static(path.join(__dirname, '../uploads')));
 import userRoute from './routes/user.route.js';
 import authRoute from './routes/auth.route.js';
 import machinesRoute from './routes/machines.route.js';
-import machinesParamsRoute from './routes/machines-params.route.js';
+import machinesParamsRoute from './routes/machinesParams.route.js';
 import driverRoute from './routes/driver.route.js';
 import clientRoute from './routes/client.route.js';
-import paramsFilterRoute from './routes/params-filter.route.js';
+import paramsFilterRoute from './routes/paramsFilter.route.js';
 import uploadRoute from './routes/upload.route.js';
 import regionRoute from './routes/region.route.js';
 import structureRoute from './routes/structure.route.js';
-import machinePriceRoute from './routes/machine-price.route.js';
+import machinePriceRoute from './routes/machinePrice.route.js';
 import staticRoute from './routes/static.route.js';
 import orderRoute from './routes/order.route.js';
 // PAYMENT ROUTES
-import bankCardRoute from './routes/bank-card.route.js';
+import bankCardRoute from './routes/bankCard.route.js';
 import payRoute from './routes/pay.route.js';
 
 // File uploads route
@@ -66,7 +68,13 @@ app.use('/api/order', orderRoute);
 app.use('/api/cards', bankCardRoute);
 app.use('/api/pay', payRoute);
 
-// Error handler
+// 404 middleware
+app.use((req, res, next) => {
+  next(ApiError.notFound('Not Found'));
+});
+
+// Global error handling middleware’ni qo‘shish
+app.use(errorHandler);
 
 // Start the server
 const PORT = process.env.PORT || 8000;

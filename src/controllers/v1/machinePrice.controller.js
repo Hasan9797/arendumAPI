@@ -1,5 +1,5 @@
-import { responseError } from '../../helpers/response.helper.js';
-import machinePriceService from '../../services/machine-price.service.js';
+import { responseError } from '../../helpers/responseHelper.js';
+import machinePriceService from '../../services/machinePrice.service.js';
 
 const getAll = async (req, res) => {
   const query = {

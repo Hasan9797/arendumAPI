@@ -6,7 +6,7 @@ import userController from '../controllers/v1/user.controller.js';
 import {
     authentication,
     authorization,
-} from '../middlewares/auth.middleware.js';
+} from '../middlewares/auth.js';
 
 // User routes
 

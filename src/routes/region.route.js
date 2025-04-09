@@ -4,9 +4,9 @@ import regionController from '../controllers/v1/region.controller.js';
 import {
   authentication,
   authorization,
-} from '../middlewares/auth.middleware.js';
+} from '../middlewares/auth.js';
 
-import UserRole from '../enums/user/user-role.enum.js';
+import UserRole from '../enums/user/userRoleEnum.js';
 
 const router = Router();
 

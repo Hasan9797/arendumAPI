@@ -1,7 +1,7 @@
 import prisma from '../config/prisma.js';
-import { regionStatus } from '../enums/Region/region-status.enum.js';
-import { structureStatus } from '../enums/structure/structure-status.enum.js';
-import { buildWhereFilter } from '../helpers/where-filter-helper.js';
+import { regionStatus } from '../enums/Region/regionStatusEnum.js';
+import { structureStatus } from '../enums/structure/structureStatusEnum.js';
+import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
 
 const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;

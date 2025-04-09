@@ -9,21 +9,21 @@ import {
 import {
   generateAccessToken,
   generateRefreshToken,
-} from '../../helpers/jwt-token.helper.js';
+} from '../../helpers/jwtTokenHelper.js';
 
-import userRoleEnum from '../../enums/user/user-role.enum.js';
-import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
+import userRoleEnum from '../../enums/user/userRoleEnum.js';
+import { updateOrCreateUserToken } from '../../repositories/userToken.repo.js';
 import clientService from '../../services/client.service.js';
 
 import {
   ClientStatus,
   getClientStatusText,
-} from '../../enums/client/client-status.enum.js';
+} from '../../enums/client/clientStatusEnum.js';
 
 import {
   responseSuccess,
   responseError,
-} from '../../helpers/response.helper.js';
+} from '../../helpers/responseHelper.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 

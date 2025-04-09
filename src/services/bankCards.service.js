@@ -1,8 +1,8 @@
-import bankCardRepo from '../repositories/bank-cards.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
-import CardInitRequest from '../services/pay/requests/card-init.request.js';
-import CardConfirmRequest from '../services/pay/requests/card-confirm.request.js';
-import userRoleEnum from '../enums/user/user-role.enum.js';
+import bankCardRepo from '../repositories/bankCards.repo.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
+import CardInitRequest from './pay/requests/cardInitRequest.js';
+import CardConfirmRequest from './pay/requests/cardConfirmRequest.js';
+import userRoleEnum from '../enums/user/userRoleEnum.js';
 
 const getAll = async (query) => {
   const bankCards = await bankCardRepo.getAll(query);

@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 import UserRole from '../constants/user-role.constant.js';
-import { buildWhereFilter } from '../helpers/where-filter-helper.js';
+import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
 
 const getMachines = async (query) => {
   const { page, limit, sort, filters } = query;

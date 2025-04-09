@@ -5,7 +5,7 @@ import staticController from '../controllers/v1/statics.controller.js';
 import {
   authentication,
   authorization,
-} from '../middlewares/auth.middleware.js';
+} from '../middlewares/auth.js';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
-import machinePriceRepo from '../repositories/machine-price.repo.js';
+import machinePriceRepo from '../repositories/machinePrice.repo.js';
 import prisma from '../config/prisma.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 
 const getPrices = async (lang, query) => {
   try {

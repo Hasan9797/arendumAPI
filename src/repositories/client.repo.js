@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
-import { getClientStatusText } from '../enums/client/client-status.enum.js';
-import { buildWhereFilter } from '../helpers/where-filter-helper.js';
+import { getClientStatusText } from '../enums/client/clientStatusEnum.js';
+import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
 
 const findAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
@@ -114,19 +114,6 @@ const getById = async (lang, id) => {
             nameRu: true,
           },
         },
-        // cards: {
-        //   select: {
-        //     id: true,
-        //     cardId: true,
-        //     pan: true,
-        //     expiry: true,
-        //     cardHolder: true,
-        //     balance: true,
-        //     phone: true,
-        //     cardToken: true,
-        //     status: true,
-        //   },
-        // },
       },
     });
 

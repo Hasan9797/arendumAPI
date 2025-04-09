@@ -1,5 +1,5 @@
 import driverRepository from '../repositories/driver.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 
 const getAll = async (lang, query) => {
   try {

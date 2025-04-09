@@ -1,5 +1,5 @@
 import prisma from '../config/prisma.js';
-import { buildWhereFilter } from '../helpers/where-filter-helper.js';
+import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
 
 const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;

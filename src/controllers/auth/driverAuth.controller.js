@@ -9,15 +9,15 @@ import {
 import {
   generateAccessToken,
   generateRefreshToken,
-} from '../../helpers/jwt-token.helper.js';
+} from '../../helpers/jwtTokenHelper.js';
 
-import userRoleEnum from '../../enums/user/user-role.enum.js';
+import userRoleEnum from '../../enums/user/userRoleEnum.js';
 import driverService from '../../services/driver.service.js';
-import { updateOrCreateUserToken } from '../../repositories/user-token.repo.js';
+import { updateOrCreateUserToken } from '../../repositories/userToken.repo.js';
 import {
   DriverStatus,
   getDriverStatusText,
-} from '../../enums/driver/driver-status.enum.js';
+} from '../../enums/driver/driverStatusEnum.js';
 
 import machineService from '../../services/machines.service.js';
 import regionService from '../../services/regiosn.service.js';
