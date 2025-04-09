@@ -1,12 +1,12 @@
 import { Router } from 'express';
 
-import machinePriceController from '../controllers/v1/machine-price.controller.js';
+import machinePriceController from '../controllers/v1/machinePrice.controller.js';
 import {
   authentication,
   authorization,
-} from '../middlewares/auth.middleware.js';
+} from '../middlewares/auth.js';
 
-import UserRole from '../enums/user/user-role.enum.js';
+import UserRole from '../enums/user/userRoleEnum.js';
 
 const router = Router();
 

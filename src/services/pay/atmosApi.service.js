@@ -1,5 +1,5 @@
 import axios from 'axios';
-import AtmosTokenService from './atmos-token.service.js';
+import AtmosTokenService from './atmosToken.service.js';
 
 class AtmosApiService extends AtmosTokenService {
   #route = '';

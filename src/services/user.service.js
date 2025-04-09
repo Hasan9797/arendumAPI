@@ -1,5 +1,5 @@
 import userRepository from '../repositories/user.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import bcrypt from 'bcryptjs';
 
 const getUsers = async (query) => {

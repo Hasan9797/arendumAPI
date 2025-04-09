@@ -1,5 +1,5 @@
 import regionRepo from '../repositories/region.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 
 const getRegions = async (lang, query) => {
   const regions = await regionRepo.getAll(lang, query);

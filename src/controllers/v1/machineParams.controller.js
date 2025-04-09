@@ -1,8 +1,8 @@
-import machinParamsService from '../../services/machin-params.service.js';
+import machinParamsService from '../../services/machinParams.service.js';
 import {
   responseSuccess,
   responseError,
-} from '../../helpers/response.helper.js';
+} from '../../helpers/responseHelper.js';
 
 const getAll = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';

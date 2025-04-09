@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 import redisClient from '../config/redis.js';
-import { buildWhereFilter } from '../helpers/where-filter-helper.js';
+import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
 
 const getMachines = async (lang, query) => {
   const { page, limit, sort, filters } = query;

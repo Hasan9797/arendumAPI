@@ -1,6 +1,6 @@
-import CardInitRequest from '../../services/pay/requests/card-init.request.js';
-import CardConfirmRequest from '../../services/pay/requests/card-confirm.request.js';
-import AtmosTokenService from '../../services/pay/atmos-token.service.js';
+import CardInitRequest from '../../services/pay/requests/cardInitRequest.js';
+import CardConfirmRequest from '../../services/pay/requests/cardConfirmRequest.js';
+import AtmosTokenService from '../../services/pay/atmosToken.service.js';
 
 const accessToken = '';
 

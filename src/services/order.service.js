@@ -1,16 +1,16 @@
 import orderRepo from '../repositories/order.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import {
   OrderStatus,
   getStatusText,
-} from '../enums/order/order-status.enum.js';
-import orderCalculateWorkHelper from '../helpers/order-calculate-work.helper.js';
-import orderType from '../enums/order/order-type.enum.js';
-import { getAmountTypeText } from '../enums/pay/payment-type.enum.js';
-import machinePriceService from './machine-price.service.js';
+} from '../enums/order/orderStatusEnum.js';
+import orderCalculateWorkHelper from '../helpers/orderCalculateWorkHelper.js';
+import orderType from '../enums/order/orderTypeEnum.js';
+import { getAmountTypeText } from '../enums/pay/paymentTypeEnum.js';
+import machinePriceService from './machinePrice.service.js';
 import structureService from './structure.service.js';
 import machineService from './machines.service.js';
-import redisSetHelper from '../helpers/redis-set-helper.js';
+import redisSetHelper from '../helpers/redisSetHelper.js';
 import SocketService from '../socket/index.js';
 
 const getOrders = async (query, lang = 'ru') => {

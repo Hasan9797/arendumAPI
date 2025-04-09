@@ -1,5 +1,5 @@
 import structureRepo from '../repositories/structure.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 
 const getStructures = async (lang, query) => {
   const result = await structureRepo.getAll(lang, query);

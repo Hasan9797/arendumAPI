@@ -4,7 +4,7 @@ import driverController from '../controllers/v1/driver.controller.js';
 import {
   authentication,
   authorization,
-} from '../middlewares/auth.middleware.js';
+} from '../middlewares/auth.js';
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import clientRepository from '../repositories/client.repo.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 
 const getClients = async (lang, query) => {
   const result = await clientRepository.findAll(lang, query);

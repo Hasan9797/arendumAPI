@@ -1,13 +1,13 @@
 import { Router } from 'express';
 
-import bankCardController from '../controllers/v1/bank-card.controller.js';
+import bankCardController from '../controllers/v1/bankCard.controller.js';
 
 import {
   authentication,
   authorization,
-} from '../middlewares/auth.middleware.js';
+} from '../middlewares/auth.js';
 
-import UserRole from '../enums/user/user-role.enum.js';
+import UserRole from '../enums/user/userRoleEnum.js';
 
 const router = Router();
 

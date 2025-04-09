@@ -1,5 +1,5 @@
-import { verifyToken } from '../helpers/jwt-token.helper.js';
-import { responseError } from '../helpers/response.helper.js';
+import { verifyToken } from '../helpers/jwtTokenHelper.js';
+import { responseError } from '../helpers/responseHelper.js';
 
 export const authentication = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];

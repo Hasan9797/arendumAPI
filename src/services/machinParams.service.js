@@ -1,7 +1,7 @@
-import machineParamsRepo from '../repositories/machine-params.repo.js';
-import machinePriceService from './machine-price.service.js';
-import paramsFiltersService from './params-filters.service.js';
-import { formatResponseDates } from '../helpers/format-date.helper.js';
+import machineParamsRepo from '../repositories/machineParams.repo.js';
+import machinePriceService from './machinePrice.service.js';
+import paramsFiltersService from './paramsFilters.service.js';
+import { formatResponseDates } from '../helpers/formatDateHelper.js';
 
 function convertToUnderscoreFormat(str) {
   let trimmedStr = str.trim();

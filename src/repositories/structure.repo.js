@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
-import { getStructureStatusText } from '../enums/structure/structure-status.enum.js';
-import { buildWhereFilter } from '../helpers/where-filter-helper.js';
+import { getStructureStatusText } from '../enums/structure/structureStatusEnum.js';
+import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
 
 const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;

@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
-import { getDriverStatusText } from '../enums/driver/driver-status.enum.js';
-import { buildWhereFilter } from '../helpers/where-filter-helper.js';
+import { getDriverStatusText } from '../enums/driver/driverStatusEnum.js';
+import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
 import redisClient from '../config/redis.js';
 
 const findAll = async (lang, query) => {
@@ -133,7 +133,6 @@ const updateById = async (id, driverData) => {
 
     return updatedUser;
   } catch (error) {
-    console.error('Error updating user:', error);
     throw error;
   }
 };
@@ -164,56 +163,47 @@ const getDriverProfile = async (id) => {
     return JSON.parse(cachedDriver); // Cache'da bo‘lsa, JSON parse qilamiz
   }
 
-  // 2. Agar cache'da bo‘lmasa, bazadan olish
-  const driver = await prisma.driver.findUnique({
-    where: { id },
-    include: {
-      region: {
-        select: {
-          id: true,
-          name: true,
-          nameUz: true,
-          nameRu: true,
+  try {
+    // 2. Agar cache'da bo‘lmasa, bazadan olish
+    const driver = await prisma.driver.findUnique({
+      where: { id },
+      include: {
+        region: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+          },
+        },
+        structure: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+          },
+        },
+        machine: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+          },
         },
       },
-      structure: {
-        select: {
-          id: true,
-          name: true,
-          nameUz: true,
-          nameRu: true,
-        },
-      },
-      machine: {
-        select: {
-          id: true,
-          name: true,
-          nameUz: true,
-          nameRu: true,
-        },
-      },
-      // cards: {
-      //   select: {
-      //     id: true,
-      //     cardId: true,
-      //     pan: true,
-      //     expiry: true,
-      //     cardHolder: true,
-      //     balance: true,
-      //     phone: true,
-      //     cardToken: true,
-      //     status: true,
-      //   }
-      // },
-    },
-  });
+    });
 
-  // 3. Agar driver topilsa, Redis cache'ga 1 kunga saqlaymiz
-  if (driver) {
-    await redisClient.setEx(cacheKey, 86400, JSON.stringify(driver)); // 86400 soniya = 1 kun
+    // 3. Agar driver topilsa, Redis cache'ga 1 kunga saqlaymiz
+    if (driver) {
+      await redisClient.setEx(cacheKey, 86400, JSON.stringify(driver)); // 86400 soniya = 1 kun
+    }
+
+    return driver;
+  } catch (error) {
+    throw error;
   }
-
-  return driver;
 };
 
 const getDriversByStructureIdForNotification = async (

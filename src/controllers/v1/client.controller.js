@@ -2,7 +2,7 @@ import clientService from '../../services/client.service.js';
 import {
   responseSuccess,
   responseError,
-} from '../../helpers/response.helper.js';
+} from '../../helpers/responseHelper.js';
 import orderService from '../../services/order.service.js';
 
 const getAll = async (req, res) => {
