@@ -25,6 +25,7 @@ const getAll = async (req, res) => {
       success: false,
       error: {
         message: error.message,
+        stack: error.stack,
         code: 500,
       },
     });

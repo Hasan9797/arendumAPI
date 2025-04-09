@@ -30,8 +30,8 @@ const getMachines = async (lang, query) => {
 
     const formattedMachines = machines.map((machine) => ({
       ...machine,
-      MachinePrice:
-        machine.MachinePrice.length > 0 ? machine.MachinePrice[0] : null, // Birinchi elementni olish
+      machinePrice:
+        machine.machinePrice.length > 0 ? machine.machinePrice[0] : null, // Birinchi elementni olish
     }));
 
     const data = formattedMachines.map((machine) => {
