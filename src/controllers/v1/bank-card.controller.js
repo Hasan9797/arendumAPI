@@ -66,9 +66,9 @@ const cardConfirm = async (req, res) => {
   try {
     const transactionId = req.body.transactionId;
     const smsCode = req.body.smsCode;
-    const userId = req.user.id;
+    const user = req.user;
 
-    const result = await bankCardsService.cardConfirm(userId, transactionId, smsCode);
+    const result = await bankCardsService.cardConfirm(user, transactionId, smsCode);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
