@@ -36,6 +36,19 @@ const findAll = async (lang, query) => {
             status: true,
           },
         },
+        // cards: {
+        //   select: {
+        //     id: true,
+        //     cardId: true,
+        //     pan: true,
+        //     expiry: true,
+        //     cardHolder: true,
+        //     balance: true,
+        //     phone: true,
+        //     cardToken: true,
+        //     status: true,
+        //   },
+        // },
       },
     });
 
@@ -99,6 +112,19 @@ const getById = async (lang, id) => {
             name: true,
             nameUz: true,
             nameRu: true,
+          },
+        },
+        cards: {
+          select: {
+            id: true,
+            cardId: true,
+            pan: true,
+            expiry: true,
+            cardHolder: true,
+            balance: true,
+            phone: true,
+            cardToken: true,
+            status: true,
           },
         },
       },

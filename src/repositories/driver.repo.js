@@ -107,25 +107,14 @@ const create = async (newDriver) => {
 };
 
 const getById = async (id) => {
-  const cacheKey = `driver_${id}`; // Redis kaliti
-
-  // 1. Avval Redis cache dan tekshirish
-  const cachedDriver = await redisClient.get(cacheKey);
-  if (cachedDriver) {
-    return JSON.parse(cachedDriver); // Cache'da bo‘lsa, JSON parse qilamiz
+  try {
+    const driver = await prisma.driver.findUnique({
+      where: { id },
+    });
+    return driver;
+  } catch (error) {
+    throw error;
   }
-
-  // 2. Agar cache'da bo‘lmasa, bazadan olish
-  const driver = await prisma.driver.findUnique({
-    where: { id },
-  });
-
-  // 3. Agar driver topilsa, Redis cache'ga 1 kunga saqlaymiz
-  if (driver) {
-    await redisClient.setEx(cacheKey, 86400, JSON.stringify(driver)); // 86400 soniya = 1 kun
-  }
-
-  return driver;
 };
 
 const updateById = async (id, driverData) => {
@@ -202,6 +191,19 @@ const getDriverProfile = async (id) => {
           nameUz: true,
           nameRu: true,
         },
+      },
+      cards: {
+        select: {
+          id: true,
+          cardId: true,
+          pan: true,
+          expiry: true,
+          cardHolder: true,
+          balance: true,
+          phone: true,
+          cardToken: true,
+          status: true,
+        }
       },
     },
   });
