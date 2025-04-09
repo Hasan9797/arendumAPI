@@ -114,19 +114,19 @@ const getById = async (lang, id) => {
             nameRu: true,
           },
         },
-        cards: {
-          select: {
-            id: true,
-            cardId: true,
-            pan: true,
-            expiry: true,
-            cardHolder: true,
-            balance: true,
-            phone: true,
-            cardToken: true,
-            status: true,
-          },
-        },
+        // cards: {
+        //   select: {
+        //     id: true,
+        //     cardId: true,
+        //     pan: true,
+        //     expiry: true,
+        //     cardHolder: true,
+        //     balance: true,
+        //     phone: true,
+        //     cardToken: true,
+        //     status: true,
+        //   },
+        // },
       },
     });
 

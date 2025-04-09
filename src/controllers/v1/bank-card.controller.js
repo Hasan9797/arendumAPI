@@ -1,4 +1,5 @@
 import bankCardsService from "../../services/bank-cards.service.js";
+import userRoleEnum from "../../enums/user/user-role.enum.js";
 
 const getAll = async (req, res) => {
   const query = {
@@ -32,6 +33,26 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const result = await bankCardsService.getById(parseInt(req.params.id));
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+      },
+    });
+  }
+};
+
+const getByUserId = async (req, res) => {
+  const userId = req.user.id;
+  const userRole = req.user.role;
+  try {
+    if (userRole !== userRoleEnum.CLIENT && userRole !== userRoleEnum.DRIVER) {
+      throw new Error('Invalid user role', 400);
+    }
+    const result = await bankCardsService.getByClientIdOrDriverId(userId, userRole);
     res.status(201).json(result);
   } catch (error) {
     res.status(500).json({
@@ -88,6 +109,7 @@ const distroy = async (req, res) => { };
 export default {
   getAll,
   getById,
+  getByUserId,
   cardInit,
   cardConfirm,
   update,
