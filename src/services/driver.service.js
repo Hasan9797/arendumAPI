@@ -1,6 +1,4 @@
 import driverRepository from '../repositories/driver.repo.js';
-import { sendNotification } from '../helpers/send-notification.helper.js';
-import clientRepository from '../repositories/client.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
 
 const getAll = async (lang, query) => {
