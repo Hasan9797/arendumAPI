@@ -41,6 +41,10 @@ class AtmosApiService extends AtmosTokenService {
     return this.getResponse()?.result;
   }
 
+  getData() {
+    return this.getResponse()?.data;
+  }
+
   getError() {
     return {
       code: this.getResponse()?.result?.code,
