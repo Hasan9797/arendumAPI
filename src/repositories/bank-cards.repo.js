@@ -16,6 +16,21 @@ const getAll = async (query) => {
       orderBy,
       skip,
       take: limit,
+      include: {
+        client: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        }, driver: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        }
+      },
     });
 
     const total = await prisma.bankCard.count({ where });
@@ -38,6 +53,21 @@ const getById = async (id) => {
   try {
     const bankCard = await prisma.bankCard.findUnique({
       where: { id },
+      include: {
+        client: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        }, driver: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        }
+      },
     });
 
     return bankCard;
