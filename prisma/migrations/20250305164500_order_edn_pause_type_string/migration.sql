@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "OrderPause" ALTER COLUMN "start_pause" SET DATA TYPE TEXT,
-ALTER COLUMN "end_pause" SET DATA TYPE TEXT,
-ALTER COLUMN "total_time" SET DATA TYPE TEXT;

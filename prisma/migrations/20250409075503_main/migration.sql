@@ -21,6 +21,7 @@ CREATE TABLE "Driver" (
     "phone" TEXT NOT NULL,
     "machine_id" INTEGER,
     "email" TEXT,
+    "img" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
     "photo_tex_passport" JSONB NOT NULL DEFAULT '[]',
     "photo_passport" JSONB NOT NULL DEFAULT '[]',
@@ -34,7 +35,7 @@ CREATE TABLE "Driver" (
     "machineColor" TEXT,
     "machineNumber" TEXT,
     "company_name" TEXT,
-    "companyInn" TEXT,
+    "company_inn" TEXT,
     "legal" BOOLEAN NOT NULL DEFAULT false,
     "merchant_id" INTEGER,
     "region_id" INTEGER,
@@ -53,6 +54,7 @@ CREATE TABLE "Client" (
     "phone" TEXT NOT NULL,
     "legal" BOOLEAN NOT NULL DEFAULT false,
     "email" TEXT,
+    "img" TEXT,
     "status" INTEGER NOT NULL DEFAULT 0,
     "long" DECIMAL(65,30) DEFAULT 0,
     "lat" DECIMAL(65,30) DEFAULT 0,
@@ -113,9 +115,15 @@ CREATE TABLE "MachineParamsFilters" (
 -- CreateTable
 CREATE TABLE "BankCard" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "expire" TEXT NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "card_id" INTEGER NOT NULL,
+    "pan" TEXT NOT NULL,
+    "expiry" TEXT NOT NULL,
+    "card_holder" TEXT,
+    "client_id" INTEGER,
+    "driver_id" INTEGER,
+    "balance" INTEGER,
+    "phone" TEXT,
+    "card_token" TEXT NOT NULL,
     "status" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -187,12 +195,15 @@ CREATE TABLE "Order" (
     "amount" INTEGER NOT NULL,
     "amount_type" INTEGER NOT NULL DEFAULT 1,
     "status" INTEGER NOT NULL DEFAULT 1,
+    "driver_arrived_time" TEXT,
     "start_hour" TEXT,
     "end_hour" TEXT,
     "total_work_hour" INTEGER,
     "total_work_minut" INTEGER,
     "total_pause_hour" INTEGER,
     "total_pause_minut" INTEGER,
+    "paid_waiting_time" TEXT,
+    "paid_waiting_amount" INTEGER,
     "hour_count" INTEGER,
     "km_count" INTEGER,
     "total_amount" INTEGER,
@@ -214,9 +225,9 @@ CREATE TABLE "Order" (
 CREATE TABLE "OrderPause" (
     "id" SERIAL NOT NULL,
     "order_id" INTEGER NOT NULL,
-    "start_pause" BIGINT NOT NULL,
-    "end_pause" BIGINT,
-    "total_time" BIGINT,
+    "start_pause" TEXT NOT NULL,
+    "end_pause" TEXT,
+    "total_time" TEXT,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -251,6 +262,15 @@ CREATE TABLE "MachinePriceParams" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "MachinePriceParams_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "UsersBalance" (
+    "id" SERIAL NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "balance" TEXT NOT NULL,
+
+    CONSTRAINT "UsersBalance_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -306,6 +326,12 @@ ALTER TABLE "MachineParams" ADD CONSTRAINT "MachineParams_machine_id_fkey" FOREI
 
 -- AddForeignKey
 ALTER TABLE "MachineParamsFilters" ADD CONSTRAINT "MachineParamsFilters_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BankCard" ADD CONSTRAINT "BankCard_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "Client"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BankCard" ADD CONSTRAINT "BankCard_driver_id_fkey" FOREIGN KEY ("driver_id") REFERENCES "Driver"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Structure" ADD CONSTRAINT "Structure_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "Region"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
