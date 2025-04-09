@@ -18,7 +18,7 @@ const getMachines = async (lang, query) => {
       skip,
       take: limit,
       include: {
-        MachinePrice: {
+        machinePrice: {
           include: {
             machinePriceParams: true,
           },

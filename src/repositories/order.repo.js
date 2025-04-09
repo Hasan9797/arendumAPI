@@ -78,7 +78,7 @@ const getById = async (id) => {
         id,
       },
       include: {
-        OrderPause: {
+        orderPause: {
           select: {
             id: true,
             startPause: true,
@@ -167,7 +167,7 @@ const getOrderByDriverId = async (lang, driverId) => {
         },
       },
       include: {
-        OrderPause: {
+        orderPause: {
           select: {
             id: true,
             startPause: true,
@@ -207,7 +207,7 @@ const getOrderByClientId = async (clientId) => {
         },
       },
       include: {
-        OrderPause: {
+        orderPause: {
           select: {
             id: true,
             startPause: true,

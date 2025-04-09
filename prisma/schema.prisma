@@ -21,40 +21,41 @@ model User {
 }
 
 model Driver {
-  id                      Int       @id @default(autoincrement())
-  fullName                String?   @map("full_name")
-  phone                   String    @unique
-  machineId               Int?      @map("machine_id")
-  email                   String?   @unique
+  id                      Int        @id @default(autoincrement())
+  fullName                String?    @map("full_name")
+  phone                   String     @unique
+  machineId               Int?       @map("machine_id")
+  email                   String?    @unique
   img                     String?
-  status                  Int       @default(0)
-  photoTexPassport        Json      @default("[]") @map("photo_tex_passport")
-  photoPassport           Json      @default("[]") @map("photo_passport")
-  photoLicense            Json      @default("[]") @map("photo_license")
-  photoConfidencePassport Json      @default("[]") @map("photo_confidence_passport")
-  photoDriverLicense      Json      @default("[]") @map("photo_driver_license")
-  photoCar                Json      @default("[]") @map("photo_car")
-  params                  Json      @default("[]") @map("params")
-  long                    Decimal?  @default(0)
-  lat                     Decimal?  @default(0)
+  status                  Int        @default(0)
+  photoTexPassport        Json       @default("[]") @map("photo_tex_passport")
+  photoPassport           Json       @default("[]") @map("photo_passport")
+  photoLicense            Json       @default("[]") @map("photo_license")
+  photoConfidencePassport Json       @default("[]") @map("photo_confidence_passport")
+  photoDriverLicense      Json       @default("[]") @map("photo_driver_license")
+  photoCar                Json       @default("[]") @map("photo_car")
+  params                  Json       @default("[]") @map("params")
+  long                    Decimal?   @default(0)
+  lat                     Decimal?   @default(0)
   machineColor            String?
   machineNumber           String?
-  companyName             String?   @map("company_name")
-  companyInn              String?   @map("company_inn")
-  legal                   Boolean   @default(false)
-  merchantId              Int?      @map("merchant_id")
-  machine                 Machines? @relation("MachineDrivers", fields: [machineId], references: [id])
+  companyName             String?    @map("company_name")
+  companyInn              String?    @map("company_inn")
+  legal                   Boolean    @default(false)
+  merchantId              Int?       @map("merchant_id")
+  machine                 Machines?  @relation("MachineDrivers", fields: [machineId], references: [id])
+  // relation
+  regionId                Int?       @map("region_id")
+  region                  Region?    @relation("DriverRegion", fields: [regionId], references: [id])
+  // relation
+  structureId             Int?       @map("structure_id")
+  structure               Structure? @relation("DriverStructure", fields: [structureId], references: [id])
 
-  regionId Int?    @map("region_id")
-  region   Region? @relation("DriverRegion", fields: [regionId], references: [id])
-
-  structureId Int?       @map("structure_id")
-  structure   Structure? @relation("DriverStructure", fields: [structureId], references: [id])
-
-  fcmToken  String?  @map("fcm_token")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  Order     Order[]
+  fcmToken  String?    @map("fcm_token")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  order     Order[] // cambleCase 
+  cards     BankCard[] //cambleCase
 }
 
 model Client {
@@ -68,13 +69,16 @@ model Client {
   long        Decimal?   @default(0)
   lat         Decimal?   @default(0)
   fcmToken    String?    @map("fcm_token")
+  // relation
   regionId    Int?       @map("region_id")
   region      Region?    @relation("ClientRegion", fields: [regionId], references: [id])
+  // relation
   structureId Int?       @map("structure_id")
   structure   Structure? @relation("ClientStructures", fields: [structureId], references: [id])
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
-  Order       Order[]    @relation("ClientOrder")
+  order       Order[]    @relation("ClientOrder") // cambleCase
+  cards       BankCard[]
 }
 
 model Machines {
@@ -90,8 +94,8 @@ model Machines {
   createdAt            DateTime               @default(now()) @map("created_at")
   updatedAt            DateTime               @updatedAt @map("updated_at")
   drivers              Driver[]               @relation("MachineDrivers")
-  Order                Order[]
-  MachinePrice         MachinePrice[]
+  order                Order[] // cambleCase
+  machinePrice         MachinePrice[] // cambleCase
 }
 
 model MachineParams {
@@ -102,9 +106,10 @@ model MachineParams {
   nameEn    String?  @map("name_en")
   key       String?
   prefix    String?
+  // relation
   machineId Int      @map("machine_id")
-  status    Int      @default(0)
   machines  Machines @relation("MachineParams", fields: [machineId], references: [id])
+  status    Int      @default(0)
   params    Json     @default("[]")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -112,6 +117,7 @@ model MachineParams {
 
 model MachineParamsFilters {
   id           Int      @id @default(autoincrement())
+  // relation
   machineId    Int      @map("machine_id")
   machines     Machines @relation("MachineParamsFilters", fields: [machineId], references: [id])
   filterParams Json     @default("[]") @map("filter_params")
@@ -121,18 +127,24 @@ model MachineParamsFilters {
 }
 
 model BankCard {
-  id         Int      @id @default(autoincrement())
-  cardId     String   @map("card_id")
+  id         Int     @id @default(autoincrement())
+  cardId     Int     @map("card_id")
   pan        String
   expiry     String
-  cardHolder String?  @map("card_holder")
-  userId     Int      @map("user_id")
-  balance    Int?
-  phone      String?
-  cardToken  String   @map("card_token")
-  status     Int      @default(0)
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  cardHolder String? @map("card_holder")
+  // relation
+  clientId   Int?    @map("client_id")
+  client     Client? @relation(fields: [clientId], references: [id])
+  // relation
+  driverId   Int?    @map("driver_id")
+  driver     Driver? @relation(fields: [driverId], references: [id])
+
+  balance   Int?
+  phone     String?
+  cardToken String   @map("card_token")
+  status    Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 model UserToken {
@@ -165,8 +177,8 @@ model Region {
   structures Structure[] @relation("RegionStructures")
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @updatedAt @map("updated_at")
-  Driver     Driver[]    @relation("DriverRegion")
-  Client     Client[]    @relation("ClientRegion")
+  driver     Driver[]    @relation("DriverRegion") // cambleCase
+  client     Client[]    @relation("ClientRegion") // cambleCase
 }
 
 model Structure {
@@ -176,20 +188,24 @@ model Structure {
   nameRu    String   @map("name_ru")
   nameEn    String?  @map("name_en")
   status    Int      @default(1)
+  // relation
   regionId  Int      @map("region_id")
   region    Region?  @relation("RegionStructures", fields: [regionId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  Client    Client[] @relation("ClientStructures")
-  Driver    Driver[] @relation("DriverStructure")
+  client    Client[] @relation("ClientStructures") // cambleCase
+  driver    Driver[] @relation("DriverStructure") // cambleCase
 }
 
 model Order {
   id                Int          @id @default(autoincrement())
+  //relation
   clientId          Int          @map("client_id")
   client            Client       @relation("ClientOrder", fields: [clientId], references: [id])
+  // relation
   driverId          Int?         @map("driver_id")
   driver            Driver?      @relation(fields: [driverId], references: [id])
+  // relation
   machineId         Int?         @map("machine_id")
   machine           Machines?    @relation(fields: [machineId], references: [id])
   amount            Int
@@ -217,7 +233,7 @@ model Order {
   structureId       Int          @default(0) @map("structure_id")
   createdAt         DateTime     @default(now()) @map("created_at")
   updatedAt         DateTime     @updatedAt @map("updated_at")
-  OrderPause        OrderPause[]
+  orderPause        OrderPause[] // cambleCase
 
   // ✅ Individual indekslar
   @@index([status])
@@ -241,6 +257,7 @@ model OrderPause {
 model MachinePrice {
   id                 Int                  @id @default(autoincrement())
   machineId          Int                  @map("machine_id")
+  // relation
   machines           Machines             @relation(fields: [machineId], references: [id])
   minAmount          Int?                 @map("min_amount")
   minimum            Int?                 @map("minimum")
@@ -257,9 +274,10 @@ model MachinePriceParams {
   parameterName  String       @map("parameter_name")
   unit           String       @map("unit")
   type           String       @map("type")
+  // relation
   machinePriceId Int          @map("machine_price_id")
-  status         Int          @default(0)
   machinePrice   MachinePrice @relation("MachinePriceParams", fields: [machinePriceId], references: [id], onDelete: Cascade)
+  status         Int          @default(0)
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
 }
