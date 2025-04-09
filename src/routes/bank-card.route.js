@@ -13,9 +13,9 @@ const router = Router();
 
 router.get('/', bankCardController.getAll);
 
-router.post('/card-init', bankCardController.cardInit);
+router.post('/card-init', authentication, bankCardController.cardInit);
 
-router.post('/card-confirm', bankCardController.cardConfirm);
+router.post('/card-confirm', authentication, bankCardController.cardConfirm);
 
 router.put('/update/:id', bankCardController.update);
 
