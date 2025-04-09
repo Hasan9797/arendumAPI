@@ -2,6 +2,7 @@ import bankCardRepo from '../repositories/bank-cards.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
 import CardInitRequest from '../services/pay/requests/card-init.request.js';
 import CardConfirmRequest from '../services/pay/requests/card-confirm.request.js';
+import userRoleEnum from '../enums/user/user-role.enum.js';
 
 const getAll = async (query) => {
   const bankCards = await bankCardRepo.getAll(query);
@@ -31,13 +32,16 @@ const cardInit = async (cardNumber, cardExpiry) => {
   }
 };
 
-const cardConfirm = async (userId, transactionId, smsCode) => {
+const cardConfirm = async (user, transactionId, smsCode) => {
   try {
     const request = new CardConfirmRequest(transactionId, smsCode);
     const response = await request.send();
 
+    const clientId = user.role == userRoleEnum.CLIENT ? user.id : null;
+    const driverId = user.role == userRoleEnum.DRIVER ? user.id : null;
+
     if (response.isOk()) {
-      const result = await bankCardRepo.createBankCard(userId, response.getData());
+      const result = await bankCardRepo.createBankCard(driverId, clientId, response.getData());
 
       if (!result) {
         throw new Error('Bank card not created');

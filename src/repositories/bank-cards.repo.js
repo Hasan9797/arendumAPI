@@ -46,11 +46,12 @@ const getById = async (id) => {
   }
 };
 
-const createBankCard = async (userId, body) => {
+const createBankCard = async (driverId, clientId, body) => {
   try {
     return await prisma.bankCard.create({
       data: {
-        userId,
+        driverId,
+        clientId,
         cardId: body.card_id,
         pan: body.pan,
         cardHolder: body.card_holder,
