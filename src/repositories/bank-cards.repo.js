@@ -7,7 +7,7 @@ const getAll = async (query) => {
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
 
   try {
-    const where = buildWhereFilter(filters, lang);
+    const where = buildWhereFilter(filters);
 
     const orderBy = { [sort.column]: sort.value };
 
