@@ -76,6 +76,30 @@ const getById = async (id) => {
   }
 };
 
+const getByClientId = async (clientId) => {
+  try {
+    const bankCards = await prisma.bankCard.findMany({
+      where: { clientId },
+    });
+
+    return bankCards;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getByDriverId = async (driverId) => {
+  try {
+    const bankCards = await prisma.bankCard.findMany({
+      where: { driverId },
+    });
+
+    return bankCards;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const createBankCard = async (driverId, clientId, body) => {
   try {
     return await prisma.bankCard.create({
@@ -122,6 +146,8 @@ const deleteById = async (id) => {
 export default {
   getAll,
   getById,
+  getByClientId,
+  getByDriverId,
   createBankCard,
   updateById,
   deleteById,

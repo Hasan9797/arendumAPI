@@ -13,6 +13,8 @@ const router = Router();
 
 router.get('/', bankCardController.getAll);
 
+router.get('/my-cards', authentication, bankCardController.getByUserId);
+
 router.post('/card-init', authentication, bankCardController.cardInit);
 
 router.post('/card-confirm', authentication, bankCardController.cardConfirm);

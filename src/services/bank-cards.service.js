@@ -17,6 +17,22 @@ const getById = async (id) => {
   return formatResponseDates(bankCard);
 };
 
+const getByClientIdOrDriverId = async (userId, role) => {
+  let bankCards = null;
+
+  try {
+    if (role == userRoleEnum.CLIENT) {
+      bankCards = await bankCardRepo.getByClientId(userId);
+    } else {
+      bankCards = await bankCardRepo.getByDriverId(userId);
+    }
+
+    return formatResponseDates(bankCards);
+  } catch (error) {
+    throw error;
+  }
+};
+
 const cardInit = async (cardNumber, cardExpiry) => {
   try {
     const request = new CardInitRequest(cardNumber, cardExpiry);
@@ -67,6 +83,7 @@ const distroy = async (id) => {
 export default {
   getAll,
   getById,
+  getByClientIdOrDriverId,
   cardInit,
   cardConfirm,
   update,
