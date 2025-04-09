@@ -1,6 +1,7 @@
 import bankCardRepo from '../repositories/bank-cards.repo.js';
 import { formatResponseDates } from '../helpers/format-date.helper.js';
 import CardInitRequest from '../services/pay/requests/card-init.request.js';
+import CardConfirmRequest from '../services/pay/requests/card-confirm.request.js';
 
 const getAll = async (query) => {
   const bankCards = await bankCardRepo.getAll(query);
@@ -30,8 +31,25 @@ const cardInit = async (cardNumber, cardExpiry) => {
   }
 };
 
-const cardConfirm = async (data) => {
-  return await bankCardRepo.createBankCard(data);
+const cardConfirm = async (userId, transactionId, smsCode) => {
+  try {
+    const request = new CardConfirmRequest(transactionId, smsCode);
+    const response = await request.send();
+
+    if (response.isOk()) {
+      const result = await bankCardRepo.createBankCard(userId, response.getData());
+
+      if (!result) {
+        throw new Error('Bank card not created');
+      }
+
+      return response.getResult();
+    }
+
+    return response.getError();
+  } catch (error) {
+    throw error;
+  }
 };
 
 const update = async (id, data) => {
