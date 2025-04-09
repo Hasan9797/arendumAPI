@@ -51,7 +51,7 @@ const createBankCard = async (userId, body) => {
     return await prisma.bankCard.create({
       data: {
         userId,
-        cardId: body.card_id,
+        cardId: String(body.card_id),
         pan: body.pan,
         cardHolder: body.card_holder,
         balance: body.balance,
