@@ -44,10 +44,6 @@ const getAll = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    const stackLine = error.stack?.split("\n")[1]?.match(/\((.*):(\d+):(\d+)\)/);
-    const file = stackLine ? stackLine[1] : "Unknown";
-    const line = stackLine ? stackLine[2] : "Unknown";
-
     res.status(500).json({
       success: false,
       error: {

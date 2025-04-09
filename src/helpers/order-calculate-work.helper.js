@@ -4,7 +4,7 @@ async function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
   const machinePrice = await machinePriceService.getPriceByMachineId(
     order.machineId
   );
-  console.log('machinePrice: ', machinePrice);
+  // console.log('machinePrice: ', machinePrice);
 
   if (!machinePrice) return { waitingPaid: 0, waitingTime: 0 };
 
@@ -24,8 +24,8 @@ async function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
     { waitingTime: 0, waitingPaid: 0 }
   );
 
-  console.log('waitingPaid: ', waitingPaid);
-  console.log('waitingTime: ', waitingTime);
+  // console.log('waitingPaid: ', waitingPaid);
+  // console.log('waitingTime: ', waitingTime);
 
   // Haydovchi kelgan vaqt va buyurtma boshlangan vaqt farqini hisoblash (daqiqalarda)
   const calculateTime = Math.floor(
@@ -34,11 +34,11 @@ async function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
 
   // Agar hisoblangan vaqt `waitingTime` dan kichik bo‘lsa, 0 bo‘lishi kerak
   const finalWaitingTime = calculateTime > waitingTime ? calculateTime : 0;
-  console.log('finalWaitingTime: ', finalWaitingTime);
+  // console.log('finalWaitingTime: ', finalWaitingTime);
 
   if (totalWorkInSeconds > 0) {
     const minmumSeconds = machinePrice.minimum * 3600;
-    console.log('minmumSeconds: ', minmumSeconds);
+    // console.log('minmumSeconds: ', minmumSeconds);
 
     // Ish vaqtini soat va minutlarga aylantirish, agar minimum vaqtdan kichik bo‘lsa, minimum vaqtga o‘tish
     let totalWorkHour = Math.floor(totalWorkInSeconds / 3600);
@@ -48,12 +48,13 @@ async function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
       totalWorkHour = Math.floor(minmumSeconds / 3600);
       totalWorkMinut = Math.floor((minmumSeconds % 3600) / 60);
     }
-    console.log(
-      'totalWorkHour: ',
-      totalWorkHour,
-      'totalWorkMinut: ',
-      totalWorkMinut
-    );
+
+    // console.log(
+    //   'totalWorkHour: ',
+    //   totalWorkHour,
+    //   'totalWorkMinut: ',
+    //   totalWorkMinut
+    // );
 
     return {
       waitingPaid: waitingPaid * finalWaitingTime,
@@ -87,28 +88,28 @@ const formatTime = (minutes) => {
 
 const calculateWorkTimeAmount = async (order) => {
   // 1. Total pause time hisoblash (soniyalarda)
-  const totalPauseTimeInSeconds = Array.isArray(order?.OrderPause)
-    ? order.OrderPause.reduce(
-        (total, pause) => total + (pause.totalTime || 0),
-        0
-      )
+  const totalPauseTimeInSeconds = Array.isArray(order?.orderPause)
+    ? order.orderPause.reduce(
+      (total, pause) => total + (pause.totalTime || 0),
+      0
+    )
     : 0;
 
-  console.log('totalPauseTimeInSeconds: ', totalPauseTimeInSeconds);
+  // console.log('totalPauseTimeInSeconds: ', totalPauseTimeInSeconds);
 
   // 2. String Unixtimestump ni numberga o'girish (soniyalarda)
   const startHour = order.startHour ? Number(order.startHour) : 0;
   const endHour = order.endHour ? Number(order.endHour) : 0;
 
-  console.log('startHour: ', startHour);
-  console.log('endHour: ', endHour);
+  // console.log('startHour: ', startHour);
+  // console.log('endHour: ', endHour);
 
   // 3. Total work time hisoblash (soniyalarda)
   const totalWorkInSeconds = endHour - startHour - totalPauseTimeInSeconds;
 
-  console.log('totalWorkInSeconds: ', totalWorkInSeconds);
+  // console.log('totalWorkInSeconds: ', totalWorkInSeconds);
 
-  console.log('order amount: ', order.amount);
+  // console.log('order amount: ', order.amount);
 
   if (totalWorkInSeconds <= 0) {
     return {
@@ -123,9 +124,7 @@ const calculateWorkTimeAmount = async (order) => {
   }
 
   let totalAmount = 0;
-
-  const { waitingPaid, waitingTime, totalWorkHour, totalWorkMinut } =
-    await calculateWaitingAmountAndTime(order, totalWorkInSeconds);
+  const totalTimeObj = await calculateWaitingAmountAndTime(order, totalWorkInSeconds);
 
   // 5. Pause vaqtini soat va minutlarga aylantirish
   const totalPauseHour = Math.floor(totalPauseTimeInSeconds / 3600);
@@ -135,19 +134,19 @@ const calculateWorkTimeAmount = async (order) => {
   const amountPerMinute = order.amount / 60;
   // Umumiy narx hisoblash
   totalAmount = Math.round(
-    (totalWorkHour * 60 + totalWorkMinut) * amountPerMinute + waitingPaid
+    (totalTimeObj.totalWorkHour * 60 + totalTimeObj.totalWorkMinut) * amountPerMinute + totalTimeObj.waitingPaid
   );
 
-  console.log('totalAmount: ', totalAmount);
+  // console.log('totalAmount: ', totalAmount);
 
   return {
-    totalWorkHour,
-    totalWorkMinut,
+    totalWorkHour: totalTimeObj.totalWorkHour,
+    totalWorkMinut: totalTimeObj.totalWorkMinut,
     totalPauseHour,
     totalPauseMinut,
     totalAmount,
-    paidWaitingAmount: waitingPaid,
-    paidWaitingTime: formatTime(waitingTime),
+    paidWaitingAmount: totalTimeObj.waitingPaid,
+    paidWaitingTime: formatTime(totalTimeObj.waitingTime),
   };
 };
 
