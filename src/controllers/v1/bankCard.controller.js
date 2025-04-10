@@ -102,9 +102,26 @@ const cardConfirm = async (req, res) => {
   }
 };
 
+
 const update = async (req, res) => { };
 
-const distroy = async (req, res) => { };
+const distroy = async (req, res) => {
+  try {
+    const bankCard = await bankCardsService.getById(parseInt(req.params.id));
+
+    if (!bankCard) {
+      throw new Error('Bank card not found', 404);
+    }
+
+    await bankCardsService.distroy(bankCard);
+    res.status(200).json({
+      success: true,
+      message: "Bank card deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json(responseError(error.message, 500));
+  };
+}
 
 export default {
   getAll,
