@@ -3,6 +3,7 @@ import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import CardInitRequest from './pay/requests/cardInitRequest.js';
 import CardConfirmRequest from './pay/requests/cardConfirmRequest.js';
 import userRoleEnum from '../enums/user/userRoleEnum.js';
+import CardRemoveRequest from './pay/requests/cardRemoveRequest.js';
 
 const getAll = async (query) => {
   const bankCards = await bankCardRepo.getAll(query);
@@ -72,12 +73,24 @@ const cardConfirm = async (user, transactionId, smsCode) => {
   }
 };
 
+
 const update = async (id, data) => {
   return await bankCardRepo.updateById(id, data);
 };
 
-const distroy = async (id) => {
-  return await bankCardRepo.deleteById(id);
+const distroy = async (bankCard) => {
+  try {
+    const request = new CardRemoveRequest(bankCard.cardId, bankCard.cardToken);
+    const response = await request.send();
+
+    if (response.isOk()) {
+      await bankCardRepo.deleteById(bankCard.id);
+      return response.getResult();
+    }
+    return response.getError();
+  } catch (error) {
+    throw error;
+  }
 };
 
 export default {
