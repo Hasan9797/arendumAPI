@@ -7,7 +7,7 @@ const getUsers = async (query) => {
   const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
 
   try {
-    const where = buildWhereFilter(filters, lang);
+    const where = buildWhereFilter(filters);
 
     const orderBy = { [sort.column]: sort.value };
 
@@ -16,17 +16,6 @@ const getUsers = async (query) => {
       orderBy,
       skip,
       take: limit,
-      select: {
-        id: true,
-        fullName: true,
-        phone: true,
-        role: true,
-        login: true,
-        img: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-      },
     });
 
     const total = await prisma.user.count({ where });

@@ -1,6 +1,7 @@
 import userService from '../../services/user.service.js';
 
 const getUsers = async (req, res) => {
+  const lang = req.headers['accept-language'] || 'ru';
   const query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
@@ -19,7 +20,6 @@ const getUsers = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
       error: {
