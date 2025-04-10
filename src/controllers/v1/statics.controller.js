@@ -5,6 +5,8 @@ import { amountTypeOptions } from '../../enums/pay/paymentTypeEnum.js';
 
 import regionRepository from '../../repositories/region.repo.js';
 import structureRepository from '../../repositories/structure.repo.js';
+import { userRoleOptions } from '../../enums/user/userRoleEnum.js';
+import { userStatusOptions } from '../../enums/user/userStatusEnum.js';
 
 const driverStatus = (req, res) => {
   try {
@@ -55,7 +57,12 @@ const orderAmountType = (req, res) => {
   res.status(200).json({ success: true, data: amountTypeOptions });
 };
 
-const userOptions = (req, res) => {};
+const userOptions = (req, res) => {
+  res.status(200).json({ success: true, data: {
+    role: userRoleOptions,
+    status: userStatusOptions,
+  } });
+};
 
 const machineManufacturers = (req, res) => {};
 
