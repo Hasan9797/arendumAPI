@@ -14,8 +14,15 @@ const getAll = async (query) => {
 };
 
 const getById = async (id) => {
-  const bankCard = await bankCardRepo.getById(id);
-  return formatResponseDates(bankCard);
+  try {
+    const bankCard = await bankCardRepo.getById(id);
+    if (!bankCard) {
+      throw new Error('Bank card not found', 404);
+    }
+    return formatResponseDates(bankCard);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getByClientIdOrDriverId = async (userId, role) => {
