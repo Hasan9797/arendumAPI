@@ -3,11 +3,15 @@ import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import bcrypt from 'bcryptjs';
 
 const getUsers = async (query) => {
-  const users = await userRepository.getUsers(query);
-  return {
-    data: formatResponseDates(users.data),
-    pagination: users.pagination,
-  };
+  try {
+    const users = await userRepository.getUsers(query);
+    return {
+      data: formatResponseDates(users.data),
+      pagination: users.pagination,
+    };
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getUserById = async (userId) => {
