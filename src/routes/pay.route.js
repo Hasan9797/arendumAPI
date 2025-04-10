@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import payController from '../controllers/v1/pay.controller.js';
+import { getToken, createPay, preConfirmPay, confirmPay } from '../controllers/v1/pay.controller.js';
 import {
   authentication,
   authorization,
@@ -8,10 +8,11 @@ import {
 
 const router = Router();
 
-router.get('/auth', payController.getToken);
+router.get('/auth', getToken);
 
-router.post('/card-init', payController.cardInit);
-router.post('/card-confirm', payController.cardConfirm);
+router.post('/create', createPay);
+router.post('/pre-confirm', preConfirmPay);
+router.post('/confirm', confirmPay);
 
 // router.put('/update/:id', payController.update);
 
