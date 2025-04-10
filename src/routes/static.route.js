@@ -9,6 +9,8 @@ import {
 
 const router = Router();
 
+router.get('/users/options', staticController.userOptions);
+
 router.get('/driver/status', staticController.driverStatus);
 
 router.get('/client/status', staticController.clientStatus);
@@ -22,5 +24,6 @@ router.put('/machine/status', staticController.machineStatus);
 router.get('/region/ids', staticController.getRegionIds);
 
 router.get('/structure/ids', staticController.getStructureIds);
+
 
 export default router;
