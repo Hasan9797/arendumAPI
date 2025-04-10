@@ -34,16 +34,16 @@ export const userRoleOptions = [
     label: ROLE_NAME[ACCOUNTANT],
   },
   {
-    value: MERCHANT,
-    label: ROLE_NAME[MERCHANT],
-  },
-  {
     value: CLIENT,
     label: ROLE_NAME[CLIENT],
   },
   {
     value: DRIVER,
     label: ROLE_NAME[DRIVER],
+  },
+  {
+    value: MERCHANT,
+    label: ROLE_NAME[MERCHANT],
   },
   {
     value: MODERATOR,
