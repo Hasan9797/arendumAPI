@@ -113,11 +113,8 @@ const distroy = async (req, res) => {
       throw new Error('Bank card not found', 404);
     }
 
-    await bankCardsService.distroy(bankCard);
-    res.status(200).json({
-      success: true,
-      message: "Bank card deleted successfully",
-    });
+    const result =await bankCardsService.distroy(bankCard);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
   };
