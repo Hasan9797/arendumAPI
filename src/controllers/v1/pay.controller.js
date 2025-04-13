@@ -42,10 +42,10 @@ export const preConfirmPay = async (req, res) => {
 export const confirmPay = async (req, res) => {
   try {
     const transactionId = req.body.transactionId;
-    const otp = req.body.otp;
-    const storeId = req.body.storeId;
+    // const otp = req.body.otp;
+    // const storeId = req.body.storeId;
 
-    const request = new PayConfirmRequest(transactionId, otp, storeId);
+    const request = new PayConfirmRequest(transactionId);
     const response = await request.send();
 
     res.status(200).json(response.getResponse());
