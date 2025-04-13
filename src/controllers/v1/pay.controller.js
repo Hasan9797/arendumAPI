@@ -1,13 +1,17 @@
 import CardInitRequest from '../../services/pay/requests/cardInitRequest.js';
 import CardConfirmRequest from '../../services/pay/requests/cardConfirmRequest.js';
 import AtmosTokenService from '../../services/pay/atmosToken.service.js';
+import PayCreateRequest from '../../services/pay/requests/payCreateRequest.js';
+import PayPreConfirmRequest from '../../services/pay/requests/payPreConfirmRequest.js';
+import PayConfirmRequest from '../../services/pay/requests/payConfirmRequest.js';
 
 export const createPay = async (req, res) => {
   try {
-    const cardNumber = req.body.cardNumber;
-    const cardExpiry = req.body.expiry;
 
-    const request = new CardInitRequest(cardNumber, cardExpiry);
+    const amount = req.body.amount;
+    const account = req.body.account;
+
+    const request = new PayCreateRequest(amount, account);
     const response = await request.send();
 
     res.status(200).json(response.getResponse());
@@ -22,9 +26,9 @@ export const createPay = async (req, res) => {
 export const preConfirmPay = async (req, res) => {
   try {
     const transactionId = req.body.transactionId;
-    const smsCode = req.body.smsCode;
+    const cardToken = req.body.cardToken;
 
-    const request = new CardConfirmRequest(transactionId, smsCode);
+    const request = new PayPreConfirmRequest(transactionId, cardToken);
     const response = await request.send();
 
     res.status(200).json(response.getResponse());
@@ -41,7 +45,7 @@ export const confirmPay = async (req, res) => {
     const transactionId = req.body.transactionId;
     const smsCode = req.body.smsCode;
 
-    const request = new CardConfirmRequest(transactionId, smsCode);
+    const request = new PayConfirmRequest(transactionId, smsCode);
     const response = await request.send();
 
     res.status(200).json(response.getResponse());
