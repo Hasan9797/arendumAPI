@@ -10,10 +10,6 @@ class AtmosApiService extends AtmosTokenService {
 
   #requestType = 'pay';
 
-  // constructor() {
-  //   super();
-  // }
-
   setRequestType(type) {
     this.#requestType = type;
     return this;
@@ -86,6 +82,7 @@ class AtmosApiService extends AtmosTokenService {
 
       this.#response = response.data;
       logData.response = this.#response;
+      console.log(logData);
 
       return this;
 
