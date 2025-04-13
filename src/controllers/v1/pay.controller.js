@@ -45,7 +45,7 @@ export const confirmPay = async (req, res) => {
     const otp = req.body.otp;
     const storeId = req.body.storeId;
 
-    const request = new PayConfirmRequest(transactionId);
+    const request = new PayConfirmRequest(transactionId, otp, storeId);
     const response = await request.send();
 
     res.status(200).json(response.getResponse());
