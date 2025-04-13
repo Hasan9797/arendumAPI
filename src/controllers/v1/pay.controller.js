@@ -43,7 +43,6 @@ export const preConfirmPay = async (req, res) => {
 export const confirmPay = async (req, res) => {
   try {
     const transactionId = req.body.transactionId;
-    const smsCode = req.body.smsCode;
 
     const request = new PayConfirmRequest(transactionId);
     const response = await request.send();

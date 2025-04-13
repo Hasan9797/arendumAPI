@@ -1,9 +1,6 @@
 import orderRepo from '../repositories/order.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
-import {
-  OrderStatus,
-  getStatusText,
-} from '../enums/order/orderStatusEnum.js';
+import { OrderStatus, getStatusText } from '../enums/order/orderStatusEnum.js';
 import orderCalculateWorkHelper from '../helpers/orderCalculateWorkHelper.js';
 import orderType from '../enums/order/orderTypeEnum.js';
 import { getAmountTypeText } from '../enums/pay/paymentTypeEnum.js';
@@ -34,10 +31,13 @@ const getOrders = async (query, lang = 'ru') => {
           ...rest,
           machine: machine
             ? {
-              name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
-              id: machine?.id || null,
-              img: machine?.img || null,
-            }
+                name:
+                  lang === 'ru'
+                    ? machine?.nameRu || null
+                    : machine?.nameUz || null,
+                id: machine?.id || null,
+                img: machine?.img || null,
+              }
             : null,
         };
       }
@@ -65,7 +65,9 @@ const getOrderById = async (id, lang = 'ru') => {
 
     if (order?.machineId && order.machineId > 0) {
       machine = await machineService.getMachineById(order.machineId, lang);
-      machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+      machinePrice = await machinePriceService.getPriceByMachineId(
+        order.machineId
+      );
     }
 
     const structure = await structureService.getById(order.structureId, lang);
@@ -149,10 +151,7 @@ const endOrder = async (orderId) => {
   try {
     if (!orderId) throw new Error('Order ID is required');
 
-    const proseccStatus = [
-      OrderStatus.START_WORK,
-      OrderStatus.PAUSE_WORK,
-    ];
+    const proseccStatus = [OrderStatus.START_WORK, OrderStatus.PAUSE_WORK];
 
     const order = await orderRepo.getById(orderId);
     if (!order || !proseccStatus.includes(order.status)) {
@@ -172,7 +171,8 @@ const endOrder = async (orderId) => {
         });
         break;
       case orderType.km:
-        updateData = await orderCalculateWorkHelper.calculateWorkKmAmount(order);
+        updateData =
+          await orderCalculateWorkHelper.calculateWorkKmAmount(order);
         break;
       default:
         updateData;
@@ -237,7 +237,7 @@ const getOrderByDriverId = async (lang, driverId) => {
     const order = await orderRepo.getOrderByDriverId(lang, driverId);
 
     if (!order) {
-      return null;
+      return {};
     }
 
     const machine = await machineService.getMachineById(order.machineId, lang);
@@ -275,7 +275,7 @@ const getOrderByClientId = async (lang, clientId) => {
     const order = await orderRepo.getOrderByClientId(clientId);
 
     if (!order) {
-      throw new Error('Order not found');
+      return {};
     }
 
     const machine = await machineService.getMachineById(order.machineId, lang);
