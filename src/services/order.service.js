@@ -379,6 +379,29 @@ const driverArrived = async (orderId) => {
   }
 };
 
+const cancelOrder = async (orderId) => {
+  try {
+    const result = await orderRepo.updateById(orderId, {
+      status: OrderStatus.CANCELLED,
+    });
+
+    if (!result) {
+      throw new Error('Order update error');
+    }
+
+    const driverSocket = SocketService.getSocket('driver');
+
+    driverSocket.to(`order_room_${orderId}`).emit('cancelOrder', {
+      success: true,
+      message: 'Order cancelled',
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getOrders,
   getOrderById,
@@ -392,4 +415,5 @@ export default {
   getOrderByDriverId,
   getOrderByClientId,
   getNewOrderByDriverParams,
+  cancelOrder,
 };

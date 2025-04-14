@@ -51,34 +51,36 @@ model Driver {
   structureId             Int?       @map("structure_id")
   structure               Structure? @relation("DriverStructure", fields: [structureId], references: [id])
 
-  fcmToken  String?    @map("fcm_token")
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
-  order     Order[] // cambleCase 
-  cards     BankCard[] //cambleCase
+  fcmToken     String?       @map("fcm_token")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  order        Order[] // cambleCase 
+  cards        BankCard[] //cambleCase
+  transactions Transaction[]
 }
 
 model Client {
-  id          Int        @id @default(autoincrement())
-  fullName    String?    @map("full_name")
-  phone       String     @unique
-  legal       Boolean    @default(false)
-  email       String?    @unique
-  img         String?
-  status      Int        @default(0)
-  long        Decimal?   @default(0)
-  lat         Decimal?   @default(0)
-  fcmToken    String?    @map("fcm_token")
+  id           Int           @id @default(autoincrement())
+  fullName     String?       @map("full_name")
+  phone        String        @unique
+  legal        Boolean       @default(false)
+  email        String?       @unique
+  img          String?
+  status       Int           @default(0)
+  long         Decimal?      @default(0)
+  lat          Decimal?      @default(0)
+  fcmToken     String?       @map("fcm_token")
   // relation
-  regionId    Int?       @map("region_id")
-  region      Region?    @relation("ClientRegion", fields: [regionId], references: [id])
+  regionId     Int?          @map("region_id")
+  region       Region?       @relation("ClientRegion", fields: [regionId], references: [id])
   // relation
-  structureId Int?       @map("structure_id")
-  structure   Structure? @relation("ClientStructures", fields: [structureId], references: [id])
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
-  order       Order[]    @relation("ClientOrder") // cambleCase
-  cards       BankCard[]
+  structureId  Int?          @map("structure_id")
+  structure    Structure?    @relation("ClientStructures", fields: [structureId], references: [id])
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  order        Order[]       @relation("ClientOrder") // cambleCase
+  cards        BankCard[]
+  transactions Transaction[]
 }
 
 model Machines {
@@ -283,15 +285,39 @@ model MachinePriceParams {
 }
 
 model UsersBalance {
-  id      Int    @id @default(autoincrement())
-  userId  Int    @map("user_id")
-  balance String
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  balance   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 }
 
-// model Transaction {
-//   id       Int @id @default(autoincrement())
-//   orderId  Int @map("order_id")
-//   clientId Int @map("client_id")
-//   driverId Int @map("driver_id")
-//   amount   Int
-// }
+model Deposit {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  amount    Int
+  request   Json     @default("{\"create\":{},\"preConfirm\":{},\"confirm\":{}}")
+  response  Json     @default("{\"create\":{},\"preConfirm\":{},\"confirm\":{}}")
+  status    Int      @default(1)
+  type      Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Transaction {
+  id       Int     @id @default(autoincrement())
+  orderId  Int     @map("order_id")
+  clientId Int?    @map("client_id")
+  //relation
+  client   Client? @relation(fields: [clientId], references: [id])
+
+  driverId  Int?     @map("driver_id")
+  //relation
+  driver    Driver?  @relation(fields: [driverId], references: [id])
+  amount    Int
+  request   Json     @default("{\"create\":{},\"preConfirm\":{},\"confirm\":{}}")
+  response  Json     @default("{\"create\":{},\"preConfirm\":{},\"confirm\":{}}")
+  status    Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}

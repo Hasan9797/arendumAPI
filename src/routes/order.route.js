@@ -3,10 +3,7 @@ import { Router } from 'express';
 import orderController from '../controllers/v1/order.controller.js';
 import orderPauseController from '../controllers/v1/orderPause.controller.js';
 
-import {
-  authentication,
-  authorization,
-} from '../middlewares/auth.js';
+import { authentication, authorization } from '../middlewares/auth.js';
 
 import userRole from '../enums/user/userRoleEnum.js';
 
@@ -29,7 +26,13 @@ router.get('/start-pause', authentication, orderPauseController.startPauseTime);
 
 router.get('/end-pause', authentication, orderPauseController.endPauseTime); // query params: order ID
 
-router.get('/get-new-order', authentication, orderController.getNewOrderByDriverParams); // Authentication required
+router.get('/cancel-order', authentication, orderController.orderCancel); // query params: order ID
+
+router.get(
+  '/get-new-order',
+  authentication,
+  orderController.getNewOrderByDriverParams
+); // Authentication required
 
 router.post('/create', authentication, orderController.create);
 

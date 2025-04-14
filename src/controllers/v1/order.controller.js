@@ -37,7 +37,7 @@ const getAll = async (req, res) => {
   }
 
   try {
-    const result = await orderService.getOrders(query);
+    const result = await getOrders(query);
     res.status(200).json({
       success: true,
       data: result.data,
@@ -49,7 +49,7 @@ const getAll = async (req, res) => {
       error: {
         message: error.message,
         code: 500,
-        stack: error.stack
+        stack: error.stack,
       },
     });
   }
@@ -203,6 +203,22 @@ const getNewOrderByDriverParams = async (req, res) => {
   }
 };
 
+const orderCancel = async (req, res) => {
+  const orderId = Number(req.query.id);
+  try {
+    const result = await orderService.cancelOrder(orderId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+};
+
 export default {
   getAll,
   getById,
@@ -212,4 +228,5 @@ export default {
   orderStartWork,
   orderEndWork,
   getNewOrderByDriverParams,
+  orderCancel,
 };
