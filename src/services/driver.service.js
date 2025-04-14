@@ -22,7 +22,7 @@ const getById = async (id) => {
 const getProfile = async (lang, id) => {
   const driver = await driverRepository.getDriverProfile(id);
 
-  if (!driver) throw new Error('Driver not found');
+  if (!driver) return {};
 
   const formattedDriver = formatResponseDates(driver);
 
@@ -41,6 +41,7 @@ const getProfile = async (lang, id) => {
       region: adjustName(rest.region),
       structure: adjustName(rest.structure),
       machine: adjustName(rest.machine),
+      balance: rest.balance?.balance ?? '0',
     };
   };
 

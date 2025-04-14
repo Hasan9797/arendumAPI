@@ -6,7 +6,7 @@ import http from 'http';
 import cors from 'cors';
 import SocketService from './socket/index.js';
 import { Server } from 'socket.io';
-import errorHandler from './middlewares/errorHandler.js'
+import errorHandler from './middlewares/errorHandler.js';
 import { ApiError } from './Errors/appErrors.js';
 
 dotenv.config();
@@ -66,6 +66,7 @@ app.use('/api/order', orderRoute);
 
 // PAYMENT API
 app.use('/api/cards', bankCardRoute);
+// app.use('/api/deposit', depositRoute);
 app.use('/api/pay', payRoute);
 
 // 404 middleware

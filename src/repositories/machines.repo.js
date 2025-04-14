@@ -28,11 +28,11 @@ const getMachines = async (lang, query) => {
 
     const total = await prisma.machines.count({ where });
 
-    const formattedMachines = machines.map((machine) => ({
-      ...machine,
-      machinePrice:
-        machine.machinePrice.length > 0 ? machine.machinePrice[0] : null, // Birinchi elementni olish
-    }));
+    // const formattedMachines = machines.map((machine) => ({
+    //   ...machine,
+    //   machinePrice:
+    //     machine.machinePrice.length > 0 ? machine.machinePrice[0] : null, // Birinchi elementni olish
+    // }));
 
     const data = formattedMachines.map((machine) => {
       const { nameRu, nameUz, nameEn, ...rest } = machine;
@@ -64,7 +64,6 @@ const createMachine = async (newUser) => {
   }
 };
 
-
 const getMachineById = async (lang, id) => {
   try {
     const cacheKey = `machine:${id}:${lang}`;
@@ -75,7 +74,7 @@ const getMachineById = async (lang, id) => {
     }
 
     const machine = await prisma.machines.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!machine) {
@@ -130,7 +129,6 @@ const deleteMachineById = async (id) => {
   }
 };
 
-
 const getMachinesIdAnName = async () => {
   return await prisma.machines.findMany({
     select: {
@@ -140,7 +138,6 @@ const getMachinesIdAnName = async () => {
   });
 };
 
-
 async function deleteMachineCache(id) {
   const pattern = `machine:${id}:*`; // Barcha `machine:${id}:lang` kalitlarni topadi
   const keys = await redisClient.keys(pattern); // Barcha mos kalitlarni qaytaradi
@@ -149,8 +146,6 @@ async function deleteMachineCache(id) {
     await redisClient.del(keys); // Topilgan kalitlarni o‘chiradi
   }
 }
-
-
 
 export default {
   getMachines,

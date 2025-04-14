@@ -10,7 +10,7 @@ const findAll = async (lang, query) => {
   try {
     const where = buildWhereFilter(filters, lang);
 
-    const orderBy = { [sort.column]: sort.value }
+    const orderBy = { [sort.column]: sort.value };
 
     const clients = await prisma.client.findMany({
       where,
@@ -36,19 +36,11 @@ const findAll = async (lang, query) => {
             status: true,
           },
         },
-        // cards: {
-        //   select: {
-        //     id: true,
-        //     cardId: true,
-        //     pan: true,
-        //     expiry: true,
-        //     cardHolder: true,
-        //     balance: true,
-        //     phone: true,
-        //     cardToken: true,
-        //     status: true,
-        //   },
-        // },
+        balance: {
+          select: {
+            balance: true,
+          },
+        },
       },
     });
 
@@ -58,8 +50,8 @@ const findAll = async (lang, query) => {
       ({ regionId, structureId, machineId, ...rest }) => rest
     );
 
-    const data = sanitizedDrivers.map((driver) => {
-      const { region, structure, machine, ...rest } = driver;
+    const data = sanitizedDrivers.map((client) => {
+      const { region, structure, machine, ...rest } = client;
 
       // Adjust name field based on the language
       const adjustName = (obj) => {
@@ -75,6 +67,7 @@ const findAll = async (lang, query) => {
         status: { key: rest.status, value: getClientStatusText(rest.status) },
         region: region ? adjustName(region) : null,
         structure: structure ? adjustName(structure) : null,
+        balance: rest.balance?.balance ?? '0',
       };
     });
 
@@ -88,8 +81,7 @@ const findAll = async (lang, query) => {
       },
     };
   } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users');
+    throw error;
   }
 };
 
@@ -114,6 +106,11 @@ const getById = async (lang, id) => {
             nameRu: true,
           },
         },
+        balance: {
+          select: {
+            balance: true,
+          },
+        },
       },
     });
 
@@ -132,6 +129,7 @@ const getById = async (lang, id) => {
         region: rest.region ? adjustName(rest.region) : null,
         structure: rest.structure ? adjustName(rest.structure) : null,
         status: { key: rest.status, value: getClientStatusText(rest.status) },
+        balance: rest.balance?.balance ?? '0',
         createdAt,
         updatedAt,
       };

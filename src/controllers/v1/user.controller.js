@@ -1,7 +1,7 @@
 import userService from '../../services/user.service.js';
 
 const getUsers = async (req, res) => {
-  const lang = req.headers['accept-language'] || 'ru';
+  // const lang = req.headers['accept-language'] || 'ru';
   const query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
@@ -90,7 +90,7 @@ const updateUser = async (req, res) => {
 };
 
 const getMe = async (req, res) => {
-  try {    
+  try {
     const user = await userService.getUserById(parseInt(req.user.id));
     res.status(200).json({
       success: true,
@@ -106,7 +106,7 @@ const getMe = async (req, res) => {
       },
     });
   }
-}
+};
 
 const deleteUser = async (req, res) => {
   try {
@@ -133,5 +133,5 @@ export default {
   createUser,
   updateUser,
   deleteUser,
-  getMe
+  getMe,
 };

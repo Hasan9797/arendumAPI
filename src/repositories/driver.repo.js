@@ -47,6 +47,11 @@ const findAll = async (lang, query) => {
             img: true,
           },
         },
+        balance: {
+          select: {
+            balance: true,
+          },
+        },
       },
     });
 
@@ -76,6 +81,7 @@ const findAll = async (lang, query) => {
         region: adjustName(region),
         structure: adjustName(structure),
         machine: adjustName(machine),
+        balance: rest.balance?.balance ?? '0',
       };
     });
 
@@ -90,7 +96,6 @@ const findAll = async (lang, query) => {
       },
     };
   } catch (error) {
-    console.error('Error in findAll:', error);
     throw error;
   }
 };
@@ -101,7 +106,6 @@ const create = async (newDriver) => {
       data: newDriver,
     });
   } catch (error) {
-    console.error('Error creating user:', error);
     throw error;
   }
 };
@@ -110,8 +114,18 @@ const getById = async (id) => {
   try {
     const driver = await prisma.driver.findUnique({
       where: { id },
+      include: {
+        balance: {
+          select: {
+            balance: true,
+          },
+        },
+      },
     });
-    return driver;
+    return {
+      balance: driver.balance?.balance ?? '0',
+      ...driver,
+    };
   } catch (error) {
     throw error;
   }
@@ -190,6 +204,11 @@ const getDriverProfile = async (id) => {
             name: true,
             nameUz: true,
             nameRu: true,
+          },
+        },
+        balance: {
+          select: {
+            balance: true,
           },
         },
       },
