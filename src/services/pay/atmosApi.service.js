@@ -44,21 +44,23 @@ class AtmosApiService extends AtmosTokenService {
   getError() {
     return {
       code: this.getResponse()?.result?.code,
-      message: this.getResponse()?.result?.description
+      message: this.getResponse()?.result?.description,
     };
   }
 
   async send() {
+    const { baseUrl, token } = await this.getBaseUrlAndTokenByRequestType(
+      this.#requestType
+    );
     let logData = {
       requestType: this.#requestType,
+      baseUrl: baseUrl,
       route: this.#route,
       params: this.#params,
       status: 'success',
     };
 
     try {
-      const { baseUrl, token } = await this.getBaseUrlAndTokenByRequestType(this.#requestType);
-
       const response = await axios({
         method: 'post',
         url: `${baseUrl}/${this.#route}`,
@@ -85,15 +87,12 @@ class AtmosApiService extends AtmosTokenService {
       console.log(logData);
 
       return this;
-
     } catch (error) {
       // Har doim log yoziladi
       console.log(logData);
       throw error;
     }
   }
-
-
 }
 
 export default AtmosApiService;
