@@ -38,13 +38,6 @@ CREATE TABLE "UserBalance" (
 CREATE UNIQUE INDEX "UserBalance_client_id_key" ON "UserBalance"("client_id");
 CREATE UNIQUE INDEX "UserBalance_driver_id_key" ON "UserBalance"("driver_id");
 
--- CreateIndex for Structure table
-CREATE UNIQUE INDEX "Structure_region_id_key" ON "Structure"("region_id");
-
--- CreateIndex for Transaction table
-CREATE UNIQUE INDEX "Transaction_region_id_key" ON "Transaction"("region_id");
-CREATE UNIQUE INDEX "Transaction_structure_id_key" ON "Transaction"("structure_id");
-
 -- Create Indexes for Transaction table
 CREATE INDEX "Transaction_id_idx" ON "Transaction"("id");
 CREATE INDEX "Transaction_status_idx" ON "Transaction"("status");
