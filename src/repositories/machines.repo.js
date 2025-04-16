@@ -34,7 +34,7 @@ const getMachines = async (lang, query) => {
     //     machine.machinePrice.length > 0 ? machine.machinePrice[0] : null, // Birinchi elementni olish
     // }));
 
-    const data = formattedMachines.map((machine) => {
+    const data = machines.map((machine) => {
       const { nameRu, nameUz, nameEn, ...rest } = machine;
       rest.name = lang == 'uz' ? nameUz : nameRu;
       return rest;
