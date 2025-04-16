@@ -56,7 +56,8 @@ model Driver {
   updatedAt DateTime     @updatedAt @map("updated_at")
   order     Order[] // cambleCase 
   cards     BankCard[] //cambleCase
-  balance   UserBalance? // Bir dona balance, array emas
+  // balance relation (1:1)
+  balance   UserBalance? @relation("DriverBalance")
 }
 
 model Client {
@@ -80,7 +81,8 @@ model Client {
   updatedAt   DateTime     @updatedAt @map("updated_at")
   order       Order[]      @relation("ClientOrder") // cambleCase
   cards       BankCard[]
-  balance     UserBalance? // Bir dona balance, array emas
+  // balance relation (1:1)
+  balance     UserBalance? @relation("ClientBalance")
 }
 
 model Machines {
@@ -292,9 +294,10 @@ model UserBalance {
   id        Int      @id @default(autoincrement())
   clientId  Int?     @unique @map("client_id") // unique qilish shart
   driverId  Int?     @unique @map("driver_id") // unique qilish shart
-  //relations
-  client    Client?  @relation(fields: [clientId], references: [id])
-  driver    Driver?  @relation(fields: [driverId], references: [id])
+  // Client bilan 1:1 relation
+  client    Client?  @relation("ClientBalance", fields: [clientId], references: [id])
+  // Driver bilan 1:1 relation (shu yerda ham o‘xshash usul bilan)
+  driver    Driver?  @relation("DriverBalance", fields: [driverId], references: [id])
   balance   String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
