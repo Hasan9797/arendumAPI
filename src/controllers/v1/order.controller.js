@@ -37,7 +37,7 @@ const getAll = async (req, res) => {
   }
 
   try {
-    const result = await getOrders(query);
+    const result = await orderService.getOrders(query);
     res.status(200).json({
       success: true,
       data: result.data,
