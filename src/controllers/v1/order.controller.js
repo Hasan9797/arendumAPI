@@ -207,7 +207,7 @@ const orderCancel = async (req, res) => {
   const orderId = Number(req.query.id);
   try {
     const result = await orderService.cancelOrder(orderId);
-    res.status(200).json(result);
+    res.status(200).json(responseSuccess());
   } catch (error) {
     res.status(500).json({
       success: false,
