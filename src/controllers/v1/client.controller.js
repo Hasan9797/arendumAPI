@@ -27,7 +27,7 @@ const getAll = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json(responseError(error.message, 500));
+    res.status(500).json(error);
   }
 };
 
@@ -41,7 +41,7 @@ const getById = async (req, res) => {
     res.status(200).json(responseSuccess(client));
   } catch (error) {
     console.error('Error fetching client:', error);
-    res.status(500).json(responseError(error.message, 500));
+    res.status(500).json(error);
   }
 };
 
@@ -55,7 +55,7 @@ const getMe = async (req, res) => {
     res.status(200).json(responseSuccess(client));
   } catch (error) {
     console.error('Error fetching client:', error);
-    res.status(500).json(responseError(error.message, 500));
+    res.status(500).json(error);
   }
 };
 
@@ -65,7 +65,7 @@ const create = async (req, res) => {
     res.status(201).json(responseSuccess());
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json(responseError(error.message, 500));
+    res.status(500).json(error);
   }
 };
 
@@ -78,7 +78,7 @@ const update = async (req, res) => {
     res.status(200).json(responseSuccess());
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json(responseError(error.message, 500));
+    res.status(500).json(error);
   }
 };
 
@@ -87,7 +87,7 @@ const distroy = async (req, res) => {
     await clientService.deleteClient(parseInt(req.params.id));
     res.status(200).json(responseSuccess());
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    res.status(500).json(error);
   }
 };
 
@@ -97,7 +97,7 @@ const getProcessOrder = async (req, res) => {
     const order = await orderService.getOrderByClientId(lang, req.user.id);
     res.status(200).json(responseSuccess(order));
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    res.status(500).json(error);
   }
 };
 
