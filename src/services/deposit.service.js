@@ -18,7 +18,7 @@ const depositReplenishment = async (requestDTO) => {
       }
 
       await userBalanceService.updateById(driverBalance.id, { balance: String(parseInt(driverBalance.balance) + requestDTO.amount) });
-    } else {
+    } else if (requestDTO.role == userRoleEnum.CLIENT) {
       const clientBalance = await userBalanceService.getByUserId(requestDTO.clientId, userRoleEnum.CLIENT);
 
       if (!clientBalance) {
