@@ -324,7 +324,7 @@ model Transaction {
   clientId             Int?       @map("client_id")
   structureId          Int?       @map("structure_id")
   //relations
-  clietn               Client?    @relation(fields: [clientId], references: [id])
+  client               Client?    @relation(fields: [clientId], references: [id])
   driver               Driver?    @relation(fields: [driverId], references: [id])
   structure            Structure? @relation(fields: [structureId], references: [id])
   amount               Int
