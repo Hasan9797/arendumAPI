@@ -93,7 +93,8 @@ const depositReplinshment = async (req, res) => {
       cardId,
       clientId,
       driverId,
-      transactionTypeEnum.DEPOSIT_REPLINSHMENT
+      transactionTypeEnum.DEPOSIT_REPLINSHMENT,
+      req.user.role
     );
 
     const result = await depositService.depositReplinshment(requestDTO);

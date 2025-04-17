@@ -78,4 +78,11 @@ const payConfirm = async (transaction) => {
   }
 };
 
+// -------------------------- DEPOSIT MERCHANT BLANCE WITHDRAW --------------------------
+
+const cardInfo = async (cardNumber) => { };
+const createDeposit = async (amount) => { };
+const depositConfirm = async (amount) => { };
+
+
 export default { payCreate, payPreConfirm, payConfirm };
