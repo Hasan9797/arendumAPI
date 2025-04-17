@@ -213,6 +213,7 @@ CREATE TABLE "Order" (
     "long" TEXT,
     "lat" TEXT,
     "address" TEXT,
+    "service_amount" INTEGER,
     "time_is_continue" BOOLEAN NOT NULL DEFAULT false,
     "structure_id" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -265,12 +266,47 @@ CREATE TABLE "MachinePriceParams" (
 );
 
 -- CreateTable
-CREATE TABLE "UsersBalance" (
+CREATE TABLE "UserBalance" (
     "id" SERIAL NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "client_id" INTEGER,
+    "driver_id" INTEGER,
     "balance" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "UsersBalance_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "UserBalance_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Transaction" (
+    "id" SERIAL NOT NULL,
+    "order_id" INTEGER,
+    "driver_id" INTEGER,
+    "client_id" INTEGER,
+    "structure_id" INTEGER,
+    "amount" INTEGER NOT NULL,
+    "state" INTEGER,
+    "currency" TEXT DEFAULT 'UZS',
+    "name" TEXT,
+    "pan" TEXT,
+    "confirmed" BOOLEAN,
+    "prepay_time" TEXT,
+    "confirm_time" TEXT,
+    "partner_id" INTEGER,
+    "invoice" INTEGER,
+    "card_token" TEXT,
+    "card_id" INTEGER,
+    "commission" TEXT,
+    "deposit_amount" TEXT,
+    "request" JSONB,
+    "response" JSONB,
+    "description" TEXT,
+    "type" INTEGER NOT NULL,
+    "status" INTEGER NOT NULL DEFAULT 1,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -295,6 +331,9 @@ CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");
 CREATE UNIQUE INDEX "Merchant_phone_key" ON "Merchant"("phone");
 
 -- CreateIndex
+CREATE INDEX "Order_id_idx" ON "Order"("id");
+
+-- CreateIndex
 CREATE INDEX "Order_status_idx" ON "Order"("status");
 
 -- CreateIndex
@@ -305,6 +344,30 @@ CREATE INDEX "Order_client_id_idx" ON "Order"("client_id");
 
 -- CreateIndex
 CREATE INDEX "Order_driver_id_idx" ON "Order"("driver_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MachinePrice_machine_id_key" ON "MachinePrice"("machine_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserBalance_client_id_key" ON "UserBalance"("client_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserBalance_driver_id_key" ON "UserBalance"("driver_id");
+
+-- CreateIndex
+CREATE INDEX "Transaction_id_idx" ON "Transaction"("id");
+
+-- CreateIndex
+CREATE INDEX "Transaction_status_idx" ON "Transaction"("status");
+
+-- CreateIndex
+CREATE INDEX "Transaction_structure_id_idx" ON "Transaction"("structure_id");
+
+-- CreateIndex
+CREATE INDEX "Transaction_type_idx" ON "Transaction"("type");
+
+-- CreateIndex
+CREATE INDEX "Transaction_created_at_idx" ON "Transaction"("created_at");
 
 -- AddForeignKey
 ALTER TABLE "Driver" ADD CONSTRAINT "Driver_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -353,3 +416,18 @@ ALTER TABLE "MachinePrice" ADD CONSTRAINT "MachinePrice_machine_id_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "MachinePriceParams" ADD CONSTRAINT "MachinePriceParams_machine_price_id_fkey" FOREIGN KEY ("machine_price_id") REFERENCES "MachinePrice"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserBalance" ADD CONSTRAINT "UserBalance_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "Client"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserBalance" ADD CONSTRAINT "UserBalance_driver_id_fkey" FOREIGN KEY ("driver_id") REFERENCES "Driver"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "Client"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_driver_id_fkey" FOREIGN KEY ("driver_id") REFERENCES "Driver"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_structure_id_fkey" FOREIGN KEY ("structure_id") REFERENCES "Structure"("id") ON DELETE SET NULL ON UPDATE CASCADE;
