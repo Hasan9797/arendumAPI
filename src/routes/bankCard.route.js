@@ -19,6 +19,8 @@ router.post('/card-init', authentication, bankCardController.cardInit);
 
 router.post('/card-confirm', authentication, bankCardController.cardConfirm);
 
+router.post('/card-cancel', authentication, bankCardController.cancelCard);
+
 router.put('/update/:id', bankCardController.update);
 
 router.delete('/delete/:id', bankCardController.distroy);

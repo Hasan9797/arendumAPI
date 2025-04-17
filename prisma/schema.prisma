@@ -51,38 +51,40 @@ model Driver {
   structureId             Int?       @map("structure_id")
   structure               Structure? @relation("DriverStructure", fields: [structureId], references: [id])
 
-  fcmToken  String?      @map("fcm_token")
-  createdAt DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime     @updatedAt @map("updated_at")
-  order     Order[] // cambleCase 
-  cards     BankCard[] //cambleCase
+  fcmToken    String?       @map("fcm_token")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  order       Order[] // cambleCase 
+  cards       BankCard[] //cambleCase
   // balance relation (1:1)
-  balance   UserBalance? @relation("DriverBalance")
+  balance     UserBalance?  @relation("DriverBalance")
+  Transaction Transaction[]
 }
 
 model Client {
-  id          Int          @id @default(autoincrement())
-  fullName    String?      @map("full_name")
-  phone       String       @unique
-  legal       Boolean      @default(false)
-  email       String?      @unique
+  id          Int           @id @default(autoincrement())
+  fullName    String?       @map("full_name")
+  phone       String        @unique
+  legal       Boolean       @default(false)
+  email       String?       @unique
   img         String?
-  status      Int          @default(0)
-  long        Decimal?     @default(0)
-  lat         Decimal?     @default(0)
-  fcmToken    String?      @map("fcm_token")
+  status      Int           @default(0)
+  long        Decimal?      @default(0)
+  lat         Decimal?      @default(0)
+  fcmToken    String?       @map("fcm_token")
   // relation
-  regionId    Int?         @map("region_id")
-  region      Region?      @relation("ClientRegion", fields: [regionId], references: [id])
+  regionId    Int?          @map("region_id")
+  region      Region?       @relation("ClientRegion", fields: [regionId], references: [id])
   // relation
-  structureId Int?         @map("structure_id")
-  structure   Structure?   @relation("ClientStructures", fields: [structureId], references: [id])
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
-  order       Order[]      @relation("ClientOrder") // cambleCase
+  structureId Int?          @map("structure_id")
+  structure   Structure?    @relation("ClientStructures", fields: [structureId], references: [id])
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  order       Order[]       @relation("ClientOrder") // cambleCase
   cards       BankCard[]
   // balance relation (1:1)
-  balance     UserBalance? @relation("ClientBalance")
+  balance     UserBalance?  @relation("ClientBalance")
+  Transaction Transaction[]
 }
 
 model Machines {
@@ -172,18 +174,17 @@ model Merchant {
 }
 
 model Region {
-  id          Int           @id @default(autoincrement())
-  name        String?       @map("name")
-  nameUz      String        @map("name_uz")
-  nameRu      String        @map("name_ru")
-  nameEn      String?       @map("name_en")
-  status      Int           @default(1)
-  structures  Structure[]   @relation("RegionStructures")
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  driver      Driver[]      @relation("DriverRegion") // cambleCase
-  client      Client[]      @relation("ClientRegion") // cambleCase
-  transaction Transaction[]
+  id         Int         @id @default(autoincrement())
+  name       String?     @map("name")
+  nameUz     String      @map("name_uz")
+  nameRu     String      @map("name_ru")
+  nameEn     String?     @map("name_en")
+  status     Int         @default(1)
+  structures Structure[] @relation("RegionStructures")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+  driver     Driver[]    @relation("DriverRegion") // cambleCase
+  client     Client[]    @relation("ClientRegion") // cambleCase
 }
 
 model Structure {
@@ -319,21 +320,30 @@ model UserBalance {
 model Transaction {
   id                   Int        @id @default(autoincrement())
   orderId              Int?       @map("order_id")
-  userId               Int        @map("user_id")
-  userName             String     @map("user_name")
-  userPhone            String     @map("user_phone")
-  userRole             Int        @map("user_role")
-  regionId             Int?       @map("region_id")
+  driverId             Int?       @map("driver_id")
+  clientId             Int?       @map("client_id")
   structureId          Int?       @map("structure_id")
   //relations
-  region               Region?    @relation(fields: [regionId], references: [id])
+  clietn               Client?    @relation(fields: [clientId], references: [id])
+  driver               Driver?    @relation(fields: [driverId], references: [id])
   structure            Structure? @relation(fields: [structureId], references: [id])
   amount               Int
-  serviceAmount        Int?       @map("service_amount")
-  driverAmount         Int?       @map("driver_amount")
+  state                Int?
+  currency             String?    @default("UZS")
+  name                 String?
+  pan                  String?
+  confirmed            Boolean?
+  prepayTime           String?    @map("prepay_time")
+  confirmTime          String?    @map("confirm_time")
   partnerTransactionId Int?       @map("partner_transaction_id")
-  request              Json       @default("{\"create\":{},\"preConfirm\":{},\"confirm\":{}}")
-  response             Json       @default("{\"create\":{},\"preConfirm\":{},\"confirm\":{}}")
+  invoice              Int?
+  cardToken            String?    @map("card_token")
+  cardId               Int?       @map("card_id")
+  commission           String?
+  depositAmount        String?    @map("deposit_amount")
+  request              Json?
+  response             Json?
+  description          String?
   type                 Int
   status               Int        @default(1)
   createdAt            DateTime   @default(now()) @map("created_at")
@@ -343,10 +353,6 @@ model Transaction {
   @@index([id])
   @@index([status])
   @@index([structureId])
-  @@index([userId])
-  // @@index([orderId])
   @@index([type])
-  @@index([userName])
-  @@index([userRole])
   @@index([createdAt])
 }

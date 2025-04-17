@@ -25,29 +25,6 @@ class AtmosApiService extends AtmosTokenService {
     return this;
   }
 
-  getResponse() {
-    return this.#response;
-  }
-
-  isOk() {
-    return this.getResponse()?.result?.code == 'OK' ? true : false;
-  }
-
-  getResult() {
-    return this.getResponse()?.result;
-  }
-
-  getData() {
-    return this.getResponse()?.data;
-  }
-
-  getError() {
-    return {
-      code: this.getResponse()?.result?.code,
-      message: this.getResponse()?.result?.description,
-    };
-  }
-
   async send() {
     const { baseUrl, token } = await this.getBaseUrlAndTokenByRequestType(
       this.#requestType
@@ -92,6 +69,37 @@ class AtmosApiService extends AtmosTokenService {
       console.log(logData);
       throw error;
     }
+  }
+
+  getResponse() {
+    return this.#response;
+  }
+
+  isOk() {
+    return this.getResponse()?.result?.code == 'OK' ? true : false;
+  }
+
+  getTransactionId() {
+    return this.getResponse()?.result?.transaction_id;
+  }
+
+  getResult() {
+    return this.getResponse()?.result;
+  }
+
+  getData() {
+    return this.getResponse()?.data;
+  }
+
+  getError() {
+    return {
+      code: this.getResponse()?.result?.code,
+      message: this.getResponse()?.result?.description,
+    };
+  }
+
+  getRequest() {
+    return this.#params;
   }
 }
 

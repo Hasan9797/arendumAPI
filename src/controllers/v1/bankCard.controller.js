@@ -102,8 +102,32 @@ const cardConfirm = async (req, res) => {
   }
 };
 
+const cancelCard = async (req, res) => {
+  try {
+    const cardId = req.body.cardId;
+    const cardToken = req.body.token;
 
-const update = async (req, res) => { };
+    const result = await bankCardsService.removeCard(cardId, cardToken);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+      },
+    });
+  }
+};
+
+const update = async (req, res) => {
+  try {
+    const user = await bankCardsService.update(parseInt(req.params.id), req.body);
+    res.status(200).json(responseSuccess());
+  } catch (error) {
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
 
 const distroy = async (req, res) => {
   try {
@@ -113,7 +137,7 @@ const distroy = async (req, res) => {
       throw new Error('Bank card not found', 404);
     }
 
-    const result =await bankCardsService.distroy(bankCard);
+    const result = await bankCardsService.distroy(bankCard);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
@@ -126,6 +150,7 @@ export default {
   getByUserId,
   cardInit,
   cardConfirm,
+  cancelCard,
   update,
   distroy,
 };
