@@ -73,6 +73,7 @@ const payConfirm = async (transaction) => {
       transaction.id, {
       request: JSON.stringify({ pay_confirm: response.getRequest(), ...transactionRequest }),
       response: JSON.stringify({ pay_confirm: response.getResponse(), ...transactionResponse }),
+      status: transactionStatusEnum.STATUS_SUCCESS,
     });
 
     if (!updateTransaction) {

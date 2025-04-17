@@ -1,7 +1,7 @@
 const STATUS_CREATED = 1;
 const STATUS_PENDING = 2;
 const STATUS_ERROR = 3;
-const STATUS_PAID = 4;
+const STATUS_SUCCESS = 4;
 const STATUS_CANCELLED = 5;
 
 const statusTranslations = {
@@ -26,8 +26,8 @@ const transactionStatusOptions = [
     label: statusTranslations[STATUS_ERROR],
   },
   {
-    value: STATUS_PAID,
-    label: statusTranslations[STATUS_PAID],
+    value: STATUS_SUCCESS,
+    label: statusTranslations[STATUS_SUCCESS],
   },
   {
     value: STATUS_CANCELLED,
@@ -43,7 +43,7 @@ export default {
   STATUS_CREATED,
   STATUS_PENDING,
   STATUS_ERROR,
-  STATUS_PAID,
+  STATUS_SUCCESS,
   STATUS_CANCELLED,
   transactionStatusOptions,
   getStatusName,
