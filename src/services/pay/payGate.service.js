@@ -41,9 +41,9 @@ const payCreate = async (requestDTO) => {
   }
 };
 
-const payPreConfirm = async (transaction, cardToken) => {
+const payPreConfirm = async (transaction) => {
   try {
-    const request = new PayPreConfirmRequest(transaction.partnerId, cardToken);
+    const request = new PayPreConfirmRequest(transaction.partnerId, transaction.cardToken);
     const response = await request.send();
 
     if (response.isOk()) {
