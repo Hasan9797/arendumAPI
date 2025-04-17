@@ -318,36 +318,36 @@ model UserBalance {
 // }
 
 model Transaction {
-  id                   Int        @id @default(autoincrement())
-  orderId              Int?       @map("order_id")
-  driverId             Int?       @map("driver_id")
-  clientId             Int?       @map("client_id")
-  structureId          Int?       @map("structure_id")
+  id            Int        @id @default(autoincrement())
+  orderId       Int?       @map("order_id")
+  driverId      Int?       @map("driver_id")
+  clientId      Int?       @map("client_id")
+  structureId   Int?       @map("structure_id")
   //relations
-  client               Client?    @relation(fields: [clientId], references: [id])
-  driver               Driver?    @relation(fields: [driverId], references: [id])
-  structure            Structure? @relation(fields: [structureId], references: [id])
-  amount               Int
-  state                Int?
-  currency             String?    @default("UZS")
-  name                 String?
-  pan                  String?
-  confirmed            Boolean?
-  prepayTime           String?    @map("prepay_time")
-  confirmTime          String?    @map("confirm_time")
-  partnerTransactionId Int?       @map("partner_transaction_id")
-  invoice              Int?
-  cardToken            String?    @map("card_token")
-  cardId               Int?       @map("card_id")
-  commission           String?
-  depositAmount        String?    @map("deposit_amount")
-  request              Json?
-  response             Json?
-  description          String?
-  type                 Int
-  status               Int        @default(1)
-  createdAt            DateTime   @default(now()) @map("created_at")
-  updatedAt            DateTime   @updatedAt @map("updated_at")
+  client        Client?    @relation(fields: [clientId], references: [id])
+  driver        Driver?    @relation(fields: [driverId], references: [id])
+  structure     Structure? @relation(fields: [structureId], references: [id])
+  amount        Int
+  state         Int?
+  currency      String?    @default("UZS")
+  name          String?
+  pan           String?
+  confirmed     Boolean?
+  prepayTime    String?    @map("prepay_time")
+  confirmTime   String?    @map("confirm_time")
+  partnerId    Int?       @map("partner_id")
+  invoice       Int?
+  cardToken     String?    @map("card_token")
+  cardId        Int?       @map("card_id")
+  commission    String?
+  depositAmount String?    @map("deposit_amount")
+  request       Json?
+  response      Json?
+  description   String?
+  type          Int
+  status        Int        @default(1)
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
 
   // ✅ Individual indekslar
   @@index([id])
