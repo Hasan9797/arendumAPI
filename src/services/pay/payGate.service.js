@@ -7,7 +7,12 @@ import transactionStatusEnum from '../../enums/transaction/transactionStatusEnum
 const payCreate = async (requestDTO) => {
   try {
     const transaction = await transactionService.createTransaction({
-      ...requestDTO,
+      clientId: requestDTO.clientId,
+      driverId: requestDTO.driverId,
+      amount: requestDTO.amount,
+      type: requestDTO.type,
+      cardToken: requestDTO.cardToken,
+      cardId: requestDTO.cardId,
       request: JSON.stringify({ pay_create: requestDTO.request }),
     });
 
