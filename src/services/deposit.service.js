@@ -4,37 +4,32 @@ import userBalanceService from './userBalance.service.js';
 
 const depositReplenishment = async (requestDTO) => {
   try {
-    // PayGate xizmatidan natijani olish
     const result = await payGateService.payCreate(requestDTO);
+
     if (!result) {
-      throw new Error('Deposit replenishment failed');
+      throw new Error('Deposit replinshment error');
     }
 
-    // Foydalanuvchi turiga qarab userId va role ni aniqlash
-    const isDriver = requestDTO.role === userRoleEnum.DRIVER;
-    const userId = isDriver ? requestDTO.driverId : requestDTO.clientId;
+    if (requestDTO.role == userRoleEnum.DRIVER) {
+      const driverBalance = await userBalanceService.getByUserId(requestDTO.driverId, userRoleEnum.DRIVER);
 
-    // Balansni olish yoki yangi balans yaratish
-    let userBalance = await userBalanceService.getByUserId(userId, requestDTO.role);
-    const newBalance = userBalance
-      ? parseInt(userBalance.balance) + requestDTO.amount
-      : requestDTO.amount;
+      if (!driverBalance) {
+        await userBalanceService.createBalance({ balance: String(parseInt(driverBalance.balance) + requestDTO.amount), driverId: requestDTO.driverId });
+      }
 
-    if (!userBalance) {
-      userBalance = await userBalanceService.createBalance({
-        balance: String(newBalance),
-        userId,
-      });
+      await userBalanceService.updateById(requestDTO.driverId, { balance: String(parseInt(driverBalance.balance) + requestDTO.amount) });
     } else {
-      await userBalanceService.updateById(userId, {
-        balance: String(newBalance),
-      });
+      const clientBalance = await userBalanceService.getByUserId(requestDTO.clientId, userRoleEnum.CLIENT);
+
+      if (!clientBalance) {
+        await userBalanceService.createBalance({ balance: String(parseInt(clientBalance.balance) + requestDTO.amount), clientId: requestDTO.driverId });
+      }
+      await userBalanceService.updateById(requestDTO.clientId, { balance: String(parseInt(clientBalance.balance) + requestDTO.amount) });
     }
 
     return result;
   } catch (error) {
-    // Xatolarni qayta ishlash uchun log yoki qo'shimcha context qo'shish mumkin
-    throw new Error(`Deposit replenishment error: ${error.message}`);
+    throw error;
   }
 };
 
