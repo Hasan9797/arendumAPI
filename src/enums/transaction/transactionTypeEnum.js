@@ -3,8 +3,8 @@ const DEPOSIT_WITHDRAW = 2;
 const PAYMENT_ORDER = 3;
 
 const TypeTranslations = {
-  1: 'Пополнение баланса',
-  2: 'Вывод средств',
+  1: 'Пополните баланс',
+  2: 'Снятие с баланса',
   3: 'Оплата заказа',
 };
 

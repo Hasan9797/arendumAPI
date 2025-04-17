@@ -1,14 +1,32 @@
 import PayConfirmRequest from './requests/payConfirmRequest.js';
 import PayCreateRequest from './requests/payCreateRequest.js';
 import PayPreConfirmRequest from './requests/payPreConfirmRequest.js';
+import transactionService from '../transaction.service.js';
+import transactionStatusEnum from '../../enums/transaction/transactionStatusEnum.js';
 
-const payCreate = async (amount, account) => {
+const payCreate = async (requestDTO) => {
   try {
-    const request = new PayCreateRequest(amount, account);
+    const transaction = await transactionService.createTransaction({
+      ...requestDTO,
+      request: JSON.stringify({ pay_create: requestDTO.request }),
+    });
+
+    const request = new PayCreateRequest(requestDTO.request);
     const response = await request.send();
 
+    const transactionRequest = JSON.parse(transaction.request);
+
     if (response.isOk()) {
-      return response.getResponse();
+
+      const updateTransaction = await transactionService.updateById(
+        transaction.id, {
+        status: transactionStatusEnum.STATUS_PENDING,
+        response: JSON.stringify({ pay_create: response.response() }),
+        request: JSON.stringify({ pay_pre_confirm: response.getRequest(), ...transactionRequest }),
+        partnerTransactionId: response.getData().transaction_id,
+      });
+
+      return await payPreConfirm(updateTransaction);
     }
 
     return response.getError();
@@ -17,13 +35,13 @@ const payCreate = async (amount, account) => {
   }
 };
 
-const payPreConfirm = async (transactionId, cardToken) => {
+const payPreConfirm = async (transaction, cardToken) => {
   try {
-    const request = new PayPreConfirmRequest(transactionId, cardToken);
+    const request = new PayPreConfirmRequest(transaction.partnerTransactionId, cardToken);
     const response = await request.send();
 
     if (response.isOk()) {
-      return response.getResponse();
+      return await payConfirm(updateTransaction);
     }
 
     return response.getError();
@@ -32,16 +50,29 @@ const payPreConfirm = async (transactionId, cardToken) => {
   }
 };
 
-const payConfirm = async (transactionId) => {
+const payConfirm = async (transaction) => {
   try {
-    const request = new PayConfirmRequest(transactionId);
+    const request = new PayConfirmRequest(transaction.partnerTransactionId);
     const response = await request.send();
 
-    if (response.isOk()) {
-      return response.getResponse();
+    const transactionRequest = JSON.parse(transaction.request);
+    const transactionResponse = JSON.parse(transaction.response);
+
+    if (!response.isOk()) {
+      return response.getError();
     }
 
-    return response.getError();
+    const updateTransaction = await transactionService.updateById(
+      transaction.id, {
+      request: JSON.stringify({ pay_confirm: response.getRequest(), ...transactionRequest }),
+      response: JSON.stringify({ pay_confirm: response.getResponse(), ...transactionResponse }),
+    });
+
+    if (!updateTransaction) {
+      throw new Error('Transaction not updated');
+    }
+
+    return response.getResponse();
   } catch (error) {
     throw error;
   }

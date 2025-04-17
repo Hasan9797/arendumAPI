@@ -80,6 +80,21 @@ const cardConfirm = async (user, transactionId, smsCode) => {
   }
 };
 
+const removeCard = async (cardId, cardToken) => {
+  try {
+    const request = new CardRemoveRequest(cardId, cardToken);
+    const response = await request.send();
+
+    if (response.isOk()) {
+      return response.getResult();
+    }
+
+    return response.getError();
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 const update = async (id, data) => {
   return await bankCardRepo.updateById(id, data);
@@ -106,6 +121,7 @@ export default {
   getByClientIdOrDriverId,
   cardInit,
   cardConfirm,
+  removeCard,
   update,
   distroy,
 };

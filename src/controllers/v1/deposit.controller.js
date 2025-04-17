@@ -1,6 +1,8 @@
-import depositReplinshmentService from '../../services/deposit/depositReplinshment.service.js';
+import depositService from '../../services/deposit.service.js';
 import transactionService from '../../services/transaction.service.js';
+import userRoleEnum from '../../enums/user/userRoleEnum.js';
 import transactionTypeEnum from '../../enums/transaction/transactionTypeEnum.js';
+import { payRequestDTO } from '../../DTO/payRequestDTO.js';
 
 const getAll = async (req, res) => {
   //   const lang = req.headers['accept-language'] || 'ru';
@@ -77,52 +79,24 @@ const update = async (req, res) => {
 };
 
 // ---------------- DEPOSIT REPLINSHMENT ----------------
-const createDepositReplinshment = async (req, res) => {
+const depositReplinshment = async (req, res) => {
   try {
     const amount = req.body.amount;
-    const account = req.body.account;
-
-    const result = await depositReplinshmentService.createDeposit(
-      amount,
-      account
-    );
-
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-      error: error,
-    });
-  }
-};
-
-const preConfirmDepositReplinshment = async (req, res) => {
-  try {
-    const transactionId = req.body.transactionId;
     const cardToken = req.body.cardToken;
+    const cardId = req.body.cardId;
+    const clientId = req.user.role == userRoleEnum.CLIENT ? req.user.id : null;
+    const driverId = req.user.role == userRoleEnum.DRIVER ? req.user.id : null;
 
-    const result = new PayPreConfirmRequest(transactionId, cardToken);
-
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-      error: error,
-    });
-  }
-};
-
-const confirmDepositReplinshment = async (req, res) => {
-  try {
-    const transactionId = req.body.transactionId;
-    const amount = req.body.amount;
-    const userId = req.user.id;
-
-    const result = await depositReplinshmentService.confirmDeposit(
-      userId,
+    const requestDTO = payRequestDTO(
       amount,
-      transactionId
+      cardToken,
+      cardId,
+      clientId,
+      driverId,
+      transactionTypeEnum.DEPOSIT_REPLINSHMENT
     );
+
+    const result = await depositService.depositReplinshment(requestDTO);
 
     res.status(200).json(result);
   } catch (error) {
@@ -139,7 +113,5 @@ export default {
   getAll,
   getById,
   update,
-  createDepositReplinshment,
-  preConfirmDepositReplinshment,
-  confirmDepositReplinshment,
+  depositReplinshment
 };

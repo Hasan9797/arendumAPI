@@ -27,7 +27,11 @@ const createTransaction = async (body) => {
 };
 
 const updateById = async (id, data) => {
-  return await transactionRepo.updateById(id, data);
+  try {
+    return await transactionRepo.updateById(id, data);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const deleteById = async (id) => {
