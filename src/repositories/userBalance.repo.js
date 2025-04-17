@@ -66,16 +66,16 @@ const getById = async (id) => {
   return balance;
 };
 
-const getByUserId = async (clientId, role) => {
+const getByUserId = async (userId, role) => {
   try {
     if (role === userRoleEnum.DRIVER) {
       const balance = await prisma.userBalance.findFirst({
-        where: { driverId: clientId },
+        where: { driverId: userId },
       });
       return balance;
     } else if (role === userRoleEnum.CLIENT) {
       const balance = await prisma.userBalance.findFirst({
-        where: { clientId },
+        where: { clientId: userId },
       });
       return balance;
     }
