@@ -79,7 +79,7 @@ const update = async (req, res) => {
 };
 
 // ---------------- DEPOSIT REPLINSHMENT ----------------
-const depositReplinshment = async (req, res) => {
+const depositReplenishment = async (req, res) => {
   try {
     const { amount, cardToken, cardId } = req.body;
 
@@ -96,7 +96,7 @@ const depositReplinshment = async (req, res) => {
       req.user?.role
     );
 
-    const result = await depositService.depositReplinshment(requestDTO);
+    const result = await depositService.depositReplenishment(requestDTO);
 
     res.status(200).json(result);
   } catch (error) {
@@ -113,5 +113,5 @@ export default {
   getAll,
   getById,
   update,
-  depositReplinshment
+  depositReplenishment
 };
