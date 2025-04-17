@@ -15,7 +15,7 @@ const depositReplenishment = async (requestDTO) => {
     const userId = isDriver ? requestDTO.driverId : requestDTO.clientId;
 
     // Balansni olish yoki yangi balans yaratish
-    let userBalance = await userBalanceService.getByIdUserId(userId);
+    let userBalance = await userBalanceService.getByUserId(userId, requestDTO.role);
     const newBalance = userBalance
       ? parseInt(userBalance.balance) + requestDTO.amount
       : requestDTO.amount;
