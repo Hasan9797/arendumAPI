@@ -81,9 +81,8 @@ const update = async (req, res) => {
 // ---------------- DEPOSIT REPLINSHMENT ----------------
 const depositReplinshment = async (req, res) => {
   try {
-    const amount = req.body.amount;
-    const cardToken = req.body.cardToken;
-    const cardId = req.body.cardId;
+    const { amount, cardToken, cardId } = req.body;
+
     const clientId = req.user.role == userRoleEnum.CLIENT ? req.user.id : null;
     const driverId = req.user.role == userRoleEnum.DRIVER ? req.user.id : null;
 
