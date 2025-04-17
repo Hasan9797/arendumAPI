@@ -94,7 +94,7 @@ const depositReplinshment = async (req, res) => {
       clientId,
       driverId,
       transactionTypeEnum.DEPOSIT_REPLINSHMENT,
-      req.user.role
+      req.user?.role
     );
 
     const result = await depositService.depositReplinshment(requestDTO);

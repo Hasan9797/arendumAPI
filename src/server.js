@@ -45,6 +45,7 @@ import staticRoute from './routes/static.route.js';
 import orderRoute from './routes/order.route.js';
 // PAYMENT ROUTES
 import bankCardRoute from './routes/bankCard.route.js';
+import depositRoute from './routes/deposit.route.js';
 
 // File uploads route
 app.use('/api/file-upload', uploadRoute);
@@ -65,7 +66,7 @@ app.use('/api/order', orderRoute);
 
 // PAYMENT API
 app.use('/api/cards', bankCardRoute);
-// app.use('/api/deposit', depositRoute);
+app.use('/api/deposit', depositRoute);
 
 // 404 middleware
 app.use((req, res, next) => {
