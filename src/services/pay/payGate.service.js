@@ -29,7 +29,7 @@ const payCreate = async (requestDTO) => {
         status: transactionStatusEnum.STATUS_PENDING,
         response: JSON.stringify({ pay_create: response.getResponse() }),
         request: JSON.stringify({ pay_pre_confirm: response.getRequest(), ...transactionRequest }),
-        partnerTransactionId: response.getData().transaction_id,
+        partnerId: response.getTransactionId(),
       });
 
       return await payPreConfirm(updateTransaction);

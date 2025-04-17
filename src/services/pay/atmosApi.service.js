@@ -80,7 +80,7 @@ class AtmosApiService extends AtmosTokenService {
   }
 
   getTransactionId() {
-    return this.getResponse()?.result?.transaction_id;
+    return this.getResponse()?.transaction_id;
   }
 
   getResult() {
