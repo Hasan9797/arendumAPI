@@ -11,7 +11,7 @@ const depositReplinshment = async (requestDTO) => {
     }
 
     if (requestDTO.role == userRoleEnum.DRIVER) {
-      const driverBalance = await userBalanceService.getById(requestDTO.driverId);
+      const driverBalance = await userBalanceService.getByIdUserId(requestDTO.driverId);
 
       if (!driverBalance) {
         await userBalanceService.createBalance({ balance: String(parseInt(driverBalance.balance) + requestDTO.amount), userId: requestDTO.driverId });
@@ -19,7 +19,7 @@ const depositReplinshment = async (requestDTO) => {
 
       await userBalanceService.updateById(requestDTO.driverId, { balance: String(parseInt(driverBalance.balance) + requestDTO.amount) });
     } else {
-      const clientBalance = await userBalanceService.getById(requestDTO.clientId);
+      const clientBalance = await userBalanceService.getByIdUserId(requestDTO.clientId);
 
       if (!clientBalance) {
         await userBalanceService.createBalance({ balance: String(parseInt(clientBalance.balance) + requestDTO.amount), userId: requestDTO.driverId });
