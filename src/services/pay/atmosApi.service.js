@@ -61,12 +61,12 @@ class AtmosApiService extends AtmosTokenService {
 
       this.#response = response.data;
       logData.response = this.#response;
-      console.log(logData);
+      // console.log(logData);
 
       return this;
     } catch (error) {
       // Har doim log yoziladi
-      console.log(logData);
+      // console.log(logData);
       throw error;
     }
   }
