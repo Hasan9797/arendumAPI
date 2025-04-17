@@ -18,9 +18,9 @@ const getById = async (id) => {
   }
 };
 
-const getByIdUserId = async (userId) => {
+const getByUserId = async (userId, role) => {
   try {
-    const balance = await userBalanceRepo.getByIdUserId(userId);
+    const balance = await userBalanceRepo.getByUserId(userId, role);
     return formatResponseDates(balance);
   } catch (error) {
     throw error;
@@ -50,7 +50,7 @@ const deleteById = async (id) => {
 export default {
   getAll,
   getById,
-  getByIdUserId,
+  getByUserId,
   createBalance,
   updateById,
   deleteById,

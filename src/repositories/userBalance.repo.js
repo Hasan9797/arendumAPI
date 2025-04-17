@@ -1,4 +1,5 @@
 import prisma from '../config/prisma.js';
+import userRoleEnum from '../enums/user/userRoleEnum.js';
 import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
 
 const getAll = async (query) => {
@@ -65,12 +66,20 @@ const getById = async (id) => {
   return balance;
 };
 
-const getByIdUserId = async (userId) => {
+const getByUserId = async (clientId, role) => {
   try {
-    const balance = await prisma.userBalance.findFirst({
-      where: { userId },
-    });
-    return balance;
+    if (role === userRoleEnum.DRIVER) {
+      const balance = await prisma.userBalance.findFirst({
+        where: { driverId: clientId },
+      });
+      return balance;
+    } else if (role === userRoleEnum.CLIENT) {
+      const balance = await prisma.userBalance.findFirst({
+        where: { clientId },
+      });
+      return balance;
+    }
+    return null;
   } catch (error) {
     throw error;
   }
@@ -110,7 +119,7 @@ const deleteById = async (id) => {
 export default {
   getAll,
   getById,
-  getByIdUserId,
+  getByUserId,
   create,
   updateById,
   deleteById,
