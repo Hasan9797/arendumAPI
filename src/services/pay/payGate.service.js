@@ -47,7 +47,7 @@ const payPreConfirm = async (transaction) => {
     const response = await request.send();
 
     if (response.isOk()) {
-      return await payConfirm(updateTransaction);
+      return await payConfirm(transaction);
     }
 
     return response.getError();
