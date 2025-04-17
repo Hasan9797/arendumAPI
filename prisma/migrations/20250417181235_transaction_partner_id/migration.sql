@@ -5,5 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE "Transaction" DROP COLUMN "partner_transaction_id",
-ADD COLUMN     "partner_id" INTEGER;
+-- AlterTable
+ALTER TABLE "Transaction" 
+ADD COLUMN "partner_id" INTEGER;
+
