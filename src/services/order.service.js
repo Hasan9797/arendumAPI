@@ -349,13 +349,15 @@ const acceptOrder = async (orderId, driver) => {
 
 const driverArrived = async (orderId) => {
   try {
+    console.log('orderId: ', orderId);
+
     const order = await orderRepo.getById(orderId);
 
     if (!order) {
       return null;
     }
 
-    const result = await orderRepo.updateById(orderId, {
+    const result = await orderRepo.updateById(order.id, {
       status: OrderStatus.ARRIVED,
       driverArrivedTime: String(Math.floor(Date.now() / 1000)),
     });
