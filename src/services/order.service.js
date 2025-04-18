@@ -31,13 +31,13 @@ const getOrders = async (query, lang = 'ru') => {
           ...rest,
           machine: machine
             ? {
-                name:
-                  lang === 'ru'
-                    ? machine?.nameRu || null
-                    : machine?.nameUz || null,
-                id: machine?.id || null,
-                img: machine?.img || null,
-              }
+              name:
+                lang === 'ru'
+                  ? machine?.nameRu || null
+                  : machine?.nameUz || null,
+              id: machine?.id || null,
+              img: machine?.img || null,
+            }
             : null,
         };
       }
@@ -352,7 +352,7 @@ const driverArrived = async (orderId) => {
     const order = await orderRepo.getById(orderId);
 
     if (!order) {
-      throw new Error('Order not found');
+      return null;
     }
 
     const result = await orderRepo.updateById(orderId, {
