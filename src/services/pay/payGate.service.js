@@ -22,8 +22,6 @@ const payCreate = async (requestDTO) => {
     const transactionRequest = JSON.parse(transaction.request);
 
     if (response.isOk()) {
-      console.log(response.getData());
-      
       const updateTransaction = await transactionService.updateById(
         transaction.id, {
         status: transactionStatusEnum.STATUS_PENDING,

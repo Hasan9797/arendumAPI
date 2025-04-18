@@ -9,7 +9,8 @@ const depositReplenishment = async (requestDTO) => {
     if (!result) {
       throw new Error('Deposit replinshment error');
     }
-
+    console.log('user role is', requestDTO.role);
+    
     if (requestDTO.role == userRoleEnum.DRIVER) {
       const driverBalance = await userBalanceService.getByUserId(requestDTO.driverId, userRoleEnum.DRIVER);
       console.log(driverBalance);
