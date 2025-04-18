@@ -46,7 +46,7 @@ class ClientSocketHandler {
 
       socket.on('joinRoom', (orderId) => {
         socket.join(`order_room_${orderId}`);
-        socket.emit('orderStatus', { status: true, orderId });
+        socket.emit('inRoom', { success: true, orderId });
       });
 
       socket.on('createOrder', async (order) => {

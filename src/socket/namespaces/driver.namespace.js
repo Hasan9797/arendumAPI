@@ -41,7 +41,7 @@ class DriverSocketHandler {
     // Driver room'ga qo'shilishi
     socket.on('joinRoom', (orderId) => {
       socket.join(`order_room_${orderId}`);
-      socket.emit('orderStatus', { status: true, orderId });
+        socket.emit('inRoom', { success: true, orderId });
     });
 
     // Buyurtmani qabul qilish
