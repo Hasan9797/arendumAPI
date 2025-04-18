@@ -16,7 +16,7 @@ const getAll = async (query) => {
       orderBy,
       skip,
       take: limit,
-      include: { region: true },
+      include: { structure: true },
     });
 
     const total = await prisma.transaction.count({ where });

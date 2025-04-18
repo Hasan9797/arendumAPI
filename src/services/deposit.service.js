@@ -2,7 +2,7 @@ import userRoleEnum from '../enums/user/userRoleEnum.js';
 import payGateService from './pay/payGate.service.js';
 import userBalanceService from './userBalance.service.js';
 
-const depositReplinshment = async (requestDTO) => {
+const depositReplenishment = async (requestDTO) => {
   try {
     const result = await payGateService.payCreate(requestDTO);
 
@@ -11,20 +11,22 @@ const depositReplinshment = async (requestDTO) => {
     }
 
     if (requestDTO.role == userRoleEnum.DRIVER) {
-      const driverBalance = await userBalanceService.getById(requestDTO.driverId);
-
-      if(!driverBalance){
-        await userBalanceService.createBalance({ amount: requestDTO.amount, userId: requestDTO.driverId });
+      const driverBalance = await userBalanceService.getByUserId(requestDTO.driverId, userRoleEnum.DRIVER);
+      console.log(driverBalance);
+      
+      if (!driverBalance) {
+        await userBalanceService.createBalance({ balance: String(requestDTO.amount), driverId: requestDTO.driverId });
       }
 
-      await userBalanceService.updateById(requestDTO.driverId, { amount: driverBalance.amount + requestDTO.amount });
-    } else {
-      const clientBalance = await userBalanceService.getById(requestDTO.clientId);
-
-      if(!clientBalance){
-        await userBalanceService.createBalance({ amount: requestDTO.amount, userId: requestDTO.driverId });
+      await userBalanceService.updateById(driverBalance.id, { balance: String(parseInt(driverBalance.balance) + requestDTO.amount) });
+    } else if (requestDTO.role == userRoleEnum.CLIENT) {
+      const clientBalance = await userBalanceService.getByUserId(requestDTO.clientId, userRoleEnum.CLIENT);
+      console.log(clientBalance);
+      
+      if (!clientBalance) {
+        await userBalanceService.createBalance({ balance: String(requestDTO.amount), clientId: requestDTO.driverId });
       }
-      await userBalanceService.updateById(requestDTO.clientId, { amount: requestDTO.amount });
+      await userBalanceService.updateById(clientBalance.id, { balance: String(parseInt(clientBalance.balance) + requestDTO.amount) });
     }
 
     return result;
@@ -34,5 +36,5 @@ const depositReplinshment = async (requestDTO) => {
 };
 
 export default {
-  depositReplinshment,
+  depositReplenishment,
 };

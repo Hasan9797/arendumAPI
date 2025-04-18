@@ -5,7 +5,6 @@ function generateId() {
 export const payRequestDTO = (amount, cardToken, cardId, clientId, driverId, type, payerRole) => {
     return {
         amount,
-        account: generateId(),
         cardToken,
         clientId,
         driverId,
@@ -14,6 +13,7 @@ export const payRequestDTO = (amount, cardToken, cardId, clientId, driverId, typ
         type,
         request: {
             amount: amount * 100, // Tiynlarda to'lov miqdori
+            account: generateId(),
             terminal_id: '',
             store_id: process.env.STORE_ID ?? 8032,
             lang: 'uz'
