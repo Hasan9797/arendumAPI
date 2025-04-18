@@ -26,7 +26,7 @@ const getMachinesPrice = async (lang, query) => {
             type: true,
           },
         },
-        machines: {
+        machine: {
           select: {
             id: true,
             name: true,
@@ -38,7 +38,7 @@ const getMachinesPrice = async (lang, query) => {
     });
 
     const data = machinePrices.map((machinePrice) => {
-      const { machines, ...rest } = machinePrice;
+      const { machine, ...rest } = machinePrice;
 
       const adjustName = (obj) => {
         const { nameRu, nameUz, ...relationRest } = obj;
@@ -50,7 +50,7 @@ const getMachinesPrice = async (lang, query) => {
 
       return {
         ...rest,
-        machine: machines ? adjustName(machines) : null,
+        machine: machine ? adjustName(machine) : null,
       };
     });
 
