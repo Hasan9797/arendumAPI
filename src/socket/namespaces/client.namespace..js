@@ -71,7 +71,10 @@ class ClientSocketHandler {
         );
 
         if (drivers.length === 0) {
-          socket.emit('driverNotFound', { message: 'Driver not found' });
+          socket.emit('driverNotFound', {
+            success: false,
+            message: 'Driver not found',
+          });
           return;
         }
 

@@ -37,11 +37,12 @@ class DriverSocketHandler {
   // Connection event
   async onConnection(socket) {
     console.log(`Socket connected: ${socket.id}`);
+    socket.join(`driver_room_${socket.userId}`); // Driver room'ga qo'shilishi
 
     // Driver room'ga qo'shilishi
     socket.on('joinRoom', (orderId) => {
       socket.join(`order_room_${orderId}`);
-        socket.emit('inRoom', { success: true, orderId });
+      socket.emit('inRoom', { success: true, orderId });
     });
 
     // Buyurtmani qabul qilish

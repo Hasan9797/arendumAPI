@@ -41,6 +41,7 @@ model Driver {
   machineNumber           String?
   companyName             String?    @map("company_name")
   companyInn              String?    @map("company_inn")
+  pinfl                   String? // JSHSHRI
   legal                   Boolean    @default(false)
   merchantId              Int?       @map("merchant_id")
   machine                 Machines?  @relation("MachineDrivers", fields: [machineId], references: [id])
@@ -94,7 +95,7 @@ model Machines {
   nameRu               String                 @map("name_ru")
   nameEn               String?                @map("name_en")
   img                  String?
-  status               Int                    @default(0)
+  status               Int                    @default(1)
   machineParams        MachineParams[]        @relation("MachineParams")
   machineParamsFilters MachineParamsFilters[] @relation("MachineParamsFilters")
   createdAt            DateTime               @default(now()) @map("created_at")
@@ -335,7 +336,7 @@ model Transaction {
   confirmed     Boolean?
   prepayTime    String?    @map("prepay_time")
   confirmTime   String?    @map("confirm_time")
-  partnerId    Int?       @map("partner_id")
+  partnerId     Int?       @map("partner_id")
   invoice       Int?
   cardToken     String?    @map("card_token")
   cardId        Int?       @map("card_id")
