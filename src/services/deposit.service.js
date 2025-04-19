@@ -9,14 +9,12 @@ const depositReplenishment = async (requestDTO) => {
     if (!result) {
       throw new Error('Deposit replinshment error');
     }
-    console.log('requestDTO ', requestDTO);
 
-    if (requestDTO.role == userRoleEnum.DRIVER) {
+    if (requestDTO.payerRole == userRoleEnum.DRIVER) {
       const driverBalance = await userBalanceService.getByUserId(
         requestDTO.driverId,
         userRoleEnum.DRIVER
       );
-      console.log(driverBalance);
 
       if (!driverBalance) {
         await userBalanceService.createBalance({
@@ -28,12 +26,11 @@ const depositReplenishment = async (requestDTO) => {
       await userBalanceService.updateById(driverBalance.id, {
         balance: String(parseInt(driverBalance.balance) + requestDTO.amount),
       });
-    } else if (requestDTO.role == userRoleEnum.CLIENT) {
+    } else if (requestDTO.payerRole == userRoleEnum.CLIENT) {
       const clientBalance = await userBalanceService.getByUserId(
         requestDTO.clientId,
         userRoleEnum.CLIENT
       );
-      console.log(clientBalance);
 
       if (!clientBalance) {
         await userBalanceService.createBalance({
