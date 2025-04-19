@@ -73,7 +73,7 @@ const create = async (data) => {
 
 const getById = async (orderId) => {
   try {
-    if(!orderId) throw new Error('Order ID is required');
+    if (!orderId) throw new Error('Order ID is required');
 
     return await prisma.order.findUnique({
       where: {
@@ -205,6 +205,7 @@ const getOrderByClientId = async (clientId) => {
             OrderStatus.ASSIGNED,
             OrderStatus.ARRIVED,
             OrderStatus.START_WORK,
+            OrderStatus.PAUSE_WORK,
           ],
         },
       },
