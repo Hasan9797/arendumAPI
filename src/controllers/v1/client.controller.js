@@ -101,7 +101,6 @@ const getProcessOrder = async (req, res) => {
   }
 };
 
-
 export default {
   getAll,
   getById,

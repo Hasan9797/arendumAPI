@@ -46,6 +46,7 @@ class ClientSocketHandler {
 
       socket.on('joinRoom', (orderId) => {
         socket.join(`order_room_${orderId}`);
+        console.log(`Client joined room: order_room_${orderId}`);
         socket.emit('inRoom', { success: true, orderId });
       });
 
