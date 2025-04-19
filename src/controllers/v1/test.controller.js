@@ -1,4 +1,4 @@
-import { sendNotification } from '../../helpers/sendNotificationHelper';
+import { sendNotification } from '../../helpers/sendNotificationHelper.js';
 
 export const test = async (req, res) => {
   try {
