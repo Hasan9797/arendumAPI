@@ -23,12 +23,17 @@ const payCreate = async (requestDTO) => {
 
     if (response.isOk()) {
       const updateTransaction = await transactionService.updateById(
-        transaction.id, {
-        status: transactionStatusEnum.STATUS_PENDING,
-        response: JSON.stringify({ pay_create: response.getResponse() }),
-        request: JSON.stringify({ pay_pre_confirm: response.getRequest(), ...transactionRequest }),
-        partnerId: response.getTransactionId(),
-      });
+        transaction.id,
+        {
+          status: transactionStatusEnum.STATUS_PENDING,
+          response: JSON.stringify({ pay_create: response.getResponse() }),
+          request: JSON.stringify({
+            pay_pre_confirm: response.getRequest(),
+            ...transactionRequest,
+          }),
+          partnerId: response.getTransactionId(),
+        }
+      );
 
       return await payPreConfirm(updateTransaction);
     }
@@ -41,7 +46,10 @@ const payCreate = async (requestDTO) => {
 
 const payPreConfirm = async (transaction) => {
   try {
-    const request = new PayPreConfirmRequest(transaction.partnerId, transaction.cardToken);
+    const request = new PayPreConfirmRequest(
+      transaction.partnerId,
+      transaction.cardToken
+    );
     const response = await request.send();
 
     if (response.isOk()) {
@@ -65,14 +73,22 @@ const payConfirm = async (transaction) => {
     if (!response.isOk()) {
       return response.getError();
     }
-    console.log(response.getResponse());
-    
+    console.log(transaction);
+
     const updateTransaction = await transactionService.updateById(
-      transaction.id, {
-      request: JSON.stringify({ pay_confirm: response.getRequest(), ...transactionRequest }),
-      response: JSON.stringify({ pay_confirm: response.getResponse(), ...transactionResponse }),
-      status: transactionStatusEnum.STATUS_SUCCESS,
-    });
+      transaction.id,
+      {
+        request: JSON.stringify({
+          pay_confirm: response.getRequest(),
+          ...transactionRequest,
+        }),
+        response: JSON.stringify({
+          pay_confirm: response.getResponse(),
+          ...transactionResponse,
+        }),
+        status: transactionStatusEnum.STATUS_SUCCESS,
+      }
+    );
 
     if (!updateTransaction) {
       throw new Error('Transaction not updated');
@@ -86,9 +102,8 @@ const payConfirm = async (transaction) => {
 
 // -------------------------- DEPOSIT MERCHANT BLANCE WITHDRAW --------------------------
 
-const cardInfo = async (cardNumber) => { };
-const createDeposit = async (amount) => { };
-const depositConfirm = async (amount) => { };
-
+const cardInfo = async (cardNumber) => {};
+const createDeposit = async (amount) => {};
+const depositConfirm = async (amount) => {};
 
 export default { payCreate, payPreConfirm, payConfirm };
