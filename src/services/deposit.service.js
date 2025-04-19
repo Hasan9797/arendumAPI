@@ -9,25 +9,41 @@ const depositReplenishment = async (requestDTO) => {
     if (!result) {
       throw new Error('Deposit replinshment error');
     }
-    console.log('user role is', requestDTO.role);
-    
+    console.log('requestDTO ', requestDTO);
+
     if (requestDTO.role == userRoleEnum.DRIVER) {
-      const driverBalance = await userBalanceService.getByUserId(requestDTO.driverId, userRoleEnum.DRIVER);
+      const driverBalance = await userBalanceService.getByUserId(
+        requestDTO.driverId,
+        userRoleEnum.DRIVER
+      );
       console.log(driverBalance);
-      
+
       if (!driverBalance) {
-        await userBalanceService.createBalance({ balance: String(requestDTO.amount), driverId: requestDTO.driverId });
+        await userBalanceService.createBalance({
+          balance: String(requestDTO.amount),
+          driverId: requestDTO.driverId,
+        });
       }
 
-      await userBalanceService.updateById(driverBalance.id, { balance: String(parseInt(driverBalance.balance) + requestDTO.amount) });
+      await userBalanceService.updateById(driverBalance.id, {
+        balance: String(parseInt(driverBalance.balance) + requestDTO.amount),
+      });
     } else if (requestDTO.role == userRoleEnum.CLIENT) {
-      const clientBalance = await userBalanceService.getByUserId(requestDTO.clientId, userRoleEnum.CLIENT);
+      const clientBalance = await userBalanceService.getByUserId(
+        requestDTO.clientId,
+        userRoleEnum.CLIENT
+      );
       console.log(clientBalance);
-      
+
       if (!clientBalance) {
-        await userBalanceService.createBalance({ balance: String(requestDTO.amount), clientId: requestDTO.driverId });
+        await userBalanceService.createBalance({
+          balance: String(requestDTO.amount),
+          clientId: requestDTO.driverId,
+        });
       }
-      await userBalanceService.updateById(clientBalance.id, { balance: String(parseInt(clientBalance.balance) + requestDTO.amount) });
+      await userBalanceService.updateById(clientBalance.id, {
+        balance: String(parseInt(clientBalance.balance) + requestDTO.amount),
+      });
     }
 
     return result;
