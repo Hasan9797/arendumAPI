@@ -43,6 +43,8 @@ import structureRoute from './routes/structure.route.js';
 import machinePriceRoute from './routes/machinePrice.route.js';
 import staticRoute from './routes/static.route.js';
 import orderRoute from './routes/order.route.js';
+import testRoute from './routes/test.route.js';
+
 // PAYMENT ROUTES
 import bankCardRoute from './routes/bankCard.route.js';
 import depositRoute from './routes/deposit.route.js';
@@ -63,6 +65,7 @@ app.use('/api/structure', structureRoute);
 app.use('/api/machine-price', machinePriceRoute);
 app.use('/api/static', staticRoute);
 app.use('/api/order', orderRoute);
+app.use('/api/test', testRoute);
 
 // PAYMENT API
 app.use('/api/cards', bankCardRoute);
