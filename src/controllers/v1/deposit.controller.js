@@ -3,6 +3,10 @@ import transactionService from '../../services/transaction.service.js';
 import userRoleEnum from '../../enums/user/userRoleEnum.js';
 import transactionTypeEnum from '../../enums/transaction/transactionTypeEnum.js';
 import { payRequestDTO } from '../../DTO/payRequestDTO.js';
+import {
+  responseSuccess,
+  responseError,
+} from '../../helpers/responseHelper.js';
 
 const getAll = async (req, res) => {
   //   const lang = req.headers['accept-language'] || 'ru';
@@ -98,12 +102,8 @@ const depositReplenishment = async (req, res, next) => {
 
     const result = await depositService.depositReplenishment(requestDTO);
 
-    res.status(200).json(result);
+    res.status(200).json(responseSuccess());
   } catch (error) {
-    // res.status(500).json({
-    //   message: error.message,
-    //   error: error,
-    // });
     next(error);
   }
 };
