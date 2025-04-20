@@ -14,8 +14,16 @@ const getMachines = async (lang, query) => {
 };
 
 const getMachineById = async (id, lang = 'ru') => {
-  const result = await machinesRepo.getMachineById(lang, id);
-  return formatResponseDates(result);
+  const machine = await machinesRepo.getMachineById(id);
+
+  const adjustName = (obj) => {
+    return {
+      ...obj,
+      name: lang === 'ru' ? obj.nameRu : obj.nameUz,
+    };
+  };
+
+  return formatResponseDates(adjustName(machine));
 };
 
 const createMachine = async (data) => {

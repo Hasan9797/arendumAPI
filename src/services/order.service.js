@@ -31,13 +31,13 @@ const getOrders = async (query, lang = 'ru') => {
           ...rest,
           machine: machine
             ? {
-              name:
-                lang === 'ru'
-                  ? machine?.nameRu || null
-                  : machine?.nameUz || null,
-              id: machine?.id || null,
-              img: machine?.img || null,
-            }
+                name:
+                  lang === 'ru'
+                    ? machine?.nameRu || null
+                    : machine?.nameUz || null,
+                id: machine?.id || null,
+                img: machine?.img || null,
+              }
             : null,
         };
       }
@@ -72,13 +72,7 @@ const getOrderById = async (id, lang = 'ru') => {
 
     const structure = await structureService.getById(order.structureId, lang);
 
-    const sanitizedOrders = ({
-      driverId,
-      clientId,
-      machineId,
-      structureId,
-      ...rest
-    }) => {
+    const sanitizedOrders = ({ driverId, clientId, ...rest }) => {
       return {
         ...rest,
         amountType: {

@@ -235,6 +235,7 @@ const getDriversByStructureIdForNotification = async (
       where: {
         structureId,
         machineId,
+        isOnline: true,
         ...(legal && { legal: true }), // faqat legal true bo‘lsa qo‘shiladi
       },
       select: {

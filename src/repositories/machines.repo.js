@@ -64,9 +64,9 @@ const createMachine = async (newUser) => {
   }
 };
 
-const getMachineById = async (lang, id) => {
+const getMachineById = async (id) => {
   try {
-    const cacheKey = `machine:${id}:${lang}`;
+    const cacheKey = `machine:${id}`;
     const cachedData = await redisClient.get(cacheKey);
 
     if (cachedData) {
@@ -81,17 +81,9 @@ const getMachineById = async (lang, id) => {
       throw new Error('Machine not found');
     }
 
-    const adjustName = (obj) => {
-      return {
-        ...obj,
-        name: lang === 'ru' ? obj.nameRu : obj.nameUz,
-      };
-    };
+    await redisClient.set(cacheKey, JSON.stringify(machine), { EX: 3600 }); // 1 hour
 
-    const result = adjustName(machine);
-    await redisClient.set(cacheKey, JSON.stringify(result), { EX: 3600 });
-
-    return result;
+    return machine;
   } catch (error) {
     throw error;
   }
@@ -139,12 +131,8 @@ const getMachinesIdAnName = async () => {
 };
 
 async function deleteMachineCache(id) {
-  const pattern = `machine:${id}:*`; // Barcha `machine:${id}:lang` kalitlarni topadi
-  const keys = await redisClient.keys(pattern); // Barcha mos kalitlarni qaytaradi
-
-  if (keys.length > 0) {
-    await redisClient.del(keys); // Topilgan kalitlarni o‘chiradi
-  }
+  const cacheKey = `machine:${id}`;
+  await redisClient.del(cacheKey);
 }
 
 export default {
