@@ -86,6 +86,7 @@ const payPreConfirm = async (transaction) => {
     const response = await request.send();
 
     const transactionRequest = JSON.parse(transaction.request);
+    const transactionResponse = JSON.parse(transaction.response);
 
     if (response.isOk()) {
       // Muvaffaqiyatli holat
@@ -96,6 +97,7 @@ const payPreConfirm = async (transaction) => {
           pay_pre_confirm: response.getRequest(),
         }),
         response: JSON.stringify({
+          ...transactionResponse,
           pay_pre_confirm: response.getResponse(),
         }),
         prepayTime: new Date().toISOString(),

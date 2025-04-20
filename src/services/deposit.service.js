@@ -5,6 +5,7 @@ import userBalanceService from './userBalance.service.js';
 const depositReplenishment = async (requestDTO) => {
   try {
     const transaction = await payGateService.payCreate(requestDTO);
+    console.log(transaction);
 
     if (!transaction) {
       throw new Error('Deposit replinshment error');
@@ -45,6 +46,7 @@ const depositReplenishment = async (requestDTO) => {
 
     return transaction;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };
