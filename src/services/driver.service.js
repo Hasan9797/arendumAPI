@@ -1,5 +1,6 @@
 import driverRepository from '../repositories/driver.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
+import { PAYMENT_TYPE } from '../enums/pay/paymentTypeEnum.js';
 
 const getAll = async (lang, query) => {
   try {
@@ -78,20 +79,16 @@ const getDriversInClientStructure = async (
   structureId,
   machineId,
   orderParams,
-  orderType,
-  amountType
+  paymentType
 ) => {
   try {
-    // const structureId = await clientRepository.getClientStructureId(clientId);
-
     if (!structureId) throw new Error('Structure id is required');
+    const legal = paymentType === PAYMENT_TYPE.ACCOUNT ? true : false;
 
     return await driverRepository.getDriversByStructureIdForNotification(
       structureId,
       machineId,
-      orderParams,
-      orderType,
-      amountType
+      legal
     );
   } catch (error) {
     throw error;

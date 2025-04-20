@@ -228,13 +228,15 @@ const getDriverProfile = async (id) => {
 const getDriversByStructureIdForNotification = async (
   structureId,
   machineId,
-  orderParams,
-  orderType,
-  amountType
+  legal
 ) => {
   try {
     return await prisma.driver.findMany({
-      where: { structureId, machineId },
+      where: {
+        structureId,
+        machineId,
+        ...(legal && { legal: true }), // faqat legal true bo‘lsa qo‘shiladi
+      },
       select: {
         id: true,
         fullName: true,

@@ -66,8 +66,7 @@ class ClientSocketHandler {
           order.structure.id,
           order.machineId,
           order.params,
-          order.type,
-          order.amountType
+          order.amountType.id
         );
 
         if (drivers.length === 0) {
