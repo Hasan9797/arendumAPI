@@ -4,42 +4,42 @@ import userBalanceService from './userBalance.service.js';
 
 const depositReplenishment = async (requestDTO) => {
   try {
-    const result = await payGateService.payCreate(requestDTO);
+    const transaction = await payGateService.payCreate(requestDTO);
 
-    if (!result) {
+    if (!transaction) {
       throw new Error('Deposit replinshment error');
     }
 
     if (requestDTO.payerRole == userRoleEnum.DRIVER) {
       const driverBalance = await userBalanceService.getByUserId(
-        requestDTO.driverId,
+        transaction.driverId,
         userRoleEnum.DRIVER
       );
 
       if (!driverBalance) {
         await userBalanceService.createBalance({
-          balance: String(requestDTO.amount),
-          driverId: requestDTO.driverId,
+          balance: String(transaction.amount),
+          driverId: transaction.driverId,
         });
       }
 
       await userBalanceService.updateById(driverBalance.id, {
-        balance: String(parseInt(driverBalance.balance) + requestDTO.amount),
+        balance: String(parseInt(driverBalance.balance) + transaction.amount),
       });
     } else if (requestDTO.payerRole == userRoleEnum.CLIENT) {
       const clientBalance = await userBalanceService.getByUserId(
-        requestDTO.clientId,
+        transaction.clientId,
         userRoleEnum.CLIENT
       );
 
       if (!clientBalance) {
         await userBalanceService.createBalance({
-          balance: String(requestDTO.amount),
-          clientId: requestDTO.driverId,
+          balance: String(transaction.amount),
+          clientId: transaction.clientId,
         });
       }
       await userBalanceService.updateById(clientBalance.id, {
-        balance: String(parseInt(clientBalance.balance) + requestDTO.amount),
+        balance: String(parseInt(clientBalance.balance) + transaction.amount),
       });
     }
 

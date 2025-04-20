@@ -94,7 +94,7 @@ const payConfirm = async (transaction) => {
       throw new Error('Transaction not updated');
     }
 
-    return response.getResponse();
+    return updateTransaction;
   } catch (error) {
     throw error;
   }
