@@ -37,4 +37,3 @@ export const upload = multer({
     checkfile(file, cb);
   },
 });
-

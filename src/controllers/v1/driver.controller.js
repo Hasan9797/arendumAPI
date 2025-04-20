@@ -120,6 +120,18 @@ const driverCame = async (req, res) => {
   }
 };
 
+const setOnline = async (req, res) => {
+  try {
+    await driverService.updateById(req.user.id, {
+      isOnline: req.body.isOnline,
+    });
+
+    res.status(200).json(responseSuccess());
+  } catch (error) {
+    res.status(500).json(responseError(error.message, 500));
+  }
+};
+
 export default {
   getAll,
   getById,
@@ -128,6 +140,7 @@ export default {
   distroy,
   getMe,
   acceptOrder,
+  setOnline,
   driverCame,
   getProcessOrder,
 };
