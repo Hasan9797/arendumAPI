@@ -17,7 +17,22 @@ const getAll = async (query) => {
       orderBy,
       skip,
       take: limit,
-      include: { region: true },
+      include: {
+        driver: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        },
+        client: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        },
+      },
     });
 
     const total = await prisma.userBalance.count({ where });
