@@ -169,14 +169,6 @@ const deleteById = async (id) => {
 };
 
 const getDriverProfile = async (id) => {
-  const cacheKey = `driver_profile_${id}`; // Redis kaliti
-
-  // 1. Avval Redis cache dan tekshirish
-  const cachedDriver = await redisClient.get(cacheKey);
-  if (cachedDriver) {
-    return JSON.parse(cachedDriver); // Cache'da bo‘lsa, JSON parse qilamiz
-  }
-
   try {
     // 2. Agar cache'da bo‘lmasa, bazadan olish
     const driver = await prisma.driver.findUnique({
@@ -213,11 +205,6 @@ const getDriverProfile = async (id) => {
         },
       },
     });
-
-    // 3. Agar driver topilsa, Redis cache'ga 1 kunga saqlaymiz
-    if (driver) {
-      await redisClient.setEx(cacheKey, 86400, JSON.stringify(driver)); // 86400 soniya = 1 kun
-    }
 
     return driver;
   } catch (error) {
