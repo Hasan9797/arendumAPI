@@ -5,42 +5,74 @@ import transactionService from '../transaction.service.js';
 import transactionStatusEnum from '../../enums/transaction/transactionStatusEnum.js';
 import { PartnerError } from '../../Errors/partnerErrors.js';
 
-const payCreate = async (requestDTO) => {
+const updateTransaction = async (transactionId, updateData) => {
   try {
-    const transaction = await transactionService.createTransaction({
+    const updated = await transactionService.updateById(
+      transactionId,
+      updateData
+    );
+    if (!updated) {
+      throw new Error('Transaction update failed');
+    }
+    return updated;
+  } catch (error) {
+    throw new Error(`Transaction update error: ${error.message}`);
+  }
+};
+
+const payCreate = async (requestDTO) => {
+  let transaction;
+  try {
+    // Tranzaksiya yaratish
+    transaction = await transactionService.createTransaction({
       clientId: requestDTO.clientId,
       driverId: requestDTO.driverId,
       amount: requestDTO.amount,
       type: requestDTO.type,
       cardToken: requestDTO.cardToken,
       cardId: requestDTO.cardId,
+      currency: requestDTO.currency || 'UZS',
       request: JSON.stringify({ pay_create: requestDTO.request }),
+      status: transactionStatusEnum.STATUS_CREATED,
     });
 
+    // PayCreateRequest jo'natish
     const request = new PayCreateRequest(requestDTO.request);
     const response = await request.send();
 
-    const transactionRequest = JSON.parse(transaction.request);
-
     if (response.isOk()) {
-      const updateTransaction = await transactionService.updateById(
-        transaction.id,
-        {
-          status: transactionStatusEnum.STATUS_PENDING,
-          response: JSON.stringify({ pay_create: response.getResponse() }),
-          request: JSON.stringify({
-            pay_pre_confirm: response.getRequest(),
-            ...transactionRequest,
-          }),
-          partnerId: response.getTransactionId(),
-        }
+      // if success
+      const updatedTransaction = await updateTransaction(transaction.id, {
+        status: transactionStatusEnum.STATUS_PENDING,
+        response: JSON.stringify({ pay_create: response.getResponse() }),
+        request: JSON.stringify({
+          pay_create: requestDTO.request,
+          pay_pre_confirm: response.getRequest(),
+        }),
+        partnerId: response.getTransactionId(),
+        createdAt: new Date(),
+      });
+
+      return await payPreConfirm(updatedTransaction);
+    } else {
+      // if partner error
+      await updateTransaction(transaction.id, {
+        status: transactionStatusEnum.STATUS_ERROR,
+        response: JSON.stringify({ pay_create: response.getError() }),
+      });
+      throw PartnerError.parnerResponseError(
+        response.getError().message,
+        response.getError().code
       );
-
-      return await payPreConfirm(updateTransaction);
     }
-
-    return response.getError();
   } catch (error) {
+    // if error
+    if (transaction) {
+      await updateTransaction(transaction.id, {
+        status: transactionStatusEnum.STATUS_ERROR,
+        response: JSON.stringify({ pay_create: { error: error.message } }),
+      });
+    }
     throw error;
   }
 };
@@ -53,15 +85,40 @@ const payPreConfirm = async (transaction) => {
     );
     const response = await request.send();
 
-    if (!response.isOk()) {
+    const transactionRequest = JSON.parse(transaction.request);
+
+    if (response.isOk()) {
+      // Muvaffaqiyatli holat
+      const updatedTransaction = await updateTransaction(transaction.id, {
+        status: transactionStatusEnum.STATUS_PRE_CONFIRMED,
+        request: JSON.stringify({
+          ...transactionRequest,
+          pay_pre_confirm: response.getRequest(),
+        }),
+        response: JSON.stringify({
+          pay_pre_confirm: response.getResponse(),
+        }),
+        prepayTime: new Date().toISOString(),
+      });
+
+      return await payConfirm(updatedTransaction);
+    } else {
+      // if partner error
+      await updateTransaction(transaction.id, {
+        status: transactionStatusEnum.STATUS_ERROR,
+        response: JSON.stringify({ pay_pre_confirm: response.getError() }),
+      });
       throw PartnerError.parnerResponseError(
         response.getError().message,
         response.getError().code
       );
     }
-
-    return await payConfirm(transaction);
   } catch (error) {
+    // if error
+    await updateTransaction(transaction.id, {
+      status: transactionStatusEnum.STATUS_ERROR,
+      response: JSON.stringify({ pay_pre_confirm: { error: error.message } }),
+    });
     throw error;
   }
 };
@@ -74,36 +131,40 @@ const payConfirm = async (transaction) => {
     const transactionRequest = JSON.parse(transaction.request);
     const transactionResponse = JSON.parse(transaction.response);
 
-    if (!response.isOk()) {
+    if (response.isOk()) {
+      // Muvaffaqiyatli holat
+      const updatedTransaction = await updateTransaction(transaction.id, {
+        status: transactionStatusEnum.STATUS_SUCCESS,
+        request: JSON.stringify({
+          ...transactionRequest,
+          pay_confirm: response.getRequest(),
+        }),
+        response: JSON.stringify({
+          ...transactionResponse,
+          pay_confirm: response.getResponse(),
+        }),
+        // confirmTime: new Date().toISOString(),
+        // confirmed: true,
+      });
+
+      return updatedTransaction;
+    } else {
+      // if partner error
+      await updateTransaction(transaction.id, {
+        status: transactionStatusEnum.STATUS_ERROR,
+        response: JSON.stringify({ pay_confirm: response.getError() }),
+      });
       throw PartnerError.parnerResponseError(
         response.getError().message,
         response.getError().code
       );
     }
-
-    console.log(transaction);
-
-    const updateTransaction = await transactionService.updateById(
-      transaction.id,
-      {
-        request: JSON.stringify({
-          pay_confirm: response.getRequest(),
-          ...transactionRequest,
-        }),
-        response: JSON.stringify({
-          pay_confirm: response.getResponse(),
-          ...transactionResponse,
-        }),
-        status: transactionStatusEnum.STATUS_SUCCESS,
-      }
-    );
-
-    if (!updateTransaction) {
-      throw new Error('Transaction not updated');
-    }
-
-    return updateTransaction;
   } catch (error) {
+    // if error
+    await updateTransaction(transaction.id, {
+      status: transactionStatusEnum.STATUS_ERROR,
+      response: JSON.stringify({ pay_confirm: { error: error.message } }),
+    });
     throw error;
   }
 };
