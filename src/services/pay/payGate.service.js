@@ -3,6 +3,7 @@ import PayCreateRequest from './requests/payCreateRequest.js';
 import PayPreConfirmRequest from './requests/payPreConfirmRequest.js';
 import transactionService from '../transaction.service.js';
 import transactionStatusEnum from '../../enums/transaction/transactionStatusEnum.js';
+import { response } from 'express';
 
 const payCreate = async (requestDTO) => {
   try {
@@ -40,6 +41,12 @@ const payCreate = async (requestDTO) => {
 
     return response.getError();
   } catch (error) {
+    await transactionService.updateById(transaction.id, {
+      status: transactionStatusEnum.STATUS_PENDING,
+      response: JSON.stringify({
+        pay_confirm: error,
+      }),
+    });
     throw error;
   }
 };
