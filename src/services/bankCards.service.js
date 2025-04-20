@@ -4,6 +4,7 @@ import CardInitRequest from './pay/requests/cardInitRequest.js';
 import CardConfirmRequest from './pay/requests/cardConfirmRequest.js';
 import userRoleEnum from '../enums/user/userRoleEnum.js';
 import CardRemoveRequest from './pay/requests/cardRemoveRequest.js';
+import CardListRequest from './pay/requests/cardListRequest.js';
 
 const getAll = async (query) => {
   const bankCards = await bankCardRepo.getAll(query);
@@ -65,7 +66,11 @@ const cardConfirm = async (user, transactionId, smsCode) => {
     const driverId = user.role == userRoleEnum.DRIVER ? user.id : null;
 
     if (response.isOk()) {
-      const result = await bankCardRepo.createBankCard(driverId, clientId, response.getData());
+      const result = await bankCardRepo.createBankCard(
+        driverId,
+        clientId,
+        response.getData()
+      );
 
       if (!result) {
         throw new Error('Bank card not created');
@@ -95,6 +100,20 @@ const removeCard = async (cardId, cardToken) => {
   }
 };
 
+const getCardList = async (page, pageSize) => {
+  try {
+    const request = new CardListRequest(page, pageSize);
+    const response = await request.send();
+
+    if (response.isOk()) {
+      return response.getResult();
+    }
+
+    return response.getError();
+  } catch (error) {
+    throw error;
+  }
+};
 
 const update = async (id, data) => {
   return await bankCardRepo.updateById(id, data);
@@ -122,6 +141,7 @@ export default {
   cardInit,
   cardConfirm,
   removeCard,
+  getCardList,
   update,
   distroy,
 };

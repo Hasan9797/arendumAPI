@@ -2,10 +2,7 @@ import { Router } from 'express';
 
 import bankCardController from '../controllers/v1/bankCard.controller.js';
 
-import {
-  authentication,
-  authorization,
-} from '../middlewares/auth.js';
+import { authentication, authorization } from '../middlewares/auth.js';
 
 import UserRole from '../enums/user/userRoleEnum.js';
 
@@ -20,6 +17,8 @@ router.post('/card-init', authentication, bankCardController.cardInit);
 router.post('/card-confirm', authentication, bankCardController.cardConfirm);
 
 router.post('/card-cancel', authentication, bankCardController.cancelCard);
+
+router.get('/card-list', bankCardController.getCardList); // query params: page and limit
 
 router.put('/update/:id', bankCardController.update);
 

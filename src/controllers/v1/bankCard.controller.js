@@ -1,5 +1,5 @@
-import bankCardsService from "../../services/bankCards.service.js";
-import userRoleEnum from "../../enums/user/userRoleEnum.js";
+import bankCardsService from '../../services/bankCards.service.js';
+import userRoleEnum from '../../enums/user/userRoleEnum.js';
 
 const getAll = async (req, res) => {
   const query = {
@@ -52,7 +52,10 @@ const getByUserId = async (req, res) => {
     if (userRole !== userRoleEnum.CLIENT && userRole !== userRoleEnum.DRIVER) {
       throw new Error('Invalid user role', 400);
     }
-    const result = await bankCardsService.getByClientIdOrDriverId(userId, userRole);
+    const result = await bankCardsService.getByClientIdOrDriverId(
+      userId,
+      userRole
+    );
     res.status(201).json(result);
   } catch (error) {
     res.status(500).json({
@@ -89,7 +92,11 @@ const cardConfirm = async (req, res) => {
     const smsCode = req.body.smsCode;
     const user = req.user;
 
-    const result = await bankCardsService.cardConfirm(user, transactionId, smsCode);
+    const result = await bankCardsService.cardConfirm(
+      user,
+      transactionId,
+      smsCode
+    );
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
@@ -120,9 +127,31 @@ const cancelCard = async (req, res) => {
   }
 };
 
+const getCardList = async (req, res) => {
+  try {
+    const result = await bankCardsService.getCardList(
+      parseInt(req.query.page),
+      parseInt(req.query.limit)
+    );
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+      },
+    });
+  }
+};
+
 const update = async (req, res) => {
   try {
-    const user = await bankCardsService.update(parseInt(req.params.id), req.body);
+    const user = await bankCardsService.update(
+      parseInt(req.params.id),
+      req.body
+    );
     res.status(200).json(responseSuccess());
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
@@ -141,8 +170,8 @@ const distroy = async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
-  };
-}
+  }
+};
 
 export default {
   getAll,
@@ -151,6 +180,7 @@ export default {
   cardInit,
   cardConfirm,
   cancelCard,
+  getCardList,
   update,
   distroy,
 };
