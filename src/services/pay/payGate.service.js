@@ -3,6 +3,7 @@ import PayCreateRequest from './requests/payCreateRequest.js';
 import PayPreConfirmRequest from './requests/payPreConfirmRequest.js';
 import transactionService from '../transaction.service.js';
 import transactionStatusEnum from '../../enums/transaction/transactionStatusEnum.js';
+import { PartnerError } from '../../Errors/partnerErrors.js';
 
 const payCreate = async (requestDTO) => {
   try {
@@ -58,11 +59,14 @@ const payPreConfirm = async (transaction) => {
     );
     const response = await request.send();
 
-    if (response.isOk()) {
-      return await payConfirm(transaction);
+    if (!response.isOk()) {
+      throw PartnerError.parnerResponseError(
+        response.getError().message,
+        response.getError().code
+      );
     }
 
-    return response.getError();
+    return await payConfirm(transaction);
   } catch (error) {
     throw error;
   }
@@ -77,8 +81,12 @@ const payConfirm = async (transaction) => {
     const transactionResponse = JSON.parse(transaction.response);
 
     if (!response.isOk()) {
-      return response.getError();
+      throw PartnerError.parnerResponseError(
+        response.getError().message,
+        response.getError().code
+      );
     }
+
     console.log(transaction);
 
     const updateTransaction = await transactionService.updateById(

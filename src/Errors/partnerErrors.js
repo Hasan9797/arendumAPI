@@ -1,34 +1,39 @@
 // utils/errors.js
-export class ApiError extends Error {
-    constructor(message, status, name = 'ApiError', code = null) {
-        super(message);
-        this.status = status;
-        this.name = name;
-        this.code = code; // PartnersAPI uchun xato kodi
-    }
+export class PartnerError extends Error {
+  constructor(message, status, code = null) {
+    super(message);
+    this.status = status;
+    this.name = 'PartnerError';
+    this.code = code; // PartnersAPI uchun xato kodi
+  }
 
-    static validation(message = 'Validation failed') {
-        return new ApiError(message, 400, 'ValidationError');
-    }
+  static validation(message = 'Validation failed') {
+    return new PartnerError(message, 400);
+  }
 
-    static notFound(message = 'Resource not found') {
-        return new ApiError(message, 404, 'NotFoundError');
-    }
+  static notFound(message = 'Resource not found') {
+    return new PartnerError(message, 404);
+  }
 
-    static unauthorized(message = 'Unauthorized access') {
-        return new ApiError(message, 401, 'UnauthorizedError');
-    }
+  static unauthorized(message = 'Unauthorized access') {
+    return new PartnerError(message, 401);
+  }
 
-    static serverError(message = 'Internal server error') {
-        return new ApiError(message, 500, 'ServerError');
-    }
+  static parnerResponseError(message = 'Partner response error', code = null) {
+    return new PartnerError(message, 502, code);
+  }
 
-    // PartnersAPI xatolarni qo‘shish
-    static partnerNotFound(message = 'Partner not found') {
-        return new ApiError(message, 404, 'PartnerNotFoundError', 'PARTNER_NOT_FOUND');
-    }
+  // PartnersAPI xatolarni qo‘shish
+  static partnerNotFound(message = 'Partner not found') {
+    return new PartnerError(message, 404);
+  }
 
-    static partnerAuthFailed(message = 'Partner authentication failed') {
-        return new ApiError(message, 401, 'PartnerAuthFailedError', 'PARTNER_AUTH_FAILED');
-    }
+  static partnerAuthFailed(message = 'Partner authentication failed') {
+    return new PartnerError(
+      message,
+      401,
+      'PartnerAuthFailedError',
+      'PARTNER_AUTH_FAILED'
+    );
+  }
 }

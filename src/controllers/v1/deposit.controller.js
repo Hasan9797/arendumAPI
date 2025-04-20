@@ -79,7 +79,7 @@ const update = async (req, res) => {
 };
 
 // ---------------- DEPOSIT REPLINSHMENT ----------------
-const depositReplenishment = async (req, res) => {
+const depositReplenishment = async (req, res, next) => {
   try {
     const { amount, cardToken, cardId } = req.body;
 
@@ -100,10 +100,11 @@ const depositReplenishment = async (req, res) => {
 
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-      error: error,
-    });
+    // res.status(500).json({
+    //   message: error.message,
+    //   error: error,
+    // });
+    next(error);
   }
 };
 
