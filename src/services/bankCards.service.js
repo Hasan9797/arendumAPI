@@ -106,7 +106,7 @@ const getCardList = async (page, pageSize) => {
     const response = await request.send();
 
     if (response.isOk()) {
-      return response.getResult();
+      return response.getResponse();
     }
 
     return response.getError();
