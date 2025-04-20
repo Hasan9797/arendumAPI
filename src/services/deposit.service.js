@@ -43,7 +43,7 @@ const depositReplenishment = async (requestDTO) => {
       });
     }
 
-    return result;
+    return transaction;
   } catch (error) {
     throw error;
   }
