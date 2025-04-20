@@ -41,12 +41,6 @@ const payCreate = async (requestDTO) => {
 
     return response.getError();
   } catch (error) {
-    await transactionService.updateById(transaction.id, {
-      status: transactionStatusEnum.STATUS_PENDING,
-      response: JSON.stringify({
-        pay_confirm: error,
-      }),
-    });
     throw error;
   }
 };
