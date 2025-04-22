@@ -1,5 +1,6 @@
 import serviceCommissionRepo from '../repositories/serviceCommission.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
+import { ApiError } from '../Errors/appErrors.js';
 
 const getAll = async (query) => {
   const result = await serviceCommissionRepo.getAll(query);
@@ -19,7 +20,17 @@ const create = async (data) => {
 };
 
 const updateById = async (id, data) => {
-  return await serviceCommissionRepo.updateById(id, data);
+  try {
+    const record = await serviceCommissionRepo.getById(id);
+
+    if (typeof record == 'object') {
+      throw ApiError.notFound('Service Commission not found', 404);
+    }
+    
+    return await serviceCommissionRepo.updateById(id, data);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const deleteById = async (id) => {

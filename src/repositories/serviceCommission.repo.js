@@ -11,7 +11,7 @@ const getAll = async (query) => {
 
         const orderBy = { [sort.column]: sort.value };
 
-        const serviceCommissions = await prisma.findMany({
+        const serviceCommissions = await prisma.serviceCommission.findMany({
             where,
             orderBy,
             skip,
@@ -58,6 +58,7 @@ const updateById = async (id, body) => {
             where: { id },
             data: body,
         });
+        
         return updated;
     } catch (error) {
         throw error;

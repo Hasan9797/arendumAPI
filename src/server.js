@@ -77,7 +77,7 @@ app.use('/api/deposit', depositRoute);
 
 // 404 middleware
 app.use((req, res, next) => {
-  next(ApiError.notFound('Not Found'));
+  next(ApiError.notFound('API Route Not Found'));
 });
 
 // Global error handling middleware’ni qo‘shish
