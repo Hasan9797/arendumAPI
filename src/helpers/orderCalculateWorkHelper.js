@@ -1,170 +1,114 @@
 import machinePriceService from '../services/machinePrice.service.js';
 
-async function calculateWaitingAmountAndTime(order, totalWorkInSeconds = 0) {
-  const machinePrice = await machinePriceService.getPriceByMachineId(
-    order.machineId
-  );
-  // console.log('machinePrice: ', machinePrice);
+// Sekundlarni soat va daqiqaga aylantirish
+const secondsToHoursMinutes = (seconds) => ({
+  hours: Math.floor(seconds / 3600),
+  minutes: Math.floor((seconds % 3600) / 60),
+});
 
-  if (!machinePrice) return { waitingPaid: 0, waitingTime: 0 };
+// Daqiqalarni hh:mm:ss formatiga aylantirish
+const formatTime = (minutes) => {
+  const totalSeconds = Math.max(0, minutes * 60);
+  const hours = Math.floor(totalSeconds / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+  return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+};
 
-  // Parametrlarni filter va reduce bilan olish
-  const { waitingTime, waitingPaid } = (
-    Array.isArray(machinePrice.machinePriceParams)
-      ? machinePrice.machinePriceParams
-      : []
-  ).reduce(
-    (acc, param) => {
-      if (param.type === 'waiting_time')
-        acc.waitingTime = Number(param.parameter ?? 0);
-      if (param.type === 'waiting_amount')
-        acc.waitingPaid = Number(param.parameter ?? 0);
-      return acc;
-    },
-    { waitingTime: 0, waitingPaid: 0 }
-  );
-
-  // console.log('waitingPaid: ', waitingPaid);
-  // console.log('waitingTime: ', waitingTime);
-
-  // Haydovchi kelgan vaqt va buyurtma boshlangan vaqt farqini hisoblash (daqiqalarda)
-  const calculateTime = Math.floor(
-    (parseInt(order.driverArrivedTime) - parseInt(order.startHour)) / 60
-  );
-
-  // Agar hisoblangan vaqt `waitingTime` dan kichik bo‘lsa, 0 bo‘lishi kerak
-  const finalWaitingTime = calculateTime > waitingTime ? calculateTime : 0;
-  // console.log('finalWaitingTime: ', finalWaitingTime);
-
-  if (totalWorkInSeconds > 0) {
-    const minmumSeconds = machinePrice.minimum * 3600;
-    // console.log('minmumSeconds: ', minmumSeconds);
-
-    // Ish vaqtini soat va minutlarga aylantirish, agar minimum vaqtdan kichik bo‘lsa, minimum vaqtga o‘tish
-    let totalWorkHour = Math.floor(totalWorkInSeconds / 3600);
-    let totalWorkMinut = Math.floor((totalWorkInSeconds % 3600) / 60);
-
-    if (totalWorkInSeconds < minmumSeconds) {
-      totalWorkHour = Math.floor(minmumSeconds / 3600);
-      totalWorkMinut = Math.floor((minmumSeconds % 3600) / 60);
-    }
-
-    // console.log(
-    //   'totalWorkHour: ',
-    //   totalWorkHour,
-    //   'totalWorkMinut: ',
-    //   totalWorkMinut
-    // );
-
-    return {
-      waitingPaid: waitingPaid * finalWaitingTime,
-      waitingTime: finalWaitingTime,
-      totalWorkHour,
-      totalWorkMinut,
-    };
+// Faqat kutish vaqti va narxini hisoblash
+async function calculateWaitingAmountAndTime(order) {
+  if (!order?.machineId) {
+    throw new Error('Mashina ID talab qilinadi');
   }
 
+  const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+  if (!machinePrice) {
+    return { waitingPaid: 0, waitingTime: 0 };
+  }
+
+  // Kutish parametrlarni olish
+  const { waitingTime = 0, waitingPaid = 0 } = (machinePrice.machinePriceParams ?? []).reduce(
+    (acc, param) => {
+      if (param.type === 'waiting_time') acc.waitingTime = Number(param.parameter ?? 0);
+      if (param.type === 'waiting_amount') acc.waitingPaid = Number(param.parameter ?? 0);
+      return acc;
+    },
+    {}
+  );
+
+  // Kutish vaqtini hisoblash (daqiqalarda)
+  const driverArrivedTime = Number(order.driverArrivedTime) || 0;
+  const startHour = Number(order.startHour) || 0;
+  const calculateTime = Math.floor((driverArrivedTime - startHour) / 60); // minutes
+  const finalWaitingTime = calculateTime > waitingTime ? calculateTime : 0;
+
   return {
-    waitingPaid,
+    waitingPaid: finalWaitingTime > 0 ? waitingPaid * finalWaitingTime : 0,
     waitingTime: finalWaitingTime,
   };
 }
 
-// ⏳ **Vaqtni `hh:mm:ss` formatga o‘girish uchun yordamchi funksiya**
-const formatTime = (minutes) => {
-  const totalSeconds = minutes * 60; // Daqiqani sekundga aylantirish
-
-  const hours = Math.floor(totalSeconds / 3600);
-  const mins = Math.floor((totalSeconds % 3600) / 60);
-  const secs = totalSeconds % 60;
-
-  // **Har doim 2 xonali qilish (`padStart(2, '0')`)**
-  return [
-    hours.toString().padStart(2, '0'),
-    mins.toString().padStart(2, '0'),
-    secs.toString().padStart(2, '0'),
-  ].join(':');
-};
-
-const calculateWorkTimeAmount = async (order) => {
-  // 1. Total pause time hisoblash (soniyalarda)
-  const totalPauseTimeInSeconds = Array.isArray(order?.orderPause)
-    ? order.orderPause.reduce(
-      (total, pause) => total + (pause.totalTime || 0),
-      0
-    )
-    : 0;
-
-  // console.log('totalPauseTimeInSeconds: ', totalPauseTimeInSeconds);
-
-  // 2. String Unixtimestump ni numberga o'girish (soniyalarda)
-  const startHour = order.startHour ? Number(order.startHour) : 0;
-  const endHour = order.endHour ? Number(order.endHour) : 0;
-
-  // console.log('startHour: ', startHour);
-  // console.log('endHour: ', endHour);
-
-  // 3. Total work time hisoblash (soniyalarda)
-  const totalWorkInSeconds = endHour - startHour - totalPauseTimeInSeconds;
-
-  // console.log('totalWorkInSeconds: ', totalWorkInSeconds);
-
-  // console.log('order amount: ', order.amount);
-
-  if (totalWorkInSeconds <= 0) {
-    return {
-      totalWorkHour: 0,
-      totalWorkMinut: 0,
-      totalPauseHour: 0,
-      totalPauseMinut: 0,
-      totalAmount: order.amount,
-      paidWaitingAmount: 0,
-      paidWaitingTime: '00:00:00',
-    };
+// Vaqt asosidagi narxni hisoblash
+async function calculateWorkTimeAmount(order) {
+  if (!order?.startHour || !order?.endHour || !order?.amount) {
+    throw new Error('Start time, end time, and price required');
   }
 
-  let totalAmount = 0;
-  const totalTimeObj = await calculateWaitingAmountAndTime(order, totalWorkInSeconds);
-
-  // 5. Pause vaqtini soat va minutlarga aylantirish
-  const totalPauseHour = Math.floor(totalPauseTimeInSeconds / 3600);
-  const totalPauseMinut = Math.floor((totalPauseTimeInSeconds % 3600) / 60);
-
-  // 6. Total amount hisoblash: order.amount soatlik narx sifatida
-  const amountPerMinute = order.amount / 60;
-  // Umumiy narx hisoblash
-  totalAmount = Math.round(
-    (totalTimeObj.totalWorkHour * 60 + totalTimeObj.totalWorkMinut) * amountPerMinute + totalTimeObj.waitingPaid
+  // Total pauza vaqtini hisoblash (sekundlarda)
+  const totalPauseTimeInSeconds = (order.orderPause ?? []).reduce(
+    (total, pause) => total + (Number(pause.totalTime) || 0),
+    0
   );
 
-  // console.log('totalAmount: ', totalAmount);
+  // Total ish vaqtini hisoblash (sekundlarda)
+  const startHour = Number(order.startHour);
+  const endHour = Number(order.endHour);
+  const totalWorkInSeconds = Math.max(0, endHour - startHour - totalPauseTimeInSeconds);
+
+  // Kutish vaqti va narxini olish
+  const { waitingPaid, waitingTime } = await calculateWaitingAmountAndTime(order);
+
+  // Minimal vaqtni hisobga olish
+  const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
+  const minimumSeconds = (machinePrice?.minimum ?? 0) * 3600;
+  const effectiveWorkSeconds = Math.max(totalWorkInSeconds, minimumSeconds);
+  const { hours: totalWorkHour, minutes: totalWorkMinut } = secondsToHoursMinutes(effectiveWorkSeconds);
+
+  // Pauza vaqtini soat va daqiqaga aylantirish
+  const { hours: totalPauseHour, minutes: totalPauseMinut } = secondsToHoursMinutes(totalPauseTimeInSeconds);
+
+  // Umumiy narxni hisoblash
+  const amountPerMinute = order.amount / 60;
+  const totalAmount = Math.round(
+    (totalWorkHour * 60 + totalWorkMinut) * amountPerMinute + waitingPaid
+  );
 
   return {
-    totalWorkHour: totalTimeObj.totalWorkHour,
-    totalWorkMinut: totalTimeObj.totalWorkMinut,
+    totalWorkHour,
+    totalWorkMinut,
     totalPauseHour,
     totalPauseMinut,
     totalAmount,
-    paidWaitingAmount: totalTimeObj.waitingPaid,
-    paidWaitingTime: formatTime(totalTimeObj.waitingTime),
+    paidWaitingAmount: waitingPaid,
+    paidWaitingTime: formatTime(waitingTime),
   };
-};
+}
 
-const calculateWorkKmAmount = async (order) => {
-  const { waitingPaid, waitingTime } =
-    await calculateWaitingAmountAndTime(order);
+// Masofa asosidagi narxni hisoblash
+async function calculateWorkKmAmount(order) {
+  if (!order?.amount || !order?.kmCount) {
+    throw new Error('Narx va masofa talab qilinadi');
+  }
 
-  const totalWaitingAmount = waitingPaid * waitingTime;
-
-  let totalAmount = order?.amount * order?.kmCount ?? order.amount;
-
-  if (totalWaitingAmount > 0) totalAmount += totalWaitingAmount;
+  const { waitingPaid, waitingTime } = await calculateWaitingAmountAndTime(order);
+  const totalWaitingAmount = waitingPaid;
+  const totalAmount = Math.round(order.amount * order.kmCount + totalWaitingAmount);
 
   return {
     totalAmount,
     paidWaitingAmount: waitingPaid,
     paidWaitingTime: formatTime(waitingTime),
   };
-};
+}
 
 export default { calculateWorkTimeAmount, calculateWorkKmAmount };
