@@ -44,6 +44,7 @@ import machinePriceRoute from './routes/machinePrice.route.js';
 import staticRoute from './routes/static.route.js';
 import orderRoute from './routes/order.route.js';
 import userBalanceRoute from './routes/userBalance.route.js';
+import serviceCommissionRoute from './routes/serviceCommission.route.js';
 import testRoute from './routes/test.route.js';
 
 // PAYMENT ROUTES
@@ -67,6 +68,7 @@ app.use('/api/machine-price', machinePriceRoute);
 app.use('/api/static', staticRoute);
 app.use('/api/order', orderRoute);
 app.use('/api/user-balance', userBalanceRoute);
+app.use('/api/service-commission', serviceCommissionRoute);
 app.use('/api/test', testRoute);
 
 // PAYMENT API

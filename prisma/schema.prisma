@@ -43,6 +43,7 @@ model Driver {
   companyInn              String?    @map("company_inn")
   pinfl                   String? // JSHSHRI
   legal                   Boolean    @default(false)
+  comment                 String?
   merchantId              Int?       @map("merchant_id")
   machine                 Machines?  @relation("MachineDrivers", fields: [machineId], references: [id])
   // relation
@@ -357,4 +358,14 @@ model Transaction {
   @@index([structureId])
   @@index([type])
   @@index([createdAt])
+}
+
+model ServiceCommission  {
+  id            Int      @id @default(autoincrement())
+  ndsAmount     Int      @map("nds_amount")
+  serviceAmount Int      @map("service_amount")
+  status        Int      @default(1)
+  driverBalance Int      @map("driver_balance")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 }
