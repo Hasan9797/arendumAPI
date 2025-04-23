@@ -56,6 +56,8 @@ class ClientSocketHandler {
 
         socket.orderId = order.id;
 
+        console.log(order);
+        
         await orderService.updateOrder(order.id, {
           status: OrderStatus.SEARCHING,
         });
