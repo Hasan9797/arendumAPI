@@ -1,8 +1,10 @@
 -- AlterTable
-ALTER TABLE "Order" ALTER COLUMN "structure_id" DROP NOT NULL,
-ALTER COLUMN "structure_id" DROP DEFAULT,
-ALTER COLUMN "region_id" DROP NOT NULL,
-ALTER COLUMN "region_id" DROP DEFAULT;
+ALTER TABLE "Driver" ADD COLUMN     "in_work" BOOLEAN NOT NULL DEFAULT false;
+
+-- AlterTable
+ALTER TABLE "Order" ADD COLUMN     "region_id" INTEGER,
+ALTER COLUMN "structure_id" DROP NOT NULL,
+ALTER COLUMN "structure_id" DROP DEFAULT;
 
 -- AlterTable
 ALTER TABLE "Region" ADD COLUMN     "is_open" BOOLEAN NOT NULL DEFAULT false;
