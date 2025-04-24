@@ -11,6 +11,8 @@ const getClients = async (lang, query) => {
 
 const getClientById = async (id, lang) => {
   try {
+    if(!id) return null;
+
     const client = await clientRepository.getById(lang, id);
     return formatResponseDates(client);
   } catch (error) {
