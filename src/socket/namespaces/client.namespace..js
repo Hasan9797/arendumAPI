@@ -61,7 +61,8 @@ class ClientSocketHandler {
         });
 
         socket.join(`order_room_${order.id}`);
-
+        console.log(order);
+        
         const drivers = await driverService.getDriversForNewOrder(
           order.machineId,
           order.region,
@@ -115,7 +116,8 @@ class ClientSocketHandler {
         const finalCheck = await redisSetHelper.isNotificationStopped(
           String(order.id)
         );
-
+        console.log('Final check:', finalCheck);
+        
         if (finalCheck === false) {
           socket.emit('driverWaiting', {
             success: false,
