@@ -203,9 +203,8 @@ const getNewOrderByDriverParams = async (req, res) => {
 
     const orders = await orderService.getNewOrderByDriverParams(
       driver?.params,
-      driver?.regionId,
+      driver?.region,
       driver?.structureId,
-      driver?.isRegion
     );
     res.status(200).json({
       success: true,

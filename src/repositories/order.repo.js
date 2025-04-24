@@ -149,9 +149,9 @@ const deleteById = async (id) => {
   }
 };
 
-const getNewOrderBy = async (regionId, structureId, isRegion) => {
-  const whereData = isRegion === true ? {
-    regionId,
+const getNewOrderBy = async (region, structureId) => {
+  const whereData = region.isOpen === true ? {
+    regionId: region.id,
     status: OrderStatus.SEARCHING,
   } : { structureId: structureId, status: OrderStatus.SEARCHING };
 

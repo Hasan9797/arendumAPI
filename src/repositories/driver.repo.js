@@ -115,6 +115,15 @@ const getById = async (id) => {
     const driver = await prisma.driver.findUnique({
       where: { id },
       include: {
+        region: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+            isOpen: true,
+          }
+        },
         balance: {
           select: {
             balance: true,
