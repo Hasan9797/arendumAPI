@@ -1,7 +1,4 @@
 -- AlterTable
-ALTER TABLE "Driver" ADD COLUMN     "in_work" BOOLEAN NOT NULL DEFAULT false;
-
--- AlterTable
 ALTER TABLE "Order" ADD COLUMN     "region_id" INTEGER,
 ALTER COLUMN "structure_id" DROP NOT NULL,
 ALTER COLUMN "structure_id" DROP DEFAULT;
