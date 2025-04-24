@@ -189,9 +189,9 @@ const endOrder = async (orderId) => {
   }
 };
 
-const getNewOrderByDriverParams = async (driverParams, regionId, structureId, isRegion) => {
+const getNewOrderByDriverParams = async (driverParams, region, structureId) => {
   try {
-    let orders = await orderRepo.getNewOrderBy(regionId, structureId, isRegion);
+    let orders = await orderRepo.getNewOrderBy(region, structureId);
     if (!orders) return [];
 
     orders.forEach((order) => {
