@@ -82,15 +82,28 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    if (!req.user.role == userRoleEnum.CLIENT) {
-      const client = await clientService.getClientById(req.user.id);
-
-      if (!client.status !== userStatus.ACTIVE) {
-        throw new Error('User is inactive or User is not Client');
-      }
+    if (req.user.role != userRoleEnum.CLIENT) {
+      throw new Error('User is not Client');
     }
 
-    const order = await orderService.createOrder(req.body);
+    const client = await clientService.getClientById(req.user.id);
+
+    if (client === null || client.status !== userStatus.ACTIVE) {
+      throw new Error('User is inactive or User is not Client');
+    }
+
+    if (!client.regionId || client.regionId === 0) {
+      throw new Error('User has no region');
+    }
+
+    const data = {
+      ...req.body,
+      clientId: client?.id,
+      regionId: client?.regionId,
+      structureId: client?.structureId,
+    }
+
+    const order = await orderService.createOrder(data);
     res.status(201).json({
       success: true,
       data: order,

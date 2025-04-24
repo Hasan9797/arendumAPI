@@ -56,8 +56,6 @@ class ClientSocketHandler {
 
         socket.orderId = order.id;
 
-        console.log(order);
-        
         await orderService.updateOrder(order.id, {
           status: OrderStatus.SEARCHING,
         });
@@ -88,6 +86,7 @@ class ClientSocketHandler {
 
         await redisSetHelper.startNotificationForOrder(String(order.id));
 
+        // Send notification to drivers
         for (const driver of drivers) {
           const orderExists = await redisSetHelper.isNotificationStopped(
             String(order.id)
@@ -105,6 +104,12 @@ class ClientSocketHandler {
 
           if (stillExists === true) break;
         }
+
+        // Send Reload new orders page message to drivers
+        this.driverNamespace.to(`drivers_room_${order?.machineId}_${order.structure?.regionId}`).emit('reload', {
+          success: true,
+          message: 'New order created',
+        });
 
         const finalCheck = await redisSetHelper.isNotificationStopped(
           String(order.id)

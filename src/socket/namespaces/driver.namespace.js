@@ -17,16 +17,27 @@ class DriverSocketHandler {
   authMiddleware(socket, next) {
     try {
       const token = socket.handshake.headers['auth'];
+      const machineId = socket.handshake.headers['machineid'];
+      const regionId = socket.handshake.headers['regionid'];
+
       if (!token) return next(new Error('Access denied, no token provided'));
 
       const user = verifyToken(token);
       if (!user) return next(new Error('User error'));
 
       if (user.role !== userRoleEnum.DRIVER)
-        return next(new Error('Role error')); // Qo‘shildi
+        return next(new Error('Role error'));
+
+      // ❗ Check for required headers
+      if (!machineId || !regionId) {
+        return next(new Error('Missing machineId or regionId in headers'));
+      }
 
       socket.userId = user.id;
       socket.role = user.role;
+      socket.machineId = String(machineId);
+      socket.regionId = String(regionId);
+
       next();
     } catch (error) {
       console.log(error);
@@ -34,10 +45,11 @@ class DriverSocketHandler {
     }
   }
 
+
   // Connection event
   async onConnection(socket) {
     console.log(`Socket connected: ${socket.id}`);
-    socket.join(`driver_room_${socket.userId}`); // Driver room'ga qo'shilishi
+    socket.join(`drivers_room_${socket.regionId}_${socket.machineId}`);
 
     // Driver room'ga qo'shilishi
     socket.on('joinRoom', (orderId) => {
@@ -52,7 +64,7 @@ class DriverSocketHandler {
           String(orderId)
         );
 
-        console.log('Redis Set:', stillExists);
+        // console.log('Redis Set:', stillExists);
 
         if (stillExists === true) {
           socket.emit('orderPicked', {

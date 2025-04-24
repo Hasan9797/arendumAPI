@@ -3,15 +3,19 @@ import { formatResponseDates } from '../helpers/formatDateHelper.js';
 
 const getClients = async (lang, query) => {
   const result = await clientRepository.findAll(lang, query);
-   return {
-     data: formatResponseDates(result.data),
-     pagination: result.pagination,
-   };
+  return {
+    data: formatResponseDates(result.data),
+    pagination: result.pagination,
+  };
 };
 
 const getClientById = async (lang, id) => {
-  const client = await clientRepository.getById(lang, id);
-  return formatResponseDates(client);
+  try {
+    const client = await clientRepository.getById(lang, id);
+    return formatResponseDates(client);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const createClient = async (data) => {

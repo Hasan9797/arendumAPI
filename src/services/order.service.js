@@ -95,9 +95,6 @@ const getOrderById = async (id, lang = 'ru') => {
 
 const createOrder = async (data) => {
   try {
-    if (!data.clientId || !data.machineId) {
-      throw new Error('Client ID is required');
-    }
     return await orderRepo.create(data);
   } catch (error) {
     throw error;
