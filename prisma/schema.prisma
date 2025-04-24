@@ -184,7 +184,8 @@ model Region {
   nameRu     String      @map("name_ru")
   nameEn     String?     @map("name_en")
   status     Int         @default(1)
-  isOpen     Boolean     @default(false)
+  isOpen     Boolean     @default(false) @map("is_open")
+  // relation
   structures Structure[] @relation("RegionStructures")
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @updatedAt @map("updated_at")
