@@ -85,10 +85,10 @@ const findAll = async (lang, query) => {
   }
 };
 
-const getById = async (lang, id) => {
+const getById = async (lang, clientId) => {
   try {
     const client = await prisma.client.findUnique({
-      where: { id },
+      where: { id: clientId },
       include: {
         region: {
           select: {

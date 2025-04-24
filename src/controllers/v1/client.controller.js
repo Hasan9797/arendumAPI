@@ -35,8 +35,8 @@ const getById = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
     const client = await clientService.getClientById(
-      lang,
-      parseInt(req.params.id)
+      parseInt(req.params.id),
+      lang
     );
     res.status(200).json(responseSuccess(client));
   } catch (error) {
