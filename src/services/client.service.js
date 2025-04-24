@@ -9,7 +9,7 @@ const getClients = async (lang, query) => {
   };
 };
 
-const getClientById = async (lang, id) => {
+const getClientById = async (id, lang) => {
   try {
     const client = await clientRepository.getById(lang, id);
     return formatResponseDates(client);
