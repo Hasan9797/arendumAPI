@@ -75,25 +75,46 @@ const deleteById = async (id) => {
   }
 };
 
-const getDriversInClientStructure = async (
-  structureId,
+const getDriversForNewOrder = async (
   machineId,
+  region,
+  structureId,
   orderParams,
   paymentType
 ) => {
   try {
-    if (!structureId) throw new Error('Structure id is required');
+    if (!region) throw new Error('Structure id is required');
     const legal = paymentType === PAYMENT_TYPE.ACCOUNT ? true : false;
 
-    return await driverRepository.getDriversByStructureIdForNotification(
-      structureId,
+    const drivers = await driverRepository.getDriversForNotification(
       machineId,
+      region,
+      structureId,
       legal
     );
+
+    return filterDriversByOrderParams(drivers, orderParams);
   } catch (error) {
     throw error;
   }
 };
+
+function filterDriversByOrderParams(drivers, orderParams) {
+  if (!orderParams || orderParams.length === 0) return [];
+
+  return drivers.filter((driver) => {
+    if (!driver.params || !Array.isArray(driver.params)) return false;
+
+    // orderParams dagi har bir itemni tekshiradi
+    return orderParams.every(({ key, param }) => {
+      const match = driver.params.find((p) => p.key === key);
+
+      // driver da shu key bo'lishi va uning params arrayida param bo'lishi kerak
+      return match && Array.isArray(match.params) && match.params.includes(param);
+    });
+  });
+}
+
 
 export default {
   getAll,
@@ -102,5 +123,5 @@ export default {
   create,
   updateById,
   deleteById,
-  getDriversInClientStructure,
+  getDriversForNewOrder,
 };

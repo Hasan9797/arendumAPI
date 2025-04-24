@@ -210,20 +210,34 @@ const getDriverProfile = async (id) => {
   }
 };
 
-const getDriversByStructureIdForNotification = async (
-  structureId,
+const getDriversForNotification = async (
   machineId,
+  region,
+  structureId,
   legal
 ) => {
   try {
-    return await prisma.driver.findMany({
-      where: {
-        structureId,
-        machineId,
-        isOnline: true,
-        inWork: false,
-        ...(legal && { legal: true }), // faqat legal true bo‘lsa qo‘shiladi
-      },
+    // Parametr validatsiyasi
+    if (!machineId || typeof machineId !== 'number') {
+      throw new Error('machineId is required and must be a number');
+    }
+    if (!region || typeof region !== 'object') {
+      throw new Error('region is required');
+    }
+    if (!region.isOpen && !structureId) {
+      throw new Error('structureId is required when region.isOpen is false');
+    }
+
+    // whereData ni dinamik yaratish
+    const whereData = {
+      machineId,
+      ...(region.isOpen ? { regionId: region.id } : { structureId }),
+      ...(legal === true && { legal }),
+    };
+
+    // Prisma query
+    const drivers = await prisma.driver.findMany({
+      where: whereData,
       select: {
         id: true,
         fullName: true,
@@ -233,6 +247,8 @@ const getDriversByStructureIdForNotification = async (
         fcmToken: true,
       },
     });
+
+    return drivers;
   } catch (error) {
     throw error;
   }
@@ -245,5 +261,5 @@ export default {
   updateById,
   deleteById,
   getDriverProfile,
-  getDriversByStructureIdForNotification,
+  getDriversForNotification,
 };
