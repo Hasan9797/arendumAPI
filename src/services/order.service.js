@@ -9,6 +9,7 @@ import structureService from './structure.service.js';
 import machineService from './machines.service.js';
 import redisSetHelper from '../helpers/redisSetHelper.js';
 import SocketService from '../socket/index.js';
+import driverService from './driver.service.js';
 
 const getOrders = async (query, lang = 'ru') => {
   try {
@@ -31,13 +32,13 @@ const getOrders = async (query, lang = 'ru') => {
           ...rest,
           machine: machine
             ? {
-                name:
-                  lang === 'ru'
-                    ? machine?.nameRu || null
-                    : machine?.nameUz || null,
-                id: machine?.id || null,
-                img: machine?.img || null,
-              }
+              name:
+                lang === 'ru'
+                  ? machine?.nameRu || null
+                  : machine?.nameUz || null,
+              id: machine?.id || null,
+              img: machine?.img || null,
+            }
             : null,
         };
       }
@@ -70,7 +71,7 @@ const getOrderById = async (id, lang = 'ru') => {
       );
     }
 
-    const structure = await structureService.getById(order.structureId, lang);
+    // const structure = await structureService.getById(order.structureId, lang);
 
     const sanitizedOrders = ({ driverId, clientId, ...rest }) => {
       return {
@@ -82,7 +83,7 @@ const getOrderById = async (id, lang = 'ru') => {
         status: { id: rest.status, text: getStatusText(rest.status) },
         machine,
         machinePrice,
-        structure,
+        // structure,
       };
     };
 
@@ -188,9 +189,9 @@ const endOrder = async (orderId) => {
   }
 };
 
-const getNewOrderByDriverParams = async (driverParams, structureId) => {
+const getNewOrderByDriverParams = async (driverParams, regionId, structureId, isRegion) => {
   try {
-    let orders = await orderRepo.getNewOrderByStructureId(structureId);
+    let orders = await orderRepo.getNewOrderBy(regionId, structureId, isRegion);
     if (!orders) return [];
 
     orders.forEach((order) => {
@@ -320,6 +321,9 @@ const acceptOrder = async (orderId, driver) => {
     if (!result) {
       throw new Error('Order update error');
     }
+
+    // driver in work
+    await driverService.updateById(driver.id, { inWork: true });
 
     await redisSetHelper.stopNotificationForOrder(String(orderId));
     const clientSocket = SocketService.getSocket('client');

@@ -103,6 +103,23 @@ const getById = async (orderId) => {
             phone: true,
           },
         },
+        region: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+            isOpen: true,
+          },
+        },
+        structure: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+          },
+        },
       },
     });
   } catch (error) {
@@ -132,13 +149,15 @@ const deleteById = async (id) => {
   }
 };
 
-const getNewOrderByStructureId = async (structureId) => {
+const getNewOrderBy = async (regionId, structureId, isRegion) => {
+  const whereData = isRegion === true ? {
+    regionId,
+    status: OrderStatus.SEARCHING,
+  } : { structureId: structureId, status: OrderStatus.SEARCHING };
+
   try {
     return await prisma.order.findMany({
-      where: {
-        structureId,
-        status: OrderStatus.SEARCHING,
-      },
+      where: whereData,
       include: {
         client: {
           select: {
@@ -244,5 +263,5 @@ export default {
   deleteById,
   getOrderByDriverId,
   getOrderByClientId,
-  getNewOrderByStructureId,
+  getNewOrderBy,
 };

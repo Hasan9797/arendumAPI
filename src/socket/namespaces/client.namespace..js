@@ -62,9 +62,10 @@ class ClientSocketHandler {
 
         socket.join(`order_room_${order.id}`);
 
-        const drivers = await driverService.getDriversInClientStructure(
-          order.structureId,
+        const drivers = await driverService.getDriversForNewOrder(
           order.machineId,
+          order.region,
+          order.structureId,
           order.params,
           order.amountType.id
         );
