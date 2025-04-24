@@ -36,10 +36,14 @@ CREATE TABLE "Driver" (
     "machineNumber" TEXT,
     "company_name" TEXT,
     "company_inn" TEXT,
+    "pinfl" TEXT,
     "legal" BOOLEAN NOT NULL DEFAULT false,
+    "comment" TEXT,
     "merchant_id" INTEGER,
     "region_id" INTEGER,
     "structure_id" INTEGER,
+    "is_online" BOOLEAN NOT NULL DEFAULT true,
+    "in_work" BOOLEAN NOT NULL DEFAULT false,
     "fcm_token" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -75,7 +79,7 @@ CREATE TABLE "Machines" (
     "name_ru" TEXT NOT NULL,
     "name_en" TEXT,
     "img" TEXT,
-    "status" INTEGER NOT NULL DEFAULT 0,
+    "status" INTEGER NOT NULL DEFAULT 1,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -165,6 +169,7 @@ CREATE TABLE "Region" (
     "name_ru" TEXT NOT NULL,
     "name_en" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
+    "is_open" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -215,7 +220,8 @@ CREATE TABLE "Order" (
     "address" TEXT,
     "service_amount" INTEGER,
     "time_is_continue" BOOLEAN NOT NULL DEFAULT false,
-    "structure_id" INTEGER NOT NULL DEFAULT 0,
+    "structure_id" INTEGER,
+    "region_id" INTEGER,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -307,6 +313,19 @@ CREATE TABLE "Transaction" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ServiceCommission" (
+    "id" SERIAL NOT NULL,
+    "nds_amount" INTEGER NOT NULL,
+    "service_amount" INTEGER NOT NULL,
+    "status" INTEGER NOT NULL DEFAULT 1,
+    "driver_balance" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ServiceCommission_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -407,6 +426,12 @@ ALTER TABLE "Order" ADD CONSTRAINT "Order_driver_id_fkey" FOREIGN KEY ("driver_i
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_machine_id_fkey" FOREIGN KEY ("machine_id") REFERENCES "Machines"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Order" ADD CONSTRAINT "Order_region_id_fkey" FOREIGN KEY ("region_id") REFERENCES "Region"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Order" ADD CONSTRAINT "Order_structure_id_fkey" FOREIGN KEY ("structure_id") REFERENCES "Structure"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "OrderPause" ADD CONSTRAINT "OrderPause_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
