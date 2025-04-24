@@ -88,7 +88,7 @@ const create = async (req, res) => {
 
     console.log(req.user.id);
 
-    const client = await clientService.getClientById(req.user.id, 'ru');
+    const client = await clientService.getById(req.user.id);
     
     console.log(client);
     

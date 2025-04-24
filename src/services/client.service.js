@@ -9,11 +9,20 @@ const getClients = async (lang, query) => {
   };
 };
 
+const getById = async (id) => {
+  try {
+    const client = await clientRepository.getById(id);
+    return formatResponseDates(client);
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getClientById = async (id, lang) => {
   try {
     if(!id) return null;
 
-    const client = await clientRepository.getById(lang, id);
+    const client = await clientRepository.getByIdRelation(id, lang);
     return formatResponseDates(client);
   } catch (error) {
     throw error;
@@ -39,6 +48,7 @@ const deleteClient = async (id) => {
 
 export default {
   getClients,
+  getById,
   getClientById,
   createClient,
   updateClient,
