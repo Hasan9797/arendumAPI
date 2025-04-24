@@ -138,16 +138,20 @@ const verifySmsCode = async (req, res) => {
 
     await filtersFcmToken(fcmToken);
 
-    await prisma.driver.update({
+    const updatedUser = await prisma.driver.update({
       where: { id: user.id },
       data: { fcmToken },
     });
 
+    if (!updatedUser) {
+      throw new Error('User update failed', 401);
+    }
+
     const payload = {
-      id: user.id,
-      phone: user.phone,
+      id: updatedUser.id,
+      phone: updatedUser.phone,
       role: userRoleEnum.DRIVER,
-      status: user?.status,
+      status: updatedUser?.status,
     };
 
     const accessToken = generateAccessToken(payload);
@@ -176,7 +180,6 @@ const verifySmsCode = async (req, res) => {
 async function filtersFcmToken(token) {
   const matchedDrivers = await prisma.driver.findMany({
     where: {
-      structureId: user.structureId,
       fcmToken: token.trim(),
     },
   });

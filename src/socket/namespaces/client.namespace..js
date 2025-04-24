@@ -4,6 +4,7 @@ import { verifyToken } from '../../helpers/jwtTokenHelper.js';
 import redisSetHelper from '../../helpers/redisSetHelper.js';
 import orderService from '../../services/order.service.js';
 import { OrderStatus } from '../../enums/order/orderStatusEnum.js';
+import userRoleEnum from '../../enums/user/userRoleEnum.js';
 
 class ClientSocketHandler {
   constructor(io) {
@@ -50,7 +51,6 @@ class ClientSocketHandler {
       });
 
       socket.on('createOrder', async (order) => {
-        console.log(order);
         if (!order || typeof order.id !== 'number') {
           throw new Error('orderId is required');
         }
@@ -108,7 +108,7 @@ class ClientSocketHandler {
         }
 
         // Send Reload new orders page message to drivers
-        this.driverNamespace.to(`drivers_room_${order?.machineId}_${order.structure?.regionId}`).emit('reload', {
+        this.driverNamespace.to(`drivers_room_${userRoleEnum.DRIVER}`).emit('reload', {
           success: true,
           message: 'New order created',
         });
@@ -116,7 +116,6 @@ class ClientSocketHandler {
         const finalCheck = await redisSetHelper.isNotificationStopped(
           String(order.id)
         );
-        console.log('Final check:', finalCheck);
         
         if (finalCheck === false) {
           socket.emit('driverWaiting', {

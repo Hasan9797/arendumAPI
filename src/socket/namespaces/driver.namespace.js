@@ -17,8 +17,8 @@ class DriverSocketHandler {
   authMiddleware(socket, next) {
     try {
       const token = socket.handshake.headers['auth'];
-      const machineId = socket.handshake.headers['machineid'];
-      const regionId = socket.handshake.headers['regionid'];
+      // const machineId = socket.handshake.headers['machineid'];
+      // const regionId = socket.handshake.headers['regionid'];
 
       if (!token) return next(new Error('Access denied, no token provided'));
 
@@ -29,14 +29,14 @@ class DriverSocketHandler {
         return next(new Error('Role error'));
 
       // ❗ Check for required headers
-      if (!machineId || !regionId) {
-        return next(new Error('Missing machineId or regionId in headers'));
-      }
+      // if (!machineId || !regionId) {
+      //   return next(new Error('Missing machineId or regionId in headers'));
+      // }
 
       socket.userId = user.id;
       socket.role = user.role;
-      socket.machineId = String(machineId);
-      socket.regionId = String(regionId);
+      // socket.machineId = String(machineId);
+      // socket.regionId = String(regionId);
 
       next();
     } catch (error) {
@@ -49,7 +49,7 @@ class DriverSocketHandler {
   // Connection event
   async onConnection(socket) {
     console.log(`Socket connected: ${socket.id}`);
-    socket.join(`drivers_room_${socket.regionId}_${socket.machineId}`);
+    socket.join(`drivers_room_${socket.role}`);
 
     // Driver room'ga qo'shilishi
     socket.on('joinRoom', (orderId) => {
