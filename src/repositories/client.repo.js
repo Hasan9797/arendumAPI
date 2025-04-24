@@ -85,7 +85,18 @@ const findAll = async (lang, query) => {
   }
 };
 
-const getById = async (lang, clientId) => {
+const getById = async (clientId) => {
+  try {
+    const client = await prisma.client.findUnique({
+      where: { id: clientId }
+    });
+    return client;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const getByIdRelation = async (clientId, lang) => {
   try {
     const client = await prisma.client.findUnique({
       where: { id: clientId },
@@ -178,6 +189,7 @@ const deleteClientById = async (id) => {
 export default {
   findAll,
   getById,
+  getByIdRelation,
   createClient,
   updateClientById,
   deleteClientById,
