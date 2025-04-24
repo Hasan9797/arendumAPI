@@ -79,11 +79,11 @@ const refreshToken = async (req, res) => {
   try {
     const decoded = jwt.verify(userRefreshToken, JWT_REFRESH_SECRET);
 
-    const useruserRefreshToken = await prisma.userToken.findFirst({
+    const currentRefreshToken = await prisma.userToken.findFirst({
       where: { token: userRefreshToken },
     });
 
-    if (!useruserRefreshToken) {
+    if (!currentRefreshToken) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 

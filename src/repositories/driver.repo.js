@@ -123,7 +123,7 @@ const getById = async (id) => {
       },
     });
     return {
-      balance: driver.balance?.balance ?? '0',
+      balance: driver?.balance?.balance ?? '0',
       ...driver,
     };
   } catch (error) {
@@ -134,7 +134,6 @@ const getById = async (id) => {
 const updateById = async (id, driverData) => {
   try {
     const cacheKey = `driver_${id}`;
-    const cacheKeyProfile = `driver_profile_${id}`;
 
     const updatedUser = await prisma.driver.update({
       where: { id },
@@ -143,7 +142,6 @@ const updateById = async (id, driverData) => {
 
     // 2. Redis cache'dan o‘chirish (agar bo‘lsa)
     await redisClient.del(cacheKey);
-    await redisClient.del(cacheKeyProfile);
 
     return updatedUser;
   } catch (error) {
@@ -223,6 +221,7 @@ const getDriversByStructureIdForNotification = async (
         structureId,
         machineId,
         isOnline: true,
+        inWork: false,
         ...(legal && { legal: true }), // faqat legal true bo‘lsa qo‘shiladi
       },
       select: {

@@ -54,6 +54,7 @@ model Driver {
   structure               Structure? @relation("DriverStructure", fields: [structureId], references: [id])
 
   isOnline    Boolean       @default(true) @map("is_online")
+  inWork      Boolean       @default(false) @map("in_work")
   fcmToken    String?       @map("fcm_token")
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
@@ -242,6 +243,7 @@ model Order {
   serviceAmount     Int?         @map("service_amount")
   timeIsContinue    Boolean      @default(false) @map("time_is_continue")
   structureId       Int          @default(0) @map("structure_id")
+  regionId          Int          @default(0) @map("region_id")
   createdAt         DateTime     @default(now()) @map("created_at")
   updatedAt         DateTime     @updatedAt @map("updated_at")
   orderPause        OrderPause[] // cambleCase

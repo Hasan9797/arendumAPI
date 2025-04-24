@@ -136,20 +136,7 @@ const verifySmsCode = async (req, res) => {
       throw new Error('User not found', 400);
     }
 
-    const drivers = await prisma.driver.findMany({
-      where: { structureId: user.structureId },
-    });
-
-    const currentDriver = drivers.find(
-      (driver) => String(driver.fcmToken).trim() === String(fcmToken).trim()
-    );
-
-    if (currentDriver) {
-      await prisma.driver.update({
-        where: { id: currentDriver.id },
-        data: { fcmToken: 'remove' },
-      });
-    }
+    await filtersFcmToken(fcmToken);
 
     await prisma.driver.update({
       where: { id: user.id },
@@ -185,5 +172,28 @@ const verifySmsCode = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
+async function filtersFcmToken(token) {
+  const matchedDrivers = await prisma.driver.findMany({
+    where: {
+      structureId: user.structureId,
+      fcmToken: token.trim(),
+    },
+  });
+
+  if (matchedDrivers.length > 0) {
+    const driverIds = matchedDrivers.map(driver => driver.id);
+
+    await prisma.driver.updateMany({
+      where: {
+        id: { in: driverIds },
+      },
+      data: {
+        fcmToken: 'remove',
+      },
+    });
+  }
+}
+
 
 export default { login, verifySmsCode, register };
