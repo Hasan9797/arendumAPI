@@ -86,7 +86,7 @@ const create = async (req, res) => {
       throw new Error('User is not Client');
     }
 
-    const client = await clientService.getClientById(req.user.id);
+    const client = await clientService.getClientById(req.user.id, 'ru');
 
     if (client === null || client.status !== userStatus.ACTIVE) {
       throw new Error('User is inactive or User is not Client');
