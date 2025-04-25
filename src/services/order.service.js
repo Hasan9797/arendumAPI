@@ -334,7 +334,7 @@ const acceptOrder = async (orderId, driver) => {
       driver,
     });
 
-    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', {success: true});
+    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', order);
 
     return {
       success: true,
