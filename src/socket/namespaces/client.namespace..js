@@ -62,7 +62,8 @@ class ClientSocketHandler {
         });
 
         socket.join(`order_room_${order.id}`);
-
+        console.log(order.region);
+        
         const drivers = await driverService.getDriversForNewOrder(
           order.machineId,
           order.region,
@@ -78,7 +79,8 @@ class ClientSocketHandler {
           });
           return;
         }
-
+        console.log(drivers);
+        
         const title = 'New Order';
         const body = 'You have a new order';
         const data = {
