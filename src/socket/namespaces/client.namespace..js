@@ -62,7 +62,6 @@ class ClientSocketHandler {
         });
 
         socket.join(`order_room_${order.id}`);
-        console.log(order);
         
         const drivers = await driverService.getDriversForNewOrder(
           order.machineId,
@@ -71,7 +70,6 @@ class ClientSocketHandler {
           order.params,
           order.amountType.id
         );
-        console.log('drivers:', drivers);
         
         if (drivers.length === 0) {
           socket.emit('driverNotFound', {
