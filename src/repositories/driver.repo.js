@@ -221,7 +221,8 @@ const getDriverProfile = async (id) => {
 
 const getDriversForNotification = async (
   machineId,
-  region,
+  regionId,
+  isOpen,
   structureId,
   legal
 ) => {
@@ -230,21 +231,23 @@ const getDriversForNotification = async (
     if (!machineId || typeof machineId !== 'number') {
       throw new Error('machineId is required and must be a number');
     }
-    if (!region || typeof region !== 'object') {
+    if (!regionId || typeof regionId !== 'number') {
       throw new Error('region is required and must be an object');
     }
-    if (!region.isOpen && !structureId) {
+    if (!isOpen && !structureId) {
       throw new Error('structureId is required when region.isOpen is false');
     }
 
     // whereData ni dinamik yaratish
     const whereData = {
       machineId,
-      ...(region.isOpen ? { regionId: region.id } : { structureId }),
+      isOnline: true,
+      inWork: false,
+      ...(isOpen ? { regionId } : { structureId }),
       ...(legal === true && { legal }),
     };
-    console.log("whereData: ",whereData);
-    
+    console.log("whereData: ", whereData);
+
     // Prisma query
     const drivers = await prisma.driver.findMany({
       where: whereData,
