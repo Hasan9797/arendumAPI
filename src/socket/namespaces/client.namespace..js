@@ -62,7 +62,7 @@ class ClientSocketHandler {
         });
 
         socket.join(`order_room_${order.id}`);
-        
+
         const drivers = await driverService.getDriversForNewOrder(
           order.machineId,
           order.region,
@@ -108,15 +108,12 @@ class ClientSocketHandler {
         }
 
         // Send Reload new orders page message to drivers
-        this.driverNamespace.to(`drivers_room_${userRoleEnum.DRIVER}`).emit('reload', {
-          success: true,
-          message: 'New order created',
-        });
+        this.driverNamespace.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', order);
 
         const finalCheck = await redisSetHelper.isNotificationStopped(
           String(order.id)
         );
-        
+
         if (finalCheck === false) {
           socket.emit('driverWaiting', {
             success: false,

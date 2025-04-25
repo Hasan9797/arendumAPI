@@ -327,11 +327,14 @@ const acceptOrder = async (orderId, driver) => {
 
     await redisSetHelper.stopNotificationForOrder(String(orderId));
     const clientSocket = SocketService.getSocket('client');
+    const DriverSocket = SocketService.getSocket('driver');
 
     clientSocket.to(`order_room_${orderId}`).emit('orderAccepted', {
       success: true,
       driver,
     });
+
+    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', order);
 
     return {
       success: true,
