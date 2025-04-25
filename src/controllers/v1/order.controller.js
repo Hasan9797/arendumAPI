@@ -89,9 +89,9 @@ const create = async (req, res) => {
     console.log(req.user.id);
 
     const client = await clientService.getById(req.user.id);
-    
+
     console.log(client);
-    
+
     if (client === null || client.status !== userStatus.ACTIVE) {
       throw new Error('User is inactive or User is not Client');
     }
@@ -200,6 +200,10 @@ const getNewOrderByDriverParams = async (req, res) => {
   try {
     const driver = await driverService.getById(req.user.id);
     if (!driver) throw new Error('Driver not found');
+
+    if (driver.status !== userStatus.ACTIVE) {
+      return res.status(400).json({})
+    };
 
     const orders = await orderService.getNewOrderByDriverParams(
       driver?.params,
