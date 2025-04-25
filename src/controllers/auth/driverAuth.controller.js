@@ -198,5 +198,6 @@ async function filtersFcmToken(token) {
   }
 }
 
+const logOut = async (req, res) => {};
 
 export default { login, verifySmsCode, register };

@@ -139,4 +139,6 @@ const verifySmsCode = async (req, res) => {
   }
 };
 
+const logOut = async (req, res) => {};
+
 export default { login, verifySmsCode, register };

@@ -61,34 +61,7 @@ const getOrderById = async (id, lang = 'ru') => {
       throw new Error('Order not found');
     }
 
-    let machine = {};
-    let machinePrice = {};
-
-    if (order?.machineId && order.machineId > 0) {
-      machine = await machineService.getMachineById(order.machineId, lang);
-      machinePrice = await machinePriceService.getPriceByMachineId(
-        order.machineId
-      );
-    }
-
-    // const structure = await structureService.getById(order.structureId, lang);
-
-    const sanitizedOrders = ({ driverId, clientId, ...rest }) => {
-      return {
-        ...rest,
-        amountType: {
-          id: rest.amountType,
-          text: getAmountTypeText(rest.amountType),
-        },
-        status: { id: rest.status, text: getStatusText(rest.status) },
-        machine,
-        machinePrice,
-        // structure,
-      };
-    };
-
-    const formattedOrders = formatResponseDates(order);
-    return sanitizedOrders(formattedOrders);
+    return await orderFormatter(order, lang);
   } catch (error) {
     throw error;
   }
@@ -177,8 +150,6 @@ const endOrder = async (orderId) => {
       message: 'Order completed',
     });
 
-    console.log('updateData: ', updateData);
-
     return await orderRepo.updateById(orderId, {
       ...updateData,
       endHour,
@@ -195,7 +166,11 @@ const getNewOrderByDriverParams = async (driverParams, region, structureId) => {
     if (!orders) return [];
 
     orders.forEach((order) => {
-      order.amountType = getAmountTypeText(order.amountType);
+      order.amountType = {
+        id: order.amountType,
+        text: getAmountTypeText(rest.amountType),
+      },
+        order.status = { id: rest.status, text: getStatusText(rest.status) }
     });
 
     return filterOrdersByDriverParams(orders, driverParams);
@@ -399,6 +374,35 @@ const cancelOrder = async (orderId) => {
     throw error;
   }
 };
+
+async function orderFormatter(order, lang = 'ru') {
+  let machine = {};
+  let machinePrice = {};
+
+  if (order?.machineId && order.machineId > 0) {
+    machine = await machineService.getMachineById(order.machineId, lang);
+    machinePrice = await machinePriceService.getPriceByMachineId(
+      order.machineId
+    );
+  }
+
+  const sanitizedOrders = ({ driverId, clientId, ...rest }) => {
+    return {
+      ...rest,
+      amountType: {
+        id: rest.amountType,
+        text: getAmountTypeText(rest.amountType),
+      },
+      status: { id: rest.status, text: getStatusText(rest.status) },
+      machine,
+      machinePrice,
+      // structure,
+    };
+  };
+
+  const formattedOrders = formatResponseDates(order);
+  return sanitizedOrders(formattedOrders);
+}
 
 export default {
   getOrders,
