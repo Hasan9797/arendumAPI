@@ -35,8 +35,8 @@ class DriverSocketHandler {
 
       socket.userId = user.id;
       socket.role = user.role;
-      socket.machineId = String(machineId);
-      socket.regionId = String(regionId);
+      socket.machineId = machineId;
+      socket.regionId = regionId;
 
       next();
     } catch (error) {
