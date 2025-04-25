@@ -221,29 +221,26 @@ const getDriverProfile = async (id) => {
 
 const getDriversForNotification = async (
   machineId,
-  regionId,
-  isOpen,
+  region,
   structureId,
-  legal = false
+  legal
 ) => {
   try {
     // Parametr validatsiyasi
     if (!machineId || typeof machineId !== 'number') {
       throw new Error('machineId is required and must be a number');
     }
-    if (!regionId || typeof regionId !== 'number') {
-      throw new Error('region is required and must be an object');
+    if (!region || typeof region !== 'object') {
+      throw new Error('region is required');
     }
-    if (!isOpen && !structureId) {
+    if (!region.isOpen && !structureId) {
       throw new Error('structureId is required when region.isOpen is false');
     }
 
     // whereData ni dinamik yaratish
     const whereData = {
       machineId,
-      isOnline: true,
-      inWork: false,
-      ...(isOpen ? { regionId } : { structureId }),
+      ...(region.isOpen ? { regionId: region.id } : { structureId }),
       ...(legal === true && { legal }),
     };
 

@@ -89,11 +89,10 @@ const getDriversForNewOrder = async (
   try {
     if (!region) throw new Error('Region is required');
     const legal = paymentType === PAYMENT_TYPE.ACCOUNT ? true : false;
-    
+
     const drivers = await driverRepository.getDriversForNotification(
       machineId,
-      region.id,
-      region.isOpen,
+      region,
       structureId,
       legal
     );
