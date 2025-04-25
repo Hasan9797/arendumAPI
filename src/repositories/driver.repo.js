@@ -231,7 +231,7 @@ const getDriversForNotification = async (
       throw new Error('machineId is required and must be a number');
     }
     if (!region || typeof region !== 'object') {
-      throw new Error('region is required');
+      throw new Error('region is required and must be an object');
     }
     if (!region.isOpen && !structureId) {
       throw new Error('structureId is required when region.isOpen is false');
@@ -243,7 +243,8 @@ const getDriversForNotification = async (
       ...(region.isOpen ? { regionId: region.id } : { structureId }),
       ...(legal === true && { legal }),
     };
-
+    console.log("whereData: ",whereData);
+    
     // Prisma query
     const drivers = await prisma.driver.findMany({
       where: whereData,
