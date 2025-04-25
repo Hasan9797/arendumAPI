@@ -224,7 +224,7 @@ const getDriversForNotification = async (
   regionId,
   isOpen,
   structureId,
-  legal
+  legal = false
 ) => {
   try {
     // Parametr validatsiyasi
@@ -246,7 +246,6 @@ const getDriversForNotification = async (
       ...(isOpen ? { regionId } : { structureId }),
       ...(legal === true && { legal }),
     };
-    console.log("whereData: ", whereData);
 
     // Prisma query
     const drivers = await prisma.driver.findMany({
@@ -258,6 +257,7 @@ const getDriversForNotification = async (
         lat: true,
         long: true,
         fcmToken: true,
+        params: true,
       },
     });
 

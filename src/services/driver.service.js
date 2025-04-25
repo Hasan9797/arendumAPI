@@ -89,7 +89,6 @@ const getDriversForNewOrder = async (
   try {
     if (!region) throw new Error('Region is required');
     const legal = paymentType === PAYMENT_TYPE.ACCOUNT ? true : false;
-    console.log("driver service get drivers for new order: ", region);
     
     const drivers = await driverRepository.getDriversForNotification(
       machineId,
