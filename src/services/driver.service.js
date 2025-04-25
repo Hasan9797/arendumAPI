@@ -16,8 +16,12 @@ const getAll = async (lang, query) => {
 };
 
 const getById = async (id) => {
-  const driver = await driverRepository.getById(id);
-  return formatResponseDates(driver);
+  try {
+    const driver = await driverRepository.getById(id);
+    return formatResponseDates(driver);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getProfile = async (lang, id) => {
