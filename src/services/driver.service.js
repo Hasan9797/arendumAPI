@@ -93,7 +93,8 @@ const getDriversForNewOrder = async (
     
     const drivers = await driverRepository.getDriversForNotification(
       machineId,
-      region,
+      region.id,
+      region.isOpen,
       structureId,
       legal
     );

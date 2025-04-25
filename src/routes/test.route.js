@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
-import { test } from '../controllers/v1/test.controller.js';
+import { test2 } from '../controllers/v1/test.controller.js';
 
 const router = Router();
 
-router.post('/firebase-test', test);
+router.post('/', test2);
 
 export default router;
