@@ -66,11 +66,10 @@ const optionSelectParams = async (lang, machinId) => {
   try {
     const params = await machineParamsRepo.getParamsOption(machinId);
 
-    const result = params.reduce((acc, { nameRu, nameUz, key, params }) => {
+    const result = params.reduce((acc, { key, params }) => {
       const parsedParams = params ? params : [];
 
       acc.push({
-        title: lang === 'ru' ? nameRu : nameUz,
         params: parsedParams.map((p) => p.param),
         key,
       });
