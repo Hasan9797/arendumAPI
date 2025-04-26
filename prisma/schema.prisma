@@ -224,6 +224,9 @@ model Structure {
   driver      Driver[]      @relation("DriverStructure") // cambleCase
   transaction Transaction[]
   Order       Order[]
+
+  //index
+  @@index([id])
 }
 
 model Order {
@@ -237,6 +240,7 @@ model Order {
   amount            Int
   amountType        Int        @default(1) @map("amount_type")
   status            Int        @default(1)
+  startDay          String?    @map("start_day")
   driverArrivedTime String?    @map("driver_arrived_time")
   startHour         String?    @map("start_hour")
   endHour           String?    @map("end_hour")
@@ -305,6 +309,9 @@ model MachinePrice {
   createdAt          DateTime             @default(now()) @map("created_at")
   updatedAt          DateTime             @updatedAt @map("updated_at")
   machinePriceParams MachinePriceParams[] @relation("MachinePriceParams")
+
+  //index
+  @@index([id])
 }
 
 model MachinePriceParams {

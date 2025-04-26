@@ -75,7 +75,7 @@ const createOrder = async (data) => {
       throw new Error('Order not created');
     }
 
-    let order = await orderRepo.getCreateOrder(newOrder.id);
+    let order = await orderRepo.getCreatedOrder(newOrder.id);
 
     order.amountType = {
       id: order.amountType,
@@ -294,7 +294,7 @@ const getOrderByClientId = async (lang, clientId) => {
 
 const acceptOrder = async (orderId, driver) => {
   try {
-    const order = await orderRepo.getById(orderId);
+    const order = await orderRepo.getCreatedOrder(orderId);
 
     if (!order) {
       return null;
@@ -305,14 +305,20 @@ const acceptOrder = async (orderId, driver) => {
       return false;
     }
 
-    const result = await orderRepo.updateById(orderId, {
+    const updatedOrder = await orderRepo.updateById(orderId, {
       status: OrderStatus.ASSIGNED,
       driverId: driver.id,
     });
 
-    if (!result) {
+    if (!updatedOrder) {
       throw new Error('Order update error');
     }
+
+    const preparedOrder = {
+      ...updatedOrder
+      amountType = {id: updatedOrder.amountType, text: getAmountTypeText(updatedOrder.amountType),},
+      status = { id: updatedOrder.status, text: getStatusText(updatedOrder.status) };
+    };
 
     // driver in work
     await driverService.updateById(driver.id, { inWork: true });
@@ -328,7 +334,7 @@ const acceptOrder = async (orderId, driver) => {
 
     DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
       'reloadNewOrders',
-      order
+      preparedOrder
     );
 
     return {

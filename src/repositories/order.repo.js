@@ -94,14 +94,6 @@ const getById = async (orderId) => {
             phone: true,
           },
         },
-        structure: {
-          select: {
-            id: true,
-            name: true,
-            nameRu: true,
-            nameUz: true,
-          },
-        },
       },
     });
   } catch (error) {
@@ -111,11 +103,10 @@ const getById = async (orderId) => {
 
 const updateById = async (id, orderData) => {
   try {
-    const updatedOrder = await prisma.order.update({
+    return await prisma.order.update({
       where: { id },
       data: orderData,
     });
-    return updatedOrder;
   } catch (error) {
     throw error;
   }
@@ -259,7 +250,7 @@ const getOrderByClientId = async (clientId) => {
 };
 
 // Client Socket dan yuborishi uchun kerakli relation bilan
-const getCreateOrder = async (id) => {
+const getCreatedOrder = async (id) => {
   try {
     return await prisma.order.findUnique({
       where: { id },
@@ -321,7 +312,7 @@ export default {
   findAll,
   getById,
   create,
-  getCreateOrder,
+  getCreatedOrder,
   updateById,
   deleteById,
   getOrderByDriverId,
