@@ -75,7 +75,15 @@ const createOrder = async (data) => {
       throw new Error('Order not created');
     }
 
-    return await orderRepo.getCreateOrder(newOrder.id);
+    let order = await orderRepo.getCreateOrder(newOrder.id);
+
+    order.amountType = {
+      id: order.amountType,
+      text: getAmountTypeText(rest.amountType),
+    };
+    order.status = { id: rest.status, text: getStatusText(rest.status) };
+
+    return order;
   } catch (error) {
     throw error;
   }
