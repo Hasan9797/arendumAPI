@@ -75,10 +75,15 @@ const getMachineById = async (id) => {
 
     const machine = await prisma.machines.findUnique({
       where: { id },
+      include: {
+        machinePrice: {
+          
+        }
+      }
     });
 
     if (!machine) {
-      throw new Error('Machine not found');
+      return {};
     }
 
     await redisClient.set(cacheKey, JSON.stringify(machine), { EX: 3600 }); // 1 hour

@@ -67,7 +67,6 @@ const getById = async (req, res) => {
       data: order,
     });
   } catch (error) {
-    console.error('Error fetching order:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -101,7 +100,7 @@ const create = async (req, res) => {
       clientId: client?.id,
       regionId: client?.regionId,
       structureId: client?.structureId,
-    }
+    };
 
     const order = await orderService.createOrder(data);
     res.status(201).json({
@@ -109,7 +108,6 @@ const create = async (req, res) => {
       data: order,
     });
   } catch (error) {
-    console.error('Error fetching order:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -127,7 +125,6 @@ const update = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error('Error fetching order:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -145,7 +142,6 @@ const distroy = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error('Error fetching order:', error);
     res.status(500).json({
       success: false,
       error: {
@@ -198,13 +194,13 @@ const getNewOrderByDriverParams = async (req, res) => {
     if (!driver) throw new Error('Driver not found');
 
     if (driver.status !== userStatus.ACTIVE) {
-      return res.status(400).json({})
-    };
+      return res.status(400).json({});
+    }
 
     const orders = await orderService.getNewOrderByDriverParams(
       driver?.params,
       driver?.region,
-      driver?.structureId,
+      driver?.structureId
     );
     res.status(200).json({
       success: true,

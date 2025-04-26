@@ -53,7 +53,6 @@ model Driver {
   structureId             Int?          @map("structure_id")
   structure               Structure?    @relation("DriverStructure", fields: [structureId], references: [id])
   isOnline                Boolean       @default(true) @map("is_online")
-  // isRegion                Boolean       @default(false) @map("is_region")
   inWork                  Boolean       @default(false) @map("in_work")
   fcmToken                String?       @map("fcm_token")
   createdAt               DateTime      @default(now()) @map("created_at")

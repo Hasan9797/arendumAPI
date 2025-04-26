@@ -80,15 +80,6 @@ const getById = async (orderId) => {
         id: orderId,
       },
       include: {
-        orderPause: {
-          select: {
-            id: true,
-            startPause: true,
-            endPause: true,
-            status: true,
-            totalTime: true,
-          },
-        },
         client: {
           select: {
             id: true,
@@ -103,21 +94,12 @@ const getById = async (orderId) => {
             phone: true,
           },
         },
-        region: {
-          select: {
-            id: true,
-            name: true,
-            nameUz: true,
-            nameRu: true,
-            isOpen: true,
-          },
-        },
         structure: {
           select: {
             id: true,
             name: true,
-            nameUz: true,
             nameRu: true,
+            nameUz: true,
           },
         },
       },
@@ -150,10 +132,13 @@ const deleteById = async (id) => {
 };
 
 const getNewOrderBy = async (region, structureId) => {
-  const whereData = region.isOpen === true ? {
-    regionId: region.id,
-    status: OrderStatus.SEARCHING,
-  } : { structureId: structureId, status: OrderStatus.SEARCHING };
+  const whereData =
+    region.isOpen === true
+      ? {
+          regionId: region.id,
+          status: OrderStatus.SEARCHING,
+        }
+      : { structureId: structureId, status: OrderStatus.SEARCHING };
 
   try {
     return await prisma.order.findMany({
@@ -164,6 +149,24 @@ const getNewOrderBy = async (region, structureId) => {
             id: true,
             fullName: true,
             phone: true,
+          },
+        },
+        machine: {
+          select: {
+            id: true,
+            name: true,
+            nameRu: true,
+            nameUz: true,
+            img: true,
+          },
+        },
+        region: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+            isOpen: true,
           },
         },
       },
@@ -255,13 +258,74 @@ const getOrderByClientId = async (clientId) => {
   }
 };
 
+// Client Socket dan yuborishi uchun kerakli relation bilan
+const getCreateOrder = async (id) => {
+  try {
+    return await prisma.order.findUnique({
+      where: { id },
+      include: {
+        client: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        },
+        machine: {
+          select: {
+            id: true,
+            name: true,
+            nameRu: true,
+            nameUz: true,
+            img: true,
+          },
+        },
+        region: {
+          select: {
+            id: true,
+            name: true,
+            nameUz: true,
+            nameRu: true,
+            isOpen: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getOrderForCalculate = async (id) => {
+  try {
+    return await prisma.order.findUnique({
+      where: { id },
+      include: {
+        orderPause: {
+          select: {
+            id: true,
+            startPause: true,
+            endPause: true,
+            status: true,
+            totalTime: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   findAll,
   getById,
   create,
+  getCreateOrder,
   updateById,
   deleteById,
   getOrderByDriverId,
   getOrderByClientId,
   getNewOrderBy,
+  getOrderForCalculate,
 };

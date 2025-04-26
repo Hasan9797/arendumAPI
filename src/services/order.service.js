@@ -32,13 +32,13 @@ const getOrders = async (query, lang = 'ru') => {
           ...rest,
           machine: machine
             ? {
-              name:
-                lang === 'ru'
-                  ? machine?.nameRu || null
-                  : machine?.nameUz || null,
-              id: machine?.id || null,
-              img: machine?.img || null,
-            }
+                name:
+                  lang === 'ru'
+                    ? machine?.nameRu || null
+                    : machine?.nameUz || null,
+                id: machine?.id || null,
+                img: machine?.img || null,
+              }
             : null,
         };
       }
@@ -69,7 +69,13 @@ const getOrderById = async (id, lang = 'ru') => {
 
 const createOrder = async (data) => {
   try {
-    return await orderRepo.create(data);
+    const newOrder = await orderRepo.create(data);
+
+    if (!newOrder) {
+      throw new Error('Order not created');
+    }
+
+    return await orderRepo.getCreateOrder(newOrder.id);
   } catch (error) {
     throw error;
   }
@@ -118,7 +124,7 @@ const endOrder = async (orderId) => {
 
     const proseccStatus = [OrderStatus.START_WORK, OrderStatus.PAUSE_WORK];
 
-    const order = await orderRepo.getById(orderId);
+    const order = await orderRepo.getOrderForCalculate(orderId);
     if (!order || !proseccStatus.includes(order.status)) {
       throw new Error('Order is not started');
     }
@@ -166,11 +172,11 @@ const getNewOrderByDriverParams = async (driverParams, region, structureId) => {
     if (!orders) return [];
 
     orders.forEach((order) => {
-      order.amountType = {
+      (order.amountType = {
         id: order.amountType,
         text: getAmountTypeText(rest.amountType),
-      },
-        order.status = { id: rest.status, text: getStatusText(rest.status) }
+      }),
+        (order.status = { id: rest.status, text: getStatusText(rest.status) });
     });
 
     return filterOrdersByDriverParams(orders, driverParams);
@@ -309,7 +315,10 @@ const acceptOrder = async (orderId, driver) => {
       driver,
     });
 
-    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', order);
+    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
+      'reloadNewOrders',
+      order
+    );
 
     return {
       success: true,

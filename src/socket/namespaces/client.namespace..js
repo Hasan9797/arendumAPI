@@ -62,15 +62,15 @@ class ClientSocketHandler {
         });
 
         socket.join(`order_room_${order.id}`);
-        
+
         const drivers = await driverService.getDriversForNewOrder(
           order.machineId,
           order.region,
           order.structureId,
           order.params,
-          order.amountType.id
+          order.amountType
         );
-        
+
         if (drivers.length === 0) {
           socket.emit('driverNotFound', {
             success: false,
@@ -79,7 +79,7 @@ class ClientSocketHandler {
           return;
         }
         console.log('drivers:', drivers);
-        
+
         const title = 'New Order';
         const body = 'You have a new order';
         const data = {
@@ -109,7 +109,9 @@ class ClientSocketHandler {
         }
 
         // Send Reload new orders page message to drivers
-        this.driverNamespace.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', order);
+        this.driverNamespace
+          .to(`drivers_room_${order.regionId}_${order.machineId}`)
+          .emit('reloadNewOrders', order);
 
         const finalCheck = await redisSetHelper.isNotificationStopped(
           String(order.id)

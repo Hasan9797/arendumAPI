@@ -2,6 +2,7 @@ import prisma from '../config/prisma.js';
 import { regionStatus } from '../enums/Region/regionStatusEnum.js';
 import { structureStatus } from '../enums/structure/structureStatusEnum.js';
 import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
+import redisClient from '../config/redis.js';
 
 const getAll = async (lang, query) => {
   const { page, limit, sort, filters } = query;
@@ -74,7 +75,6 @@ const getAll = async (lang, query) => {
       },
     };
   } catch (error) {
-    console.error('Error get all regions:', error);
     throw error;
   }
 };
@@ -117,7 +117,6 @@ const getById = async (lang, id) => {
 
     return serialazied;
   } catch (error) {
-    console.error('Error fetching region:', error);
     throw error;
   }
 };
@@ -128,26 +127,26 @@ const createRegion = async (newUser) => {
       data: newUser,
     });
   } catch (error) {
-    console.error('Error creating region:', error);
     throw error;
   }
 };
 
 const updateById = async (id, machineData) => {
   try {
-    const updatedUser = await prisma.region.update({
+    await redisClient.del(`region:${id}`);
+
+    return await prisma.region.update({
       where: { id },
       data: machineData,
     });
-    return updatedUser;
   } catch (error) {
-    console.error('Error updating region:', error);
     throw error;
   }
 };
 
 const deleteById = async (id) => {
   try {
+    await redisClient.del(`region:${id}`);
     return await prisma.region.delete({
       where: { id },
     });
@@ -217,10 +216,28 @@ const getRegionStatic = async (lang) => {
 };
 
 const getOne = async (id) => {
+  const cacheKey = `region:${id}`;
   try {
-    return await prisma.region.findUniqueOrThrow({
+    const cachedRegion = await redisClient.get(cacheKey);
+
+    if (cachedRegion) {
+      return JSON.parse(cachedRegion);
+    }
+
+    const region = await prisma.region.findUniqueOrThrow({
       where: { id },
+      select: {
+        id: true,
+        name: true,
+        nameRu: true,
+        nameUz: true,
+        isOpen: true,
+      },
     });
+
+    await redisClient.setEx(cacheKey, 3600, JSON.stringify(region)); // 3600 sekund = 1 soat
+
+    return region;
   } catch (error) {
     throw error;
   }
