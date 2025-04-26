@@ -3,7 +3,7 @@ import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import { OrderStatus, getStatusText } from '../enums/order/orderStatusEnum.js';
 import orderCalculateWorkHelper from '../helpers/orderCalculateWorkHelper.js';
 import orderType from '../enums/order/orderTypeEnum.js';
-import { getAmountTypeText } from '../enums/pay/paymentTypeEnum.js';
+import { getPaymentTypeText } from '../enums/pay/paymentTypeEnum.js';
 import machinePriceService from './machinePrice.service.js';
 import structureService from './structure.service.js';
 import machineService from './machines.service.js';
@@ -19,9 +19,9 @@ const getOrders = async (query, lang = 'ru') => {
 
     const sanitizedOrders = orders.data.map((order) => ({
       ...order,
-      amountType: {
-        id: order.amountType,
-        text: getAmountTypeText(order.amountType),
+      paymentType: {
+        id: order.paymentType,
+        text: getPaymentTypeText(order.paymentType),
       },
       status: { id: order.status, text: getStatusText(order.status) },
     }));
@@ -79,9 +79,9 @@ const createOrder = async (data) => {
 
     const serilizedOrder = {
       ...order,
-      amountType: {
-        id: order.amountType,
-        text: getAmountTypeText(order.amountType),
+      paymentType: {
+        id: order.paymentType,
+        text: getPaymentTypeText(order.paymentType),
       },
       status: { id: order.status, text: getStatusText(order.status) },
     };
@@ -184,9 +184,9 @@ const getNewOrderByDriverParams = async (driverParams, region, structureId) => {
     const sanitizedOrders = orders.map((order) => {
       return {
         ...order,
-        amountType: {
-          id: order.amountType,
-          text: getAmountTypeText(order.amountType),
+        paymentType: {
+          id: order.paymentType,
+          text: getPaymentTypeText(order.paymentType),
         },
         status: { id: order.status, text: getStatusText(order.status) },
       };
@@ -235,9 +235,9 @@ const getOrderByDriverId = async (lang, driverId) => {
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
       return {
         ...rest,
-        amountType: {
-          id: rest.amountType,
-          text: getAmountTypeText(rest.amountType),
+        paymentType: {
+          id: rest.paymentType,
+          text: getPaymentTypeText(rest.paymentType),
         },
         status: { id: rest.status, text: getStatusText(rest.status) },
         startHour: rest.startHour ? rest.startHour.toString() : null,
@@ -273,9 +273,9 @@ const getOrderByClientId = async (lang, clientId) => {
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
       return {
         ...rest,
-        amountType: {
-          id: rest.amountType,
-          text: getAmountTypeText(rest.amountType),
+        paymentType: {
+          id: rest.paymentType,
+          text: getPaymentTypeText(rest.paymentType),
         },
         status: { id: rest.status, text: getStatusText(rest.status) },
         startHour: rest.startHour ? rest.startHour.toString() : null,
@@ -318,9 +318,9 @@ const acceptOrder = async (orderId, driver) => {
 
     const preparedOrder = {
       ...updatedOrder,
-      amountType: {
-        id: updatedOrder.amountType,
-        text: getAmountTypeText(updatedOrder.amountType),
+      paymentType: {
+        id: updatedOrder.paymentType,
+        text: getPaymentTypeText(updatedOrder.paymentType),
       },
       status: {
         id: updatedOrder.status,
@@ -419,9 +419,9 @@ async function orderFormatter(order, lang = 'ru') {
   const sanitizedOrders = ({ driverId, clientId, ...rest }) => {
     return {
       ...rest,
-      amountType: {
-        id: rest.amountType,
-        text: getAmountTypeText(rest.amountType),
+      paymentType: {
+        id: rest.paymentType,
+        text: getPaymentTypeText(rest.paymentType),
       },
       status: { id: rest.status, text: getStatusText(rest.status) },
       machine,

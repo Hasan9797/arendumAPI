@@ -238,7 +238,7 @@ model Order {
   // relation
   machineId         Int?       @map("machine_id")
   amount            Int
-  amountType        Int        @default(1) @map("amount_type")
+  paymentType       Int        @default(1) @map("payment_type")
   status            Int        @default(1)
   startDay          String?    @map("start_day")
   driverArrivedTime String?    @map("driver_arrived_time")
