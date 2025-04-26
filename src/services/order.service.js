@@ -75,14 +75,16 @@ const createOrder = async (data) => {
       throw new Error('Order not created');
     }
 
-    let order = await orderRepo.getCreatedOrder(newOrder.id);
+    const order = await orderRepo.getCreatedOrder(newOrder.id);
 
-    order.amountType = {
-      id: order.amountType,
-      text: getAmountTypeText(order.amountType),
+    const serilizedOrder = {
+      ...order,
+      amountType: {
+        id: order.amountType,
+        text: getAmountTypeText(order.amountType),
+      },
+      status: { id: order.status, text: getStatusText(order.status) },
     };
-    order.status = { id: order.status, text: getStatusText(order.status) };
-
     return order;
   } catch (error) {
     throw error;
@@ -176,21 +178,21 @@ const endOrder = async (orderId) => {
 
 const getNewOrderByDriverParams = async (driverParams, region, structureId) => {
   try {
-    let orders = await orderRepo.getNewOrderBy(region, structureId);
+    const orders = await orderRepo.getNewOrderBy(region, structureId);
     if (!orders) return [];
 
-    orders.forEach((order) => {
-      (order.amountType = {
-        id: order.amountType,
-        text: getAmountTypeText(order.amountType),
-      }),
-        (order.status = {
-          id: order.status,
-          text: getStatusText(order.status),
-        });
+    const sanitizedOrders = orders.map((order) => {
+      return {
+        ...order,
+        amountType: {
+          id: order.amountType,
+          text: getAmountTypeText(order.amountType),
+        },
+        status: { id: order.status, text: getStatusText(order.status) },
+      };
     });
 
-    return filterOrdersByDriverParams(orders, driverParams);
+    return filterOrdersByDriverParams(sanitizedOrders, driverParams);
   } catch (error) {
     throw error;
   }
@@ -315,9 +317,15 @@ const acceptOrder = async (orderId, driver) => {
     }
 
     const preparedOrder = {
-      ...updatedOrder
-      amountType = {id: updatedOrder.amountType, text: getAmountTypeText(updatedOrder.amountType),},
-      status = { id: updatedOrder.status, text: getStatusText(updatedOrder.status) };
+      ...updatedOrder,
+      amountType: {
+        id: updatedOrder.amountType,
+        text: getAmountTypeText(updatedOrder.amountType),
+      },
+      status: {
+        id: updatedOrder.status,
+        text: getStatusText(updatedOrder.status),
+      },
     };
 
     // driver in work
@@ -403,13 +411,9 @@ const cancelOrder = async (orderId) => {
 
 async function orderFormatter(order, lang = 'ru') {
   let machine = {};
-  let machinePrice = {};
 
   if (order?.machineId && order.machineId > 0) {
     machine = await machineService.getMachineById(order.machineId, lang);
-    machinePrice = await machinePriceService.getPriceByMachineId(
-      order.machineId
-    );
   }
 
   const sanitizedOrders = ({ driverId, clientId, ...rest }) => {
@@ -421,8 +425,6 @@ async function orderFormatter(order, lang = 'ru') {
       },
       status: { id: rest.status, text: getStatusText(rest.status) },
       machine,
-      machinePrice,
-      // structure,
     };
   };
 
