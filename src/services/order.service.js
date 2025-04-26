@@ -79,9 +79,9 @@ const createOrder = async (data) => {
 
     order.amountType = {
       id: order.amountType,
-      text: getAmountTypeText(rest.amountType),
+      text: getAmountTypeText(order.amountType),
     };
-    order.status = { id: rest.status, text: getStatusText(rest.status) };
+    order.status = { id: order.status, text: getStatusText(order.status) };
 
     return order;
   } catch (error) {
