@@ -22,6 +22,7 @@ import {
 import machineService from '../../services/machines.service.js';
 import regionService from '../../services/regiosn.service.js';
 import structureService from '../../services/structure.service.js';
+import userBalanceService from '../../services/userBalance.service.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
@@ -59,6 +60,13 @@ const register = async (req, res) => {
       status: DriverStatus.INACTIVE,
       ...req.body,
     });
+
+    if (driver) {
+      await userBalanceService.createBalance({
+        driverId: driver.id,
+        balance: '0',
+      });
+    }
 
     res
       .status(201)
@@ -185,7 +193,7 @@ async function filtersFcmToken(token) {
   });
 
   if (matchedDrivers.length > 0) {
-    const driverIds = matchedDrivers.map(driver => driver.id);
+    const driverIds = matchedDrivers.map((driver) => driver.id);
 
     await prisma.driver.updateMany({
       where: {
