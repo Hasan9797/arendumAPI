@@ -57,6 +57,10 @@ export const StatusOptions = [
     value: OrderStatus.CANCELLED,
     label: StatusTranslations[OrderStatus.CANCELLED],
   },
+  {
+    value: OrderStatus.PLANNED,
+    label: StatusTranslations[OrderStatus.PLANNED],
+  },
   { value: OrderStatus.FAILED, label: StatusTranslations[OrderStatus.FAILED] },
 ];
 

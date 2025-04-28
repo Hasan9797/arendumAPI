@@ -101,6 +101,7 @@ const create = async (req, res) => {
       regionId: client?.regionId,
       structureId: client?.structureId,
     };
+    
     const order = await orderService.createOrder(data);
     res.status(201).json({
       success: true,
