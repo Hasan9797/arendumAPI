@@ -32,13 +32,13 @@ const getOrders = async (query, lang = 'ru') => {
           ...rest,
           machine: machine
             ? {
-                name:
-                  lang === 'ru'
-                    ? machine?.nameRu || null
-                    : machine?.nameUz || null,
-                id: machine?.id || null,
-                img: machine?.img || null,
-              }
+              name:
+                lang === 'ru'
+                  ? machine?.nameRu || null
+                  : machine?.nameUz || null,
+              id: machine?.id || null,
+              img: machine?.img || null,
+            }
             : null,
         };
       }
@@ -230,7 +230,12 @@ const getOrderByDriverId = async (driverId, lang) => {
     const machinePrice = await machinePriceService.getPriceByMachineId(
       order.machineId
     );
-    const structure = await structureService.getById(order.structureId, lang);
+
+    let structure = {}
+
+    if (order?.structureId) {
+      structure = await structureService.getById(order.structureId, lang);
+    }
 
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
       return {
