@@ -81,7 +81,7 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   const timestampSeconds = req.body?.startAt
-    ? Math.floor(new Date(req.body?.startAt).getTime() / 1000)
+    ? String(Math.floor(new Date(req.body?.startAt).getTime() / 1000))
     : null;
 
   try {

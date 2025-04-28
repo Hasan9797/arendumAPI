@@ -240,7 +240,7 @@ model Order {
   amount            Int
   paymentType       Int        @default(1) @map("payment_type")
   status            Int        @default(1)
-  startAt           BigInt?    @map("start_at")
+  startAt           String?    @map("start_at")
   driverArrivedTime String?    @map("driver_arrived_time")
   startHour         String?    @map("start_hour")
   endHour           String?    @map("end_hour")
