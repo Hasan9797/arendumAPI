@@ -47,10 +47,6 @@ const getAll = async (lang, query) => {
 };
 
 const getById = async (lang, id) => {
-  if(!id){
-    
-  }
-
   const structure = await prisma.structure.findUnique({
     where: { id },
   });
