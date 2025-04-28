@@ -16,6 +16,8 @@ const getMachines = async (lang, query) => {
 const getMachineById = async (id, lang = 'ru') => {
   const machine = await machinesRepo.getMachineById(id);
 
+  if (!machine) return {};
+  
   const adjustName = (obj) => {
     return {
       ...obj,
