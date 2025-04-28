@@ -194,7 +194,10 @@ const getNewOrderByDriverParams = async (req, res) => {
     if (!driver) throw new Error('Driver not found');
 
     if (driver.status !== userStatus.ACTIVE) {
-      return res.status(400).json({});
+      return res.status(200).json({
+        success: true,
+        data: [],
+      });
     }
 
     const orders = await orderService.getNewOrderByDriverParams(
