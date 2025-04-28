@@ -218,7 +218,7 @@ function filterOrdersByDriverParams(orders, driverParams) {
   });
 }
 
-const getOrderByDriverId = async (lang, driverId) => {
+const getOrderByDriverId = async (driverId, lang) => {
   try {
     const order = await orderRepo.getOrderByDriverId(driverId);
 
