@@ -126,9 +126,9 @@ const getNewOrderBy = async (region, structureId) => {
   const whereData =
     region.isOpen === true
       ? {
-          regionId: region.id,
-          status: OrderStatus.SEARCHING,
-        }
+        regionId: region.id,
+        status: OrderStatus.SEARCHING,
+      }
       : { structureId: structureId, status: OrderStatus.SEARCHING };
 
   try {
@@ -169,9 +169,10 @@ const getNewOrderBy = async (region, structureId) => {
 
 const getOrderByDriverId = async (driverId) => {
   try {
+    if (!driverId) throw new Error('Driver ID is required');
     return await prisma.order.findFirst({
       where: {
-        driverId: driverId,
+        driverId,
         status: {
           in: [
             OrderStatus.ASSIGNED,
