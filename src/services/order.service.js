@@ -220,7 +220,7 @@ function filterOrdersByDriverParams(orders, driverParams) {
 
 const getOrderByDriverId = async (lang, driverId) => {
   try {
-    const order = await orderRepo.getOrderByDriverId(lang, driverId);
+    const order = await orderRepo.getOrderByDriverId(driverId);
 
     if (!order) {
       return null;
@@ -249,7 +249,6 @@ const getOrderByDriverId = async (lang, driverId) => {
     };
 
     const orderFiltered = formatResponseDates(order);
-
     return sanitizedOrders(orderFiltered);
   } catch (error) {
     throw error;

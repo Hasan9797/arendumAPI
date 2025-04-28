@@ -167,7 +167,7 @@ const getNewOrderBy = async (region, structureId) => {
   }
 };
 
-const getOrderByDriverId = async (lang, driverId) => {
+const getOrderByDriverId = async (driverId) => {
   try {
     return await prisma.order.findFirst({
       where: {
