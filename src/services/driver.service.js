@@ -1,6 +1,8 @@
 import driverRepository from '../repositories/driver.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import { PAYMENT_TYPE } from '../enums/pay/paymentTypeEnum.js';
+import orderService from './order.service.js';
+import SocketService from '../socket/index.js';
 
 const getAll = async (lang, query) => {
   try {
@@ -10,7 +12,6 @@ const getAll = async (lang, query) => {
       pagination: result.pagination,
     };
   } catch (error) {
-    console.error('Error fetching users:', error);
     throw error;
   }
 };
@@ -57,7 +58,6 @@ const create = async (data) => {
   try {
     return await driverRepository.create(data);
   } catch (error) {
-    console.error('Error fetching users:', error);
     throw error;
   }
 };
@@ -66,7 +66,6 @@ const updateById = async (id, data) => {
   try {
     return await driverRepository.updateById(id, data);
   } catch (error) {
-    console.error('Error fetching users:', error);
     throw error;
   }
 };
@@ -103,6 +102,97 @@ const getDriversForNewOrder = async (
   }
 };
 
+const acceptOrder = async (orderId, driver) => {
+  try {
+    const order = await orderService.getCreatedOrder(orderId);
+
+    if (!order) {
+      return null;
+    }
+
+    if (order.status !== OrderStatus.SEARCHING) {
+      return false;
+    }
+
+    const updatedOrder = await orderService.updateOrder(orderId, {
+      status: OrderStatus.ASSIGNED,
+      driverId: driver.id,
+    });
+
+    if (!updatedOrder) {
+      throw new Error('Order update error');
+    }
+
+    const preparedOrder = {
+      ...updatedOrder,
+      paymentType: {
+        id: updatedOrder.paymentType,
+        text: getPaymentTypeText(updatedOrder.paymentType),
+      },
+      status: {
+        id: updatedOrder.status,
+        text: getStatusText(updatedOrder.status),
+      },
+    };
+
+    // driver in work
+    await driverRepository.updateById(driver.id, { inWork: true });
+
+    await redisSetHelper.stopNotificationForOrder(String(orderId));
+    const clientSocket = SocketService.getSocket('client');
+    const DriverSocket = SocketService.getSocket('driver');
+
+    clientSocket.to(`order_room_${orderId}`).emit('orderAccepted', {
+      success: true,
+      driver,
+    });
+
+    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
+      'reloadNewOrders',
+      preparedOrder
+    );
+
+    return {
+      success: true,
+      orderId,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+const driverArrived = async (orderId) => {
+  try {
+    const order = await orderService.getOrderById(orderId);
+
+    if (!order) {
+      return null;
+    }
+
+    const result = await orderService.updateOrder(orderId, {
+      status: OrderStatus.ARRIVED,
+      driverArrivedTime: String(Math.floor(Date.now() / 1000)),
+    });
+
+    if (!result) {
+      throw new Error('Order update error');
+    }
+
+    const clientSocket = SocketService.getSocket('client');
+
+    clientSocket.to(`order_room_${orderId}`).emit('driverArrived', {
+      success: true,
+    }); // 🔹 driverArrived eventi
+
+    return {
+      success: true,
+      orderId,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 function filterDriversByOrderParams(drivers, orderParams) {
   if (!orderParams || orderParams.length === 0) return [];
 
@@ -114,11 +204,12 @@ function filterDriversByOrderParams(drivers, orderParams) {
       const match = driver.params.find((p) => p.key === key);
 
       // driver da shu key bo'lishi va uning params arrayida param bo'lishi kerak
-      return match && Array.isArray(match.params) && match.params.includes(param);
+      return (
+        match && Array.isArray(match.params) && match.params.includes(param)
+      );
     });
   });
 }
-
 
 export default {
   getAll,
@@ -128,4 +219,6 @@ export default {
   updateById,
   deleteById,
   getDriversForNewOrder,
+  acceptOrder,
+  driverArrived,
 };
