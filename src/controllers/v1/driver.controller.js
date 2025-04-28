@@ -50,17 +50,8 @@ const getMe = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const timestampSeconds = req.body?.startAt
-    ? Math.floor(new Date(req.body?.startAt).getTime() / 1000)
-    : null;
-
-  const newData = {
-    ...req.body,
-    startAt: timestampSeconds,
-  };
-
   try {
-    await driverService.create(newData);
+    await driverService.create(req.body);
     res.status(201).json(responseSuccess());
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));

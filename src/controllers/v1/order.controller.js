@@ -80,6 +80,10 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
+  const timestampSeconds = req.body?.startAt
+    ? Math.floor(new Date(req.body?.startAt).getTime() / 1000)
+    : null;
+
   try {
     if (req.user.role != userRoleEnum.CLIENT) {
       throw new Error('User is not Client');
@@ -100,8 +104,9 @@ const create = async (req, res) => {
       clientId: client?.id,
       regionId: client?.regionId,
       structureId: client?.structureId,
+      startAt: timestampSeconds,
     };
-    
+
     const order = await orderService.createOrder(data);
     res.status(201).json({
       success: true,
