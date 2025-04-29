@@ -103,7 +103,7 @@ const getDriversForNewOrder = async (
   }
 };
 
-const acceptOrder = async (orderId, driver) => {
+const acceptOrder = async (orderId, driver = null) => {
   try {
     const order = await orderService.getCreatedOrder(orderId);
 
@@ -117,6 +117,11 @@ const acceptOrder = async (orderId, driver) => {
     ) {
       return false;
     }
+
+    if (!driver || !driver.id) {
+      throw new Error('Driver is not defined or invalid');
+    }
+    console.log('driver', driver);
 
     const updatedOrder = await orderService.updateOrder(orderId, {
       status: OrderStatus.ASSIGNED,
@@ -150,7 +155,7 @@ const acceptOrder = async (orderId, driver) => {
 
     clientSocket.to(`order_room_${orderId}`).emit('orderAccepted', {
       success: true,
-      driver,
+      data: driver,
     });
 
     DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
