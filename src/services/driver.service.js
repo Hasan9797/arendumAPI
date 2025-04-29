@@ -103,7 +103,7 @@ const getDriversForNewOrder = async (
   }
 };
 
-const acceptOrder = async (orderId, driver = null) => {
+const acceptOrder = async (orderId, driverObj) => {
   try {
     const order = await orderService.getCreatedOrder(orderId);
 
@@ -118,14 +118,14 @@ const acceptOrder = async (orderId, driver = null) => {
       return false;
     }
 
-    if (!driver || !driver.id) {
+    if (!driverObj || !driverObj.id) {
       throw new Error('Driver is not defined or invalid');
     }
-    console.log('driver', driver);
+    console.log('driver', driverObj);
 
     const updatedOrder = await orderService.updateOrder(orderId, {
       status: OrderStatus.ASSIGNED,
-      driverId: driver.id,
+      driverId: driverObj.id,
     });
 
     if (!updatedOrder) {
@@ -146,7 +146,7 @@ const acceptOrder = async (orderId, driver = null) => {
 
     if (updatedOrder.startAt === null) {
       // driver in work
-      await driverRepository.updateById(driver.id, { inWork: true });
+      await driverRepository.updateById(driverObj.id, { inWork: true });
     }
 
     await redisSetHelper.stopNotificationForOrder(String(orderId));
@@ -155,7 +155,7 @@ const acceptOrder = async (orderId, driver = null) => {
 
     clientSocket.to(`order_room_${orderId}`).emit('orderAccepted', {
       success: true,
-      data: driver,
+      data: driverObj,
     });
 
     DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
