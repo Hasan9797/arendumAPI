@@ -7,7 +7,6 @@ import { getPaymentTypeText } from '../enums/pay/paymentTypeEnum.js';
 import machinePriceService from './machinePrice.service.js';
 import structureService from './structure.service.js';
 import machineService from './machines.service.js';
-import redisSetHelper from '../helpers/redisSetHelper.js';
 import SocketService from '../socket/index.js';
 import driverService from './driver.service.js';
 

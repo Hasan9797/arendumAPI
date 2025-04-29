@@ -1,4 +1,5 @@
 import driverRepository from '../repositories/driver.repo.js';
+import redisSetHelper from '../helpers/redisSetHelper.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import {
   PAYMENT_TYPE,
