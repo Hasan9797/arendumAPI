@@ -305,8 +305,9 @@ const acceptOrder = async (orderId, driver) => {
     if (!order) {
       return null;
     }
-
-    if (order.status !== OrderStatus.SEARCHING) {
+    console.log(order);
+    
+    if (order?.status !== OrderStatus.SEARCHING) {
       // throw new Error('Order is not searching');
       return false;
     }
