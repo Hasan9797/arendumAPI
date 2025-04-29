@@ -159,7 +159,6 @@ const verifySmsCode = async (req, res) => {
       id: updatedUser.id,
       phone: updatedUser.phone,
       role: userRoleEnum.DRIVER,
-      status: updatedUser?.status,
     };
 
     const accessToken = generateAccessToken(payload);
