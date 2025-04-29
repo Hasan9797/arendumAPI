@@ -3,6 +3,7 @@ import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import { PAYMENT_TYPE } from '../enums/pay/paymentTypeEnum.js';
 import orderService from './order.service.js';
 import SocketService from '../socket/index.js';
+import { OrderStatus } from '../enums/order/orderStatusEnum.js';
 
 const getAll = async (lang, query) => {
   try {
@@ -110,7 +111,10 @@ const acceptOrder = async (orderId, driver) => {
       return null;
     }
 
-    if (order.status !== OrderStatus.SEARCHING) {
+    if (
+      order.status !== OrderStatus.SEARCHING ||
+      order.status !== OrderStatus.PLANNED
+    ) {
       return false;
     }
 
@@ -135,8 +139,10 @@ const acceptOrder = async (orderId, driver) => {
       },
     };
 
-    // driver in work
-    await driverRepository.updateById(driver.id, { inWork: true });
+    if (updatedOrder.startAt === null) {
+      // driver in work
+      await driverRepository.updateById(driver.id, { inWork: true });
+    }
 
     await redisSetHelper.stopNotificationForOrder(String(orderId));
     const clientSocket = SocketService.getSocket('client');

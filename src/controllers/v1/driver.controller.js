@@ -96,9 +96,6 @@ const getProcessOrder = async (req, res) => {
 const acceptOrder = async (req, res) => {
   try {
     const driver = await driverService.getById(req.user.id);
-    console.log('driver ID:', req.user.id);
-
-    console.log(driver);
 
     if (driver?.status !== DriverStatus.ACTIVE) {
       return res
