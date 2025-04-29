@@ -57,12 +57,13 @@ class ClientSocketHandler {
 
         socket.orderId = order.id;
 
-        await orderService.updateOrder(order.id, {
-          status: OrderStatus.SEARCHING,
-        });
+        if (order.status === OrderStatus.NEW) {
+          await orderService.updateOrder(order.id, {
+            status: OrderStatus.SEARCHING,
+          });
+        }
 
         socket.join(`order_room_${order.id}`);
-        console.log('Order created:', order);
 
         const drivers = await driverService.getDriversForNewOrder(
           order.machineId,

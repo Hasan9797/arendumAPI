@@ -241,6 +241,7 @@ model Order {
   paymentType       Int        @default(1) @map("payment_type")
   status            Int        @default(1)
   startAt           String?    @map("start_at")
+  planned           Boolean    @default(false) @map("planned")
   driverArrivedTime String?    @map("driver_arrived_time")
   startHour         String?    @map("start_hour")
   endHour           String?    @map("end_hour")
