@@ -358,10 +358,7 @@ const getCreatedOrder = async (orderId) => {
       preparedOrder
     );
 
-    return {
-      success: true,
-      orderId,
-    };
+    return order;
   } catch (error) {
     throw error;
   }
