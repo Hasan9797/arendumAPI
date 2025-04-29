@@ -104,6 +104,7 @@ const getDriversForNewOrder = async (
 };
 
 const acceptOrder = async (orderId, driver) => {
+  const statusArray = [OrderStatus.SEARCHING, OrderStatus.PLANNED];
   try {
     const order = await orderService.getCreatedOrder(orderId);
 
@@ -111,10 +112,7 @@ const acceptOrder = async (orderId, driver) => {
       return null;
     }
 
-    if (
-      order.status !== OrderStatus.SEARCHING ||
-      order.status !== OrderStatus.PLANNED
-    ) {
+    if (!statusArray.includes(order.status)) {
       return false;
     }
 
