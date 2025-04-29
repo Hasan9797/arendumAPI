@@ -122,7 +122,7 @@ const getById = async (id) => {
             nameUz: true,
             nameRu: true,
             isOpen: true,
-          }
+          },
         },
         balance: {
           select: {
@@ -169,7 +169,7 @@ const deleteById = async (id) => {
     // 2. Redis cache'dan o‘chirish (agar bo‘lsa)
     await redisClient.del(cacheKey);
 
-    return;
+    return true;
   } catch (error) {
     throw error;
   }

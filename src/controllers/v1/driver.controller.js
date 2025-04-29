@@ -82,7 +82,10 @@ const distroy = async (req, res) => {
 const getProcessOrder = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
-    const order = await orderService.getOrderByDriverId(parseInt(req.user.id), lang);
+    const order = await orderService.getOrderByDriverId(
+      parseInt(req.user.id),
+      lang
+    );
     res.status(200).json(responseSuccess(order));
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
@@ -93,10 +96,13 @@ const acceptOrder = async (req, res) => {
   try {
     const driver = await driverService.getById(req.user.id);
 
-    const result = await orderService.acceptOrder(Number(req.query.id), driver);
+    const result = await driverService.acceptOrder(
+      Number(req.query.id),
+      driver
+    );
 
     if (result == null) {
-      return res.status(404).json({ message: 'Order not found', data: null });
+      return res.status(200).json({ message: 'Order not found', data: null });
     }
 
     if (result == false) {
@@ -113,7 +119,7 @@ const acceptOrder = async (req, res) => {
 
 const driverCame = async (req, res) => {
   try {
-    const result = await orderService.driverArrived(Number(req.query.id));
+    const result = await driverService.driverArrived(Number(req.query.id));
     res.status(200).json(responseSuccess(result));
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));

@@ -79,7 +79,6 @@ class ClientSocketHandler {
           });
           return;
         }
-        console.log('drivers:', drivers);
 
         const title = 'New Order';
         const body = 'You have a new order';

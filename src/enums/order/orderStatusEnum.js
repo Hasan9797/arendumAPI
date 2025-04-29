@@ -8,6 +8,7 @@ export const OrderStatus = Object.freeze({
   PAUSE_WORK: 6,
   COMPLETED: 7,
   CLIENT_ACCEPT: 8,
+  PLANNED: 10,
   CANCELLED: 9,
   FAILED: 0,
 });
@@ -22,6 +23,7 @@ const StatusTranslations = {
   7: 'Завершено',
   8: 'Клиент подтверждено',
   9: 'Отменено',
+  10: 'Планируется',
   0: 'Ошибка',
 };
 
@@ -54,6 +56,10 @@ export const StatusOptions = [
   {
     value: OrderStatus.CANCELLED,
     label: StatusTranslations[OrderStatus.CANCELLED],
+  },
+  {
+    value: OrderStatus.PLANNED,
+    label: StatusTranslations[OrderStatus.PLANNED],
   },
   { value: OrderStatus.FAILED, label: StatusTranslations[OrderStatus.FAILED] },
 ];
