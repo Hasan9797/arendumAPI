@@ -57,7 +57,7 @@ class ClientSocketHandler {
 
         socket.orderId = order.id;
 
-        if (order.status === OrderStatus.NEW) {
+        if (order?.startAt === null) {
           await orderService.updateOrder(order.id, {
             status: OrderStatus.SEARCHING,
           });
