@@ -1,9 +1,13 @@
 import driverRepository from '../repositories/driver.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
-import { PAYMENT_TYPE } from '../enums/pay/paymentTypeEnum.js';
+import {
+  PAYMENT_TYPE,
+  getPaymentTypeText,
+} from '../enums/pay/paymentTypeEnum.js';
+
 import orderService from './order.service.js';
 import SocketService from '../socket/index.js';
-import { OrderStatus } from '../enums/order/orderStatusEnum.js';
+import { OrderStatus, getStatusText } from '../enums/order/orderStatusEnum.js';
 
 const getAll = async (lang, query) => {
   try {
