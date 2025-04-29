@@ -318,50 +318,6 @@ const getCreatedOrder = async (orderId) => {
     if (!order) {
       return null;
     }
-    console.log(order);
-
-    if (order?.status !== OrderStatus.SEARCHING) {
-      // throw new Error('Order is not searching');
-      return false;
-    }
-
-    const updatedOrder = await orderRepo.updateById(orderId, {
-      status: OrderStatus.ASSIGNED,
-      driverId: driver.id,
-    });
-
-    if (!updatedOrder) {
-      throw new Error('Order update error');
-    }
-
-    const preparedOrder = {
-      ...updatedOrder,
-      paymentType: {
-        id: updatedOrder.paymentType,
-        text: getPaymentTypeText(updatedOrder.paymentType),
-      },
-      status: {
-        id: updatedOrder.status,
-        text: getStatusText(updatedOrder.status),
-      },
-    };
-
-    // driver in work
-    await driverService.updateById(driver.id, { inWork: true });
-
-    await redisSetHelper.stopNotificationForOrder(String(orderId));
-    const clientSocket = SocketService.getSocket('client');
-    const DriverSocket = SocketService.getSocket('driver');
-
-    clientSocket.to(`order_room_${orderId}`).emit('orderAccepted', {
-      success: true,
-      driver,
-    });
-
-    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
-      'reloadNewOrders',
-      preparedOrder
-    );
 
     return order;
   } catch (error) {

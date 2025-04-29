@@ -111,54 +111,52 @@ const acceptOrder = async (orderId, driver) => {
       return null;
     }
 
-    // if (
-    //   order.status !== OrderStatus.SEARCHING ||
-    //   order.status !== OrderStatus.PLANNED
-    // ) {
-    //   return false;
-    // }
+    if (
+      order.status !== OrderStatus.SEARCHING ||
+      order.status !== OrderStatus.PLANNED
+    ) {
+      return false;
+    }
 
-    // console.log('driver', driver);
+    const updatedOrder = await orderService.updateOrder(orderId, {
+      status: OrderStatus.ASSIGNED,
+      driverId: driver.id,
+    });
 
-    // const updatedOrder = await orderService.updateOrder(orderId, {
-    //   status: OrderStatus.ASSIGNED,
-    //   driverId: driver.id,
-    // });
+    if (!updatedOrder) {
+      throw new Error('Order update error');
+    }
 
-    // if (!updatedOrder) {
-    //   throw new Error('Order update error');
-    // }
+    const preparedOrder = {
+      ...updatedOrder,
+      paymentType: {
+        id: updatedOrder.paymentType,
+        text: getPaymentTypeText(updatedOrder.paymentType),
+      },
+      status: {
+        id: updatedOrder.status,
+        text: getStatusText(updatedOrder.status),
+      },
+    };
 
-    // const preparedOrder = {
-    //   ...updatedOrder,
-    //   paymentType: {
-    //     id: updatedOrder.paymentType,
-    //     text: getPaymentTypeText(updatedOrder.paymentType),
-    //   },
-    //   status: {
-    //     id: updatedOrder.status,
-    //     text: getStatusText(updatedOrder.status),
-    //   },
-    // };
+    if (updatedOrder.startAt === null) {
+      // driver in work
+      await driverRepository.updateById(driver.id, { inWork: true });
+    }
 
-    // if (updatedOrder.startAt === null) {
-    //   // driver in work
-    //   await driverRepository.updateById(driver.id, { inWork: true });
-    // }
+    await redisSetHelper.stopNotificationForOrder(String(orderId));
+    const clientSocket = SocketService.getSocket('client');
+    const DriverSocket = SocketService.getSocket('driver');
 
-    // await redisSetHelper.stopNotificationForOrder(String(orderId));
-    // const clientSocket = SocketService.getSocket('client');
-    // const DriverSocket = SocketService.getSocket('driver');
+    clientSocket.to(`order_room_${orderId}`).emit('orderAccepted', {
+      success: true,
+      driver,
+    });
 
-    // clientSocket.to(`order_room_${orderId}`).emit('orderAccepted', {
-    //   success: true,
-    //   data: driver,
-    // });
-
-    // DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
-    //   'reloadNewOrders',
-    //   preparedOrder
-    // );
+    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
+      'reloadNewOrders',
+      preparedOrder
+    );
 
     return {
       success: true,
