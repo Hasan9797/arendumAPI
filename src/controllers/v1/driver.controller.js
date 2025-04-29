@@ -103,9 +103,10 @@ const acceptOrder = async (req, res) => {
         .json({ message: 'Driver is inactive', data: null });
     }
 
-    const result = await driverService.acceptOrder(Number(req.query.id), {
-      ...driver,
-    });
+    const result = await driverService.acceptOrder(
+      Number(req.query.id),
+      driver
+    );
 
     if (result == null) {
       return res.status(200).json({ message: 'Order not found', data: null });
