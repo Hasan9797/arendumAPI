@@ -4,6 +4,7 @@ import {
   responseError,
 } from '../../helpers/responseHelper.js';
 import orderService from '../../services/order.service.js';
+import { DriverStatus } from '../../enums/driver/driverStatusEnum.js';
 
 const getAll = async (req, res) => {
   const query = {
@@ -94,6 +95,10 @@ const getProcessOrder = async (req, res) => {
 
 const acceptOrder = async (req, res) => {
   try {
+    if (req.user.status != DriverStatus.ACTIVE) {
+      return res.status(400).json({ message: 'Driver is inactive', data: null });
+    }
+
     const driver = await driverService.getById(req.user.id);
 
     const result = await driverService.acceptOrder(
