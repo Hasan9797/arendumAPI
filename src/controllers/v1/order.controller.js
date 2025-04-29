@@ -3,7 +3,7 @@ import userRoleEnum from '../../enums/user/userRoleEnum.js';
 import { userStatus } from '../../enums/user/userStatusEnum.js';
 import clientService from '../../services/client.service.js';
 import driverService from '../../services/driver.service.js';
-
+import { OrderStatus } from '../../enums/order/orderStatusEnum.js';
 import {
   responseSuccess,
   responseError,
@@ -203,7 +203,41 @@ const getNewOrderByDriverParams = async (req, res) => {
     const orders = await orderService.getNewOrderByDriverParams(
       driver?.params,
       driver?.region,
-      driver?.structureId
+      driver?.structureId,
+      OrderStatus.SEARCHING
+    );
+    res.status(200).json({
+      success: true,
+      data: orders,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+};
+
+const getNewPlannedOrderByDriverParams = async (req, res) => {
+  try {
+    const driver = await driverService.getById(req.user.id);
+    if (!driver) throw new Error('Driver not found');
+
+    if (driver.status !== userStatus.ACTIVE) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+      });
+    }
+
+    const orders = await orderService.getNewOrderByDriverParams(
+      driver?.params,
+      driver?.region,
+      driver?.structureId,
+      OrderStatus.PLANNED
     );
     res.status(200).json({
       success: true,
@@ -245,5 +279,6 @@ export default {
   orderStartWork,
   orderEndWork,
   getNewOrderByDriverParams,
+  getNewPlannedOrderByDriverParams,
   orderCancel,
 };

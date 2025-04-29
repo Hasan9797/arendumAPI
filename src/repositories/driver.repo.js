@@ -1,7 +1,10 @@
 import prisma from '../config/prisma.js';
-import { getDriverStatusText } from '../enums/driver/driverStatusEnum.js';
-import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
 import redisClient from '../config/redis.js';
+import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
+import {
+  getDriverStatusText,
+  DriverStatus,
+} from '../enums/driver/driverStatusEnum.js';
 
 const findAll = async (lang, query) => {
   const { page, limit, sort, filters = [] } = query;
@@ -240,6 +243,9 @@ const getDriversForNotification = async (
     // whereData ni dinamik yaratish
     const whereData = {
       machineId,
+      status: DriverStatus.ACTIVE,
+      inWork: false,
+      isOnline: true,
       ...(region.isOpen ? { regionId: region.id } : { structureId }),
       ...(legal === true && { legal }),
     };

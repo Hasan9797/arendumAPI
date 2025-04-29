@@ -122,14 +122,14 @@ const deleteById = async (id) => {
   }
 };
 
-const getNewOrderBy = async (region, structureId) => {
+const getNewOrder = async (region, structureId, status) => {
   const whereData =
     region.isOpen === true
       ? {
           regionId: region.id,
-          status: OrderStatus.SEARCHING,
+          status,
         }
-      : { structureId: structureId, status: OrderStatus.SEARCHING };
+      : { structureId: structureId, status };
 
   try {
     return await prisma.order.findMany({
@@ -362,7 +362,7 @@ export default {
   deleteById,
   getOrderByDriverId,
   getOrderByClientId,
-  getNewOrderBy,
+  getNewOrder,
   getOrderForCalculate,
   getOrderForSchedule,
 };

@@ -184,9 +184,14 @@ const endOrder = async (orderId) => {
   }
 };
 
-const getNewOrderByDriverParams = async (driverParams, region, structureId) => {
+const getNewOrderByDriverParams = async (
+  driverParams,
+  region,
+  structureId,
+  status
+) => {
   try {
-    const orders = await orderRepo.getNewOrderBy(region, structureId);
+    const orders = await orderRepo.getNewOrder(region, structureId, status);
     if (!orders) return [];
 
     const sanitizedOrders = orders.map((order) => {
@@ -314,7 +319,7 @@ const getCreatedOrder = async (orderId) => {
       return null;
     }
     console.log(order);
-    
+
     if (order?.status !== OrderStatus.SEARCHING) {
       // throw new Error('Order is not searching');
       return false;
@@ -441,6 +446,12 @@ async function orderFormatter(order, lang = 'ru') {
   const formattedOrders = formatResponseDates(order);
   return sanitizedOrders(formattedOrders);
 }
+
+const getNewPlannedOrderByDriverParams = async (
+  params,
+  regionId,
+  structureId
+) => {};
 
 export default {
   getOrders,

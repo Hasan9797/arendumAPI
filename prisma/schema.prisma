@@ -65,6 +65,11 @@ model Driver {
 
   //index
   @@index([id])
+  @@index([status])
+  @@index([isOnline])
+  @@index([inWork])
+  // @@index([regionId])
+  @@index([machineId])
 }
 
 model Client {
