@@ -248,6 +248,5 @@ export default {
   orderStartWork,
   orderEndWork,
   getNewOrderByDriverParams,
-  getNewPlannedOrderByDriverParams,
   orderCancel,
 };
