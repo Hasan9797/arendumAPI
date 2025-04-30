@@ -37,10 +37,18 @@ const register = async (req, res) => {
         .json({ message: 'Client not found for Register', success: false });
     }
 
-    await clientService.updateClient(req.user.id, {
+    const client = await clientService.updateClient(req.user.id, {
       status: ClientStatus.ACTIVE,
       ...req.body,
     });
+
+    if (client) {
+      await userBalanceService.createBalance({
+        clientId: client.id,
+        balance: '0',
+      });
+    }
+
     res.status(201).json(responseSuccess());
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
