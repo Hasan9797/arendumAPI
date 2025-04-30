@@ -220,6 +220,11 @@ function filterDriversByOrderParams(drivers, orderParams) {
   });
 }
 
+//Driverga order qabul qilaolishini tekshirish
+function canTakeNewOrder(driverId) {
+
+}
+
 export default {
   getAll,
   getById,

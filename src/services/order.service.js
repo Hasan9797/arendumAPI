@@ -31,13 +31,13 @@ const getOrders = async (query, lang = 'ru') => {
           ...rest,
           machine: machine
             ? {
-                name:
-                  lang === 'ru'
-                    ? machine?.nameRu || null
-                    : machine?.nameUz || null,
-                id: machine?.id || null,
-                img: machine?.img || null,
-              }
+              name:
+                lang === 'ru'
+                  ? machine?.nameRu || null
+                  : machine?.nameUz || null,
+              id: machine?.id || null,
+              img: machine?.img || null,
+            }
             : null,
         };
       }
@@ -165,6 +165,9 @@ const endOrder = async (orderId) => {
       default:
         updateData;
     }
+
+    // 2. Driver boshqa zakas lar uchun ochiq
+    await driverService.updateById(order.driverId, { inWork: false });
 
     const clientSocket = SocketService.getSocket('client');
 
@@ -406,7 +409,7 @@ const getNewPlannedOrderByDriverParams = async (
   params,
   regionId,
   structureId
-) => {};
+) => { };
 
 export default {
   getOrders,
