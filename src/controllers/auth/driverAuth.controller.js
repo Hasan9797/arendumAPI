@@ -23,6 +23,7 @@ import machineService from '../../services/machines.service.js';
 import regionService from '../../services/regiosn.service.js';
 import structureService from '../../services/structure.service.js';
 import userBalanceService from '../../services/userBalance.service.js';
+import { normalizePhoneNumber } from '../../helpers/phoneHelper.js';
 
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
@@ -89,6 +90,13 @@ const login = async (req, res) => {
   }
 
   try {
+    if (!normalizePhoneNumber(phoneNumber)) {
+      return res.status(400).json({
+        message: 'Invalid phone number',
+        success: false,
+      });
+    };
+
     const user = await prisma.driver.findUnique({
       where: { phone: phoneNumber },
     });
@@ -205,6 +213,6 @@ async function filtersFcmToken(token) {
   }
 }
 
-const logOut = async (req, res) => {};
+const logOut = async (req, res) => { };
 
 export default { login, verifySmsCode, register };

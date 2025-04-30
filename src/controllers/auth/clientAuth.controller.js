@@ -25,6 +25,8 @@ import {
   responseError,
 } from '../../helpers/responseHelper.js';
 
+import { normalizePhoneNumber } from '../../helpers/phoneHelper.js';
+
 const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
 
 const register = async (req, res) => {
@@ -46,14 +48,14 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
+  const { phoneNumber } = req.body;
   try {
-    const { phoneNumber } = req.body;
-
-    if (!phoneNumber) {
-      return res
-        .status(400)
-        .json({ message: 'phoneNumber is required', success: false });
-    }
+    if (!normalizePhoneNumber(phoneNumber)) {
+      return res.status(400).json({
+        message: 'Invalid phone number',
+        success: false,
+      });
+    };
 
     const user = await prisma.client.findUnique({
       where: { phone: phoneNumber },
@@ -139,6 +141,6 @@ const verifySmsCode = async (req, res) => {
   }
 };
 
-const logOut = async (req, res) => {};
+const logOut = async (req, res) => { };
 
 export default { login, verifySmsCode, register };
