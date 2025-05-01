@@ -390,10 +390,9 @@ const cancelOrder = async (orderId) => {
       message: 'Order cancelled',
     });
 
-    DriverSocket.to(`drivers_room_${result.regionId}_${result.machineId}`).emit(
-      'reloadNewOrders',
-      order
-    );
+    driverSocket
+      .to(`drivers_room_${order.regionId}_${order.machineId}`)
+      .emit('reloadNewOrders', order);
     return result;
   } catch (error) {
     throw error;
