@@ -126,10 +126,10 @@ const getNewOrder = async (region, structureId, status) => {
   const whereData =
     region.isOpen === true
       ? {
-          regionId: region.id,
-          status,
-        }
-      : { structureId: structureId, status };
+        regionId: region.id,
+        status: status,
+      }
+      : { structureId: structureId, status: status };
 
   try {
     return await prisma.order.findMany({
