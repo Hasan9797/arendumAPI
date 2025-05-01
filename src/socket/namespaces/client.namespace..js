@@ -86,9 +86,9 @@ class ClientSocketHandler {
         let orderTotalAmount = order.totalAmount;
 
         if (order.type === 'hour') {
-          orderTotalAmount = order.totalAmount * order.hourCount;
+          orderTotalAmount = order.amount * order.hourCount;
         } else if (order.type === 'km') {
-          orderTotalAmount = order.totalAmount * order.kmCount;
+          orderTotalAmount = order.amount * order.kmCount;
         }
 
         const title = 'New Order';
@@ -97,6 +97,7 @@ class ClientSocketHandler {
           key: 'new_order',
           order: JSON.stringify({
             ...order,
+            amount: orderTotalAmount,
             totalAmount: orderTotalAmount,
           }),
         };
