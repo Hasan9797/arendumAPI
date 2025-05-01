@@ -31,13 +31,13 @@ const getOrders = async (query, lang = 'ru') => {
           ...rest,
           machine: machine
             ? {
-              name:
-                lang === 'ru'
-                  ? machine?.nameRu || null
-                  : machine?.nameUz || null,
-              id: machine?.id || null,
-              img: machine?.img || null,
-            }
+                name:
+                  lang === 'ru'
+                    ? machine?.nameRu || null
+                    : machine?.nameUz || null,
+                id: machine?.id || null,
+                img: machine?.img || null,
+              }
             : null,
         };
       }
@@ -369,6 +369,20 @@ const cancelOrder = async (orderId) => {
       throw new Error('Order update error');
     }
 
+    const order = await orderRepo.getCreatedOrder(orderId);
+
+    const preparedOrder = {
+      ...updatedOrder,
+      paymentType: {
+        id: order.paymentType,
+        text: getPaymentTypeText(order.paymentType),
+      },
+      status: {
+        id: order.status,
+        text: getStatusText(order.status),
+      },
+    };
+
     const driverSocket = SocketService.getSocket('driver');
 
     driverSocket.to(`order_room_${orderId}`).emit('cancelOrder', {
@@ -376,6 +390,10 @@ const cancelOrder = async (orderId) => {
       message: 'Order cancelled',
     });
 
+    DriverSocket.to(`drivers_room_${result.regionId}_${result.machineId}`).emit(
+      'reloadNewOrders',
+      order
+    );
     return result;
   } catch (error) {
     throw error;
@@ -409,7 +427,7 @@ const getNewPlannedOrderByDriverParams = async (
   params,
   regionId,
   structureId
-) => { };
+) => {};
 
 export default {
   getOrders,

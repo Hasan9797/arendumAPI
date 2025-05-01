@@ -91,6 +91,12 @@ const getDriversForNewOrder = async (
   orderParams,
   paymentType
 ) => {
+  console.log('orderParams', orderParams);
+  console.log('paymentType', paymentType);
+  console.log('region', region);
+  console.log('structureId', structureId);
+  console.log('machineId', machineId);
+
   try {
     if (!region) throw new Error('Region is required');
     const legal = paymentType === PAYMENT_TYPE.ACCOUNT ? true : false;
@@ -221,9 +227,7 @@ function filterDriversByOrderParams(drivers, orderParams) {
 }
 
 //Driverga order qabul qilaolishini tekshirish
-function canTakeNewOrder(driverId) {
-
-}
+function canTakeNewOrder(driverId) {}
 
 export default {
   getAll,

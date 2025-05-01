@@ -50,6 +50,8 @@ class ClientSocketHandler {
         socket.emit('inRoom', { success: true, orderId });
       });
 
+      console.log(order);
+      
       socket.on('createOrder', async (order) => {
         if (!order || typeof order.id !== 'number') {
           throw new Error('orderId is required');
@@ -72,7 +74,8 @@ class ClientSocketHandler {
           order.params,
           order.paymentType.id
         );
-
+        console.log('drivers:', drivers);
+        
         if (drivers.length === 0) {
           socket.emit('driverNotFound', {
             success: false,
