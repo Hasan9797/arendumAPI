@@ -14,7 +14,7 @@ import {
 import userRoleEnum from '../../enums/user/userRoleEnum.js';
 import { updateOrCreateUserToken } from '../../repositories/userToken.repo.js';
 import clientService from '../../services/client.service.js';
-
+import userBalanceService from '../../services/userBalance.service.js';
 import {
   ClientStatus,
   getClientStatusText,
