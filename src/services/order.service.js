@@ -372,7 +372,7 @@ const cancelOrder = async (orderId) => {
     const order = await orderRepo.getCreatedOrder(orderId);
 
     const preparedOrder = {
-      ...updatedOrder,
+      ...order,
       paymentType: {
         id: order.paymentType,
         text: getPaymentTypeText(order.paymentType),

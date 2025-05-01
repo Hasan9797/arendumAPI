@@ -41,7 +41,8 @@ const register = async (req, res) => {
       status: ClientStatus.ACTIVE,
       ...req.body,
     });
-
+    console.log(client);
+    
     if (client) {
       await userBalanceService.createBalance({
         clientId: client.id,

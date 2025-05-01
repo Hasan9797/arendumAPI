@@ -40,7 +40,6 @@ const getById = async (req, res) => {
     );
     res.status(200).json(responseSuccess(client));
   } catch (error) {
-    console.error('Error fetching client:', error);
     res.status(500).json(error);
   }
 };
@@ -54,7 +53,6 @@ const getMe = async (req, res) => {
     );
     res.status(200).json(responseSuccess(client));
   } catch (error) {
-    console.error('Error fetching client:', error);
     res.status(500).json(error);
   }
 };
