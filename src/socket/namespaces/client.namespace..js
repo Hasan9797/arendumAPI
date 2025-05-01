@@ -83,11 +83,22 @@ class ClientSocketHandler {
           return;
         }
 
+        let orderTotalAmount = order.totalAmount;
+
+        if (order.type === 'hour') {
+          orderTotalAmount = order.totalAmount * order.hourCount;
+        } else if (order.type === 'km') {
+          orderTotalAmount = order.totalAmount * order.kmCount;
+        }
+
         const title = 'New Order';
         const body = 'You have a new order';
         const data = {
           key: 'new_order',
-          order: JSON.stringify(order),
+          order: JSON.stringify({
+            ...order,
+            totalAmount: orderTotalAmount,
+          }),
         };
 
         await redisSetHelper.startNotificationForOrder(String(order.id));
