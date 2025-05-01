@@ -14,18 +14,18 @@ export const sendNotification = async (fcmToken, title, body, data) => {
       notification: { title, body },
       data,
       token: fcmToken,
-      // android: {
-      //   notification: {
-      //     sound: 'default',
-      //   },
-      // },
-      // apns: {
-      //   payload: {
-      //     aps: {
-      //       sound: 'default',
-      //     },
-      //   },
-      // },
+      android: {
+        notification: {
+          sound: 'default',
+        },
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: 'default',
+          },
+        },
+      },
     };
 
     const result = await messaging.send(message);
