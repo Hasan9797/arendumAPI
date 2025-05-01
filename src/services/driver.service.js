@@ -137,18 +137,18 @@ const acceptOrder = async (orderId, driver) => {
     }
 
     const preparedOrder = {
-      ...updatedOrder,
+      ...order,
       paymentType: {
-        id: updatedOrder.paymentType,
-        text: getPaymentTypeText(updatedOrder.paymentType),
+        id: order.paymentType,
+        text: getPaymentTypeText(order.paymentType),
       },
       status: {
-        id: updatedOrder.status,
-        text: getStatusText(updatedOrder.status),
+        id: order.status,
+        text: getStatusText(order.status),
       },
     };
 
-    if (updatedOrder.startAt === null) {
+    if (order.startAt === null) {
       // driver in work
       await driverRepository.updateById(driver.id, { inWork: true });
     }
