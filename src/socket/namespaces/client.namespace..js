@@ -83,7 +83,7 @@ class ClientSocketHandler {
           return;
         }
 
-        let orderTotalAmount = order.totalAmount;
+        let orderTotalAmount = order.amount;
 
         if (order.type === 'hour') {
           orderTotalAmount = order.amount * order.hourCount;

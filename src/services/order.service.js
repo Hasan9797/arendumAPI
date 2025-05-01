@@ -197,8 +197,17 @@ const getNewOrderByDriverParams = async (
     if (!orders) return [];
 
     const sanitizedOrders = orders.map((order) => {
+      let orderTotalAmount = order.amount;
+
+      if (order.type === 'hour') {
+        orderTotalAmount = order.amount * order.hourCount;
+      } else if (order.type === 'km') {
+        orderTotalAmount = order.amount * order.kmCount;
+      }
+
       return {
         ...order,
+        totalAmount: orderTotalAmount,
         paymentType: {
           id: order.paymentType,
           text: getPaymentTypeText(order.paymentType),
