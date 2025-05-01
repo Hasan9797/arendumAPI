@@ -403,7 +403,7 @@ model ServiceCommission {
   id                Int      @id @default(autoincrement())
   ndsAmount         Int      @map("nds_amount")
   ndsPercentage     Boolean  @default(false) @map("nds_percentage")
-  arendumAmount     Int      @map("arendum_amount")
+  arendumAmount     Int      @default(0) @map("arendum_amount")
   arendumPercentage Boolean  @default(false) @map("arendum_percentage")
   status            Int      @default(1)
   driverBalance     Int      @map("driver_balance")

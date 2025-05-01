@@ -7,7 +7,7 @@
 */
 -- AlterTable
 ALTER TABLE "ServiceCommission" DROP COLUMN "service_amount",
-ADD COLUMN     "arendum_amount" INTEGER NOT NULL,
+ADD COLUMN "arendum_amount" INTEGER NOT NULL DEFAULT 0,
 ADD COLUMN     "arendum_percentage" BOOLEAN NOT NULL DEFAULT false,
 ADD COLUMN     "nds_percentage" BOOLEAN NOT NULL DEFAULT false;
 
