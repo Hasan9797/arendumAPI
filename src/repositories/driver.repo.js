@@ -115,7 +115,7 @@ const create = async (newDriver) => {
 
 const getById = async (id) => {
   try {
-    return await prisma.driver.findUnique({
+    const driver = await prisma.driver.findUnique({
       where: { id },
       include: {
         region: {
@@ -134,6 +134,7 @@ const getById = async (id) => {
         },
       },
     });
+    return { ...driver, balance: driver.balance?.balance ?? '0' };
   } catch (error) {
     throw error;
   }

@@ -11,7 +11,7 @@ export const sendNotification = async (fcmToken, title, body, data) => {
     }
 
     const message = {
-      notification: { title, body },
+      notification: { title, body, sound: 'default' },
       data,
       token: fcmToken,
     };
