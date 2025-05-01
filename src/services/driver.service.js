@@ -143,8 +143,8 @@ const acceptOrder = async (orderId, driver) => {
         text: getPaymentTypeText(order.paymentType),
       },
       status: {
-        id: order.status,
-        text: getStatusText(order.status),
+        id: updatedOrder.status,
+        text: getStatusText(updatedOrder.status),
       },
     };
 
