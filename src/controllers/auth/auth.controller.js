@@ -4,13 +4,14 @@ import prisma from '../../config/prisma.js';
 import {
   generateAccessToken,
   generateRefreshToken,
+  verifyToken,
 } from '../../helpers/jwtTokenHelper.js';
-
+import {
+  getUserTokenByUserId,
+  updateUserToken,
+} from '../../repositories/userToken.repo.js';
 import { ROLE_NAME } from '../../enums/user/userRoleEnum.js';
-import { updateOrCreateUserToken } from '../../repositories/userToken.repo.js';
-
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+import { blockUserAccessToken } from '../../helpers/jwtTokenHelper.js';
 
 // Login
 const login = async (req, res) => {
@@ -40,17 +41,7 @@ const login = async (req, res) => {
       role: user.role,
     };
 
-    const accessToken = generateAccessToken(payload);
-
-    // const refreshToken = generateRefreshToken(payload);
-
-    // const userToken = {
-    //   token: refreshToken,
-    //   userId: user.id,
-    //   expire: '7d',
-    // };
-
-    // await updateOrCreateUserToken(userToken);
+    const accessToken = generateAccessToken(payload, '1d');
 
     return res.status(200).json({
       message: 'Login successful',
@@ -61,7 +52,6 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
@@ -77,11 +67,9 @@ const refreshToken = async (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(userRefreshToken, JWT_REFRESH_SECRET);
+    const decoded = verifyToken(userRefreshToken);
 
-    const currentRefreshToken = await prisma.userToken.findFirst({
-      where: { token: userRefreshToken },
-    });
+    const currentRefreshToken = await getUserTokenByUserId(decoded.id);
 
     if (!currentRefreshToken) {
       return res.status(401).json({ message: 'Invalid credentials' });
@@ -109,10 +97,24 @@ const logout = async (req, res) => {
       return res.status(400).json({ message: 'No token provided' });
     }
 
+    // Tokenni dekod qilish
+    const decoded = verifyToken(token);
+    const userId = decoded.id;
+
+    // Tokenni blocked qilish
+    const now = Math.floor(Date.now() / 1000);
+    const ttl = decoded.exp - now;
+
+    if (ttl > 0) {
+      await blockUserAccessToken(userId, ttl);
+    }
+
+    // UserToken modelidan user_id ga mos tokenni o'chirish
+    await updateUserToken(userId, null, true);
+
     return res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
-    console.error('Logout error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(401).json({ message: 'Token invalid' });
   }
 };
 

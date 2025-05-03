@@ -9,11 +9,14 @@ import {
 import {
   generateAccessToken,
   generateRefreshToken,
+  verifyToken,
 } from '../../helpers/jwtTokenHelper.js';
 
 import userRoleEnum from '../../enums/user/userRoleEnum.js';
 import driverService from '../../services/driver.service.js';
+
 import { updateOrCreateUserToken } from '../../repositories/userToken.repo.js';
+
 import {
   DriverStatus,
   getDriverStatusText,
@@ -25,7 +28,7 @@ import structureService from '../../services/structure.service.js';
 import userBalanceService from '../../services/userBalance.service.js';
 import { normalizePhoneNumber } from '../../helpers/phoneHelper.js';
 
-const SMS_CODE_EXPIRATION = 5 * 60 * 1000; // 5 daqiqa
+const expiresAt = 5 * 60; // 5 daqiqa = 300 soniya
 
 const register = async (req, res) => {
   try {
@@ -95,7 +98,7 @@ const login = async (req, res) => {
         message: 'Invalid phone number',
         success: false,
       });
-    };
+    }
 
     const user = await prisma.driver.findUnique({
       where: { phone: phoneNumber },
@@ -108,7 +111,6 @@ const login = async (req, res) => {
     }
     // SMS code generation
     const smsCode = 777777; // Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = Date.now() + SMS_CODE_EXPIRATION;
 
     // Save the SMS code temporarily
     await saveSmsCode(phoneNumber, smsCode, expiresAt);
@@ -212,7 +214,5 @@ async function filtersFcmToken(token) {
     });
   }
 }
-
-const logOut = async (req, res) => { };
 
 export default { login, verifySmsCode, register };

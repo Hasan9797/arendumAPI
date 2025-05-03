@@ -175,10 +175,10 @@ model BankCard {
 
 model UserToken {
   id        Int      @id @default(autoincrement())
-  token     String
+  token     String?
   expire    String
-  userId    Int      @map("user_id")
-  status    Int      @default(0)
+  userId    Int      @unique @map("user_id")
+  status    Int      @default(1)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }

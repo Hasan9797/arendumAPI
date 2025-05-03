@@ -138,10 +138,10 @@ CREATE TABLE "BankCard" (
 -- CreateTable
 CREATE TABLE "UserToken" (
     "id" SERIAL NOT NULL,
-    "token" TEXT NOT NULL,
+    "token" TEXT,
     "expire" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL,
-    "status" INTEGER NOT NULL DEFAULT 0,
+    "status" INTEGER NOT NULL DEFAULT 1,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -198,8 +198,9 @@ CREATE TABLE "Order" (
     "driver_id" INTEGER,
     "machine_id" INTEGER,
     "amount" INTEGER NOT NULL,
-    "amount_type" INTEGER NOT NULL DEFAULT 1,
+    "payment_type" INTEGER NOT NULL DEFAULT 1,
     "status" INTEGER NOT NULL DEFAULT 1,
+    "start_at" TEXT,
     "driver_arrived_time" TEXT,
     "start_hour" TEXT,
     "end_hour" TEXT,
@@ -319,7 +320,9 @@ CREATE TABLE "Transaction" (
 CREATE TABLE "ServiceCommission" (
     "id" SERIAL NOT NULL,
     "nds_amount" INTEGER NOT NULL,
-    "service_amount" INTEGER NOT NULL,
+    "nds_percentage" BOOLEAN NOT NULL DEFAULT false,
+    "arendum_amount" INTEGER NOT NULL DEFAULT 0,
+    "arendum_percentage" BOOLEAN NOT NULL DEFAULT false,
     "status" INTEGER NOT NULL DEFAULT 1,
     "driver_balance" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -341,13 +344,46 @@ CREATE UNIQUE INDEX "Driver_phone_key" ON "Driver"("phone");
 CREATE UNIQUE INDEX "Driver_email_key" ON "Driver"("email");
 
 -- CreateIndex
+CREATE INDEX "Driver_id_idx" ON "Driver"("id");
+
+-- CreateIndex
+CREATE INDEX "Driver_status_idx" ON "Driver"("status");
+
+-- CreateIndex
+CREATE INDEX "Driver_is_online_idx" ON "Driver"("is_online");
+
+-- CreateIndex
+CREATE INDEX "Driver_in_work_idx" ON "Driver"("in_work");
+
+-- CreateIndex
+CREATE INDEX "Driver_machine_id_idx" ON "Driver"("machine_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Client_phone_key" ON "Client"("phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");
 
 -- CreateIndex
+CREATE INDEX "Client_id_idx" ON "Client"("id");
+
+-- CreateIndex
+CREATE INDEX "Machines_id_idx" ON "Machines"("id");
+
+-- CreateIndex
+CREATE INDEX "MachineParams_id_idx" ON "MachineParams"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserToken_user_id_key" ON "UserToken"("user_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Merchant_phone_key" ON "Merchant"("phone");
+
+-- CreateIndex
+CREATE INDEX "Region_id_idx" ON "Region"("id");
+
+-- CreateIndex
+CREATE INDEX "Structure_id_idx" ON "Structure"("id");
 
 -- CreateIndex
 CREATE INDEX "Order_id_idx" ON "Order"("id");
@@ -365,7 +401,13 @@ CREATE INDEX "Order_client_id_idx" ON "Order"("client_id");
 CREATE INDEX "Order_driver_id_idx" ON "Order"("driver_id");
 
 -- CreateIndex
+CREATE INDEX "OrderPause_id_idx" ON "OrderPause"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "MachinePrice_machine_id_key" ON "MachinePrice"("machine_id");
+
+-- CreateIndex
+CREATE INDEX "MachinePrice_id_idx" ON "MachinePrice"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "UserBalance_client_id_key" ON "UserBalance"("client_id");

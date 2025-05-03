@@ -42,7 +42,7 @@ const register = async (req, res) => {
       ...req.body,
     });
     console.log(client);
-    
+
     if (client) {
       await userBalanceService.createBalance({
         clientId: client.id,
@@ -64,7 +64,7 @@ const login = async (req, res) => {
         message: 'Invalid phone number',
         success: false,
       });
-    };
+    }
 
     const user = await prisma.client.findUnique({
       where: { phone: phoneNumber },
@@ -150,6 +150,6 @@ const verifySmsCode = async (req, res) => {
   }
 };
 
-const logOut = async (req, res) => { };
+const logOut = async (req, res) => {};
 
 export default { login, verifySmsCode, register };

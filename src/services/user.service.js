@@ -1,6 +1,7 @@
 import userRepository from '../repositories/user.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import bcrypt from 'bcryptjs';
+import { deleteUserTokenByUserId } from '../repositories/userToken.repo.js';
 
 const getUsers = async (query) => {
   try {
@@ -41,8 +42,9 @@ const updateUser = async (id, data) => {
   return await userRepository.updateUserById(id, data);
 };
 
-const deleteUser = async (id) => {
-  return await userRepository.deleteUserById(id);
+const deleteUser = async (userId) => {
+  await deleteUserTokenByUserId(userId);
+  return await userRepository.deleteUserById(userId);
 };
 
 export default {

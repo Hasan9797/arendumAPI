@@ -1,5 +1,6 @@
 import clientRepository from '../repositories/client.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
+import { deleteUserRefreshTokenByUserId } from '../repositories/userToken.repo.js';
 
 const getClients = async (lang, query) => {
   const result = await clientRepository.findAll(lang, query);
@@ -20,7 +21,7 @@ const getById = async (id) => {
 
 const getClientById = async (id, lang) => {
   try {
-    if(!id) return null;
+    if (!id) return null;
 
     const client = await clientRepository.getByIdRelation(id, lang);
     return formatResponseDates(client);
@@ -42,8 +43,9 @@ const updateClient = async (id, data) => {
   }
 };
 
-const deleteClient = async (id) => {
-  return await clientRepository.deleteClientById(id);
+const deleteClient = async (clientId) => {
+  await deleteUserRefreshTokenByUserId(clientId);
+  return await clientRepository.deleteClientById(clientId);
 };
 
 export default {
