@@ -7,7 +7,7 @@ import cors from 'cors';
 import SocketService from './socket/index.js';
 import { Server } from 'socket.io';
 import errorHandler from './middlewares/errorHandler.js';
-import { ApiError } from './Errors/appErrors.js';
+import { CustomError } from './Errors/customError.js';
 
 dotenv.config();
 
@@ -77,7 +77,7 @@ app.use('/api/deposit', depositRoute);
 
 // 404 middleware
 app.use((req, res, next) => {
-  next(ApiError.notFound('API Route Not Found'));
+  next(CustomError.notFoundError('API Route Not Found'));
 });
 
 // Global error handling middleware’ni qo‘shish
