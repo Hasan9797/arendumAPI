@@ -25,6 +25,7 @@ export const createUserToken = async (body) => {
       data: {
         userId: parseInt(body.userId),
         token: body.token,
+        expire: body.expire
       },
     });
   } catch (error) {
