@@ -9,7 +9,7 @@ import {
 import orderService from './order.service.js';
 import SocketService from '../socket/index.js';
 import { OrderStatus, getStatusText } from '../enums/order/orderStatusEnum.js';
-import { deleteUserRefreshTokenByUserId } from '../repositories/userToken.repo.js';
+import { deleteUserTokenByUserId } from '../repositories/userToken.repo.js';
 
 const getAll = async (lang, query) => {
   try {
@@ -79,7 +79,7 @@ const updateById = async (id, data) => {
 
 const deleteById = async (driverId) => {
   try {
-    await deleteUserRefreshTokenByUserId(driverId);
+    await deleteUserTokenByUserId(driverId);
     return await driverRepository.deleteById(driverId);
   } catch (error) {
     throw error;

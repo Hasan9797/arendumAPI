@@ -3,7 +3,7 @@ import PayCreateRequest from './requests/payCreateRequest.js';
 import PayPreConfirmRequest from './requests/payPreConfirmRequest.js';
 import transactionService from '../transaction.service.js';
 import transactionStatusEnum from '../../enums/transaction/transactionStatusEnum.js';
-import { PartnerError } from '../../Errors/partnerErrors.js';
+import { CustomError } from '../../Errors/customError.js';
 
 const updateTransaction = async (transactionId, updateData) => {
   try {
@@ -60,7 +60,7 @@ const payCreate = async (requestDTO) => {
         status: transactionStatusEnum.STATUS_ERROR,
         response: JSON.stringify({ pay_create: response.getError() }),
       });
-      throw PartnerError.parnerResponseError(
+      throw CustomError.parnerResponseError(
         response.getError().message,
         response.getError().code
       );
@@ -110,7 +110,7 @@ const payPreConfirm = async (transaction) => {
         status: transactionStatusEnum.STATUS_ERROR,
         response: JSON.stringify({ pay_pre_confirm: response.getError() }),
       });
-      throw PartnerError.parnerResponseError(
+      throw CustomError.parnerResponseError(
         response.getError().message,
         response.getError().code
       );
@@ -156,7 +156,7 @@ const payConfirm = async (transaction) => {
         status: transactionStatusEnum.STATUS_ERROR,
         response: JSON.stringify({ pay_confirm: response.getError() }),
       });
-      throw PartnerError.parnerResponseError(
+      throw CustomError.parnerResponseError(
         response.getError().message,
         response.getError().code
       );
