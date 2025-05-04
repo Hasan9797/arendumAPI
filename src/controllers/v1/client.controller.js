@@ -26,7 +26,6 @@ const getAll = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(error);
   }
 };
@@ -44,7 +43,7 @@ const getById = async (req, res) => {
   }
 };
 
-const getMe = async (req, res) => {
+const getMe = async (req, res, next) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
     const client = await clientService.getClientById(
@@ -53,7 +52,7 @@ const getMe = async (req, res) => {
     );
     res.status(200).json(responseSuccess(client));
   } catch (error) {
-    res.status(500).json(error);
+    next(error);
   }
 };
 
@@ -62,7 +61,6 @@ const create = async (req, res) => {
     await clientService.createClient(req.body);
     res.status(201).json(responseSuccess());
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(error);
   }
 };
@@ -75,7 +73,6 @@ const update = async (req, res) => {
     );
     res.status(200).json(responseSuccess());
   } catch (error) {
-    console.error('Error fetching users:', error);
     res.status(500).json(error);
   }
 };

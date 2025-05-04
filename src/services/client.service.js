@@ -1,6 +1,7 @@
 import clientRepository from '../repositories/client.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import { deleteUserTokenByUserId } from '../repositories/userToken.repo.js';
+import { CustomError } from '../Errors/customError.js';
 
 const getClients = async (lang, query) => {
   const result = await clientRepository.findAll(lang, query);
@@ -10,9 +11,9 @@ const getClients = async (lang, query) => {
   };
 };
 
-const getById = async (id) => {
+const getById = async (clientId) => {
   try {
-    const client = await clientRepository.getById(id);
+    const client = await clientRepository.getById(clientId);
     return formatResponseDates(client);
   } catch (error) {
     throw error;
@@ -21,7 +22,7 @@ const getById = async (id) => {
 
 const getClientById = async (id, lang) => {
   try {
-    if (!id) return null;
+    if (!id) throw CustomError.authFailedError();
 
     const client = await clientRepository.getByIdRelation(id, lang);
     return formatResponseDates(client);

@@ -353,16 +353,17 @@ const getOrderForSchedule = async () => {
   }
 };
 
-const getPlannedOrder = async () => {
-  const now = Date.now(); // Hozirgi vaqt millisekundda
-  const oneHourLater = now + 1 * 60 * 60 * 1000; // 1 soat keyingi vaqt
-
+const getPlannedOrder = async (driverId) => {
   try {
-    return await prisma.order.findMany({
+    return await prisma.order.findFirst({
       where: {
+        driverId,
         startAt: {
           not: null,
         },
+      },
+      orderBy: {
+        createdAt: 'asc', // eng birinchi yaratilgani (eskiroq)
       },
     });
   } catch (error) {

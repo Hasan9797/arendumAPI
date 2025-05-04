@@ -67,7 +67,9 @@ const cardConfirm = async (user, transactionId, smsCode) => {
     const driverId = user.role == userRoleEnum.DRIVER ? user.id : null;
 
     if (!clientId && !driverId) {
-      throw CustomError.validationError('Invalid user role or user not found');
+      throw CustomError.validationError(
+        'Invalid users role, must be client or driver'
+      );
     }
 
     if (response.isOk()) {
