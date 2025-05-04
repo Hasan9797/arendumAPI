@@ -168,7 +168,6 @@ const deleteById = async (id) => {
 
     // 2. Redis cache'dan o‘chirish (agar bo‘lsa)
     await redisClient.del(cacheKey);
-
     return true;
   } catch (error) {
     throw error;

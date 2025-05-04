@@ -2,10 +2,7 @@ import driverRepository from '../repositories/driver.repo.js';
 import redisSetHelper from '../helpers/redisSetHelper.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import { CustomError } from '../Errors/customError.js';
-import {
-  PAYMENT_TYPE,
-  getPaymentTypeText,
-} from '../enums/pay/paymentTypeEnum.js';
+import { PAYMENT_TYPE, getPaymentTypeText } from '../enums/pay/paymentTypeEnum.js';
 
 import orderService from './order.service.js';
 import SocketService from '../socket/index.js';
@@ -25,9 +22,11 @@ const getAll = async (lang, query) => {
   }
 };
 
-const getById = async (id) => {
+const getById = async (driverId) => {
   try {
-    const driver = await driverRepository.getById(id);
+    if (!driverId) return null;
+
+    const driver = await driverRepository.getById(driverId);
     return formatResponseDates(driver);
   } catch (error) {
     throw error;
@@ -88,29 +87,12 @@ const deleteById = async (driverId) => {
   }
 };
 
-const getDriversForNewOrder = async (
-  machineId,
-  region,
-  structureId,
-  orderParams,
-  paymentType
-) => {
-  console.log('orderParams', orderParams);
-  console.log('paymentType', paymentType);
-  console.log('region', region);
-  console.log('structureId', structureId);
-  console.log('machineId', machineId);
-
+const getDriversForNewOrder = async (machineId, region, structureId, orderParams, paymentType) => {
   try {
     if (!region) throw new Error('Region is required');
     const legal = paymentType === PAYMENT_TYPE.ACCOUNT ? true : false;
 
-    const drivers = await driverRepository.getDriversForNotification(
-      machineId,
-      region,
-      structureId,
-      legal
-    );
+    const drivers = await driverRepository.getDriversForNotification(machineId, region, structureId, legal);
 
     return filterDriversByOrderParams(drivers, orderParams);
   } catch (error) {
@@ -121,6 +103,12 @@ const getDriversForNewOrder = async (
 const acceptOrder = async (orderId, driver) => {
   const statusArray = [OrderStatus.SEARCHING, OrderStatus.PLANNED];
   try {
+    const isPlanned = await orderService.isPlannedOrder(driver.id);
+
+    if (isPlanned) {
+      throw CustomError.validationError('У вас назначена встреча через 2 часа.');
+    }
+
     const order = await orderService.getCreatedOrder(orderId);
 
     if (!order) {
@@ -166,10 +154,7 @@ const acceptOrder = async (orderId, driver) => {
       driver,
     });
 
-    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
-      'reloadNewOrders',
-      preparedOrder
-    );
+    DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', preparedOrder);
 
     return {
       success: true,
@@ -223,15 +208,10 @@ function filterDriversByOrderParams(drivers, orderParams) {
       const match = driver.params.find((p) => p.key === key);
 
       // driver da shu key bo'lishi va uning params arrayida param bo'lishi kerak
-      return (
-        match && Array.isArray(match.params) && match.params.includes(param)
-      );
+      return match && Array.isArray(match.params) && match.params.includes(param);
     });
   });
 }
-
-//Driverga order qabul qilaolishini tekshirish
-function canTakeNewOrder(driverId) {}
 
 export default {
   getAll,

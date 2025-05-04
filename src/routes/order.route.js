@@ -9,7 +9,12 @@ import userRole from '../enums/user/userRoleEnum.js';
 
 const router = Router();
 
-const allowedRoles = [userRole.ADMIN, userRole.CLIENT, userRole.DRIVER];
+const allowedRoles = [
+  userRole.ADMIN,
+  userRole.CLIENT,
+  userRole.DRIVER,
+  userRole.SUPER_ADMIN,
+];
 
 router.get(
   '/',

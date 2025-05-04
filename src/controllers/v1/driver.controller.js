@@ -1,8 +1,5 @@
 import driverService from '../../services/driver.service.js';
-import {
-  responseSuccess,
-  responseError,
-} from '../../helpers/responseHelper.js';
+import { responseSuccess, responseError } from '../../helpers/responseHelper.js';
 import orderService from '../../services/order.service.js';
 import { DriverStatus } from '../../enums/driver/driverStatusEnum.js';
 
@@ -61,10 +58,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const user = await driverService.updateById(
-      parseInt(req.params.id),
-      req.body
-    );
+    const user = await driverService.updateById(parseInt(req.params.id), req.body);
     res.status(200).json(responseSuccess());
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
@@ -83,10 +77,7 @@ const distroy = async (req, res) => {
 const getProcessOrder = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
-    const order = await orderService.getOrderByDriverId(
-      parseInt(req.user.id),
-      lang
-    );
+    const order = await orderService.getOrderByDriverId(parseInt(req.user.id), lang);
     res.status(200).json(responseSuccess(order));
   } catch (error) {
     res.status(500).json(responseError(error.message, 500));
@@ -94,28 +85,24 @@ const getProcessOrder = async (req, res) => {
 };
 
 const acceptOrder = async (req, res) => {
-  try {
-    const driver = await driverService.getById(req.user.id);
+  const orderId = parseInt(req.params.id) ?? 0;
+  const driverId = parseInt(req.user.id) ?? 0;
 
-    if (driver?.status !== DriverStatus.ACTIVE) {
-      return res
-        .status(400)
-        .json({ message: 'Driver is inactive', data: null });
+  try {
+    const driver = await driverService.getById(driverId);
+
+    if (driver?.status !== DriverStatus.ACTIVE || !orderId) {
+      return res.status(400).json({ message: 'Driver is inactive or Order ID is invalid', data: null });
     }
 
-    const result = await driverService.acceptOrder(
-      Number(req.query.id),
-      driver
-    );
+    const result = await driverService.acceptOrder(orderId, driver);
 
     if (result == null) {
       return res.status(200).json({ message: 'Order not found', data: null });
     }
 
     if (result == false) {
-      return res
-        .status(400)
-        .json({ message: 'Order already accepted', data: null });
+      return res.status(400).json({ message: 'Order already accepted', data: null });
     }
 
     res.status(200).json(responseSuccess(result));

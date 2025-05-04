@@ -174,12 +174,7 @@ const getOrderByDriverId = async (driverId) => {
       where: {
         driverId,
         status: {
-          in: [
-            OrderStatus.ASSIGNED,
-            OrderStatus.ARRIVED,
-            OrderStatus.START_WORK,
-            OrderStatus.PAUSE_WORK,
-          ],
+          in: [OrderStatus.ASSIGNED, OrderStatus.ARRIVED, OrderStatus.START_WORK, OrderStatus.PAUSE_WORK],
         },
       },
       include: {
@@ -215,12 +210,7 @@ const getOrderByClientId = async (clientId) => {
       where: {
         clientId,
         status: {
-          in: [
-            OrderStatus.ASSIGNED,
-            OrderStatus.ARRIVED,
-            OrderStatus.START_WORK,
-            OrderStatus.PAUSE_WORK,
-          ],
+          in: [OrderStatus.ASSIGNED, OrderStatus.ARRIVED, OrderStatus.START_WORK, OrderStatus.PAUSE_WORK],
         },
       },
       include: {
@@ -353,11 +343,12 @@ const getOrderForSchedule = async () => {
   }
 };
 
-const getPlannedOrder = async (driverId) => {
+const getPlannedOrderByDriverId = async (driverId) => {
   try {
     return await prisma.order.findFirst({
       where: {
         driverId,
+        status: OrderStatus.ASSIGNED,
         startAt: {
           not: null,
         },
@@ -383,5 +374,5 @@ export default {
   getNewOrder,
   getOrderForCalculate,
   getOrderForSchedule,
-  getPlannedOrder,
+  getPlannedOrderByDriverId,
 };

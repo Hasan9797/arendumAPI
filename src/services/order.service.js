@@ -25,23 +25,18 @@ const getOrders = async (query, lang = 'ru') => {
       status: { id: order.status, text: getStatusText(order.status) },
     }));
 
-    const data = sanitizedOrders.map(
-      ({ driverId, clientId, machineId, machine, ...rest }) => {
-        return {
-          ...rest,
-          machine: machine
-            ? {
-                name:
-                  lang === 'ru'
-                    ? machine?.nameRu || null
-                    : machine?.nameUz || null,
-                id: machine?.id || null,
-                img: machine?.img || null,
-              }
-            : null,
-        };
-      }
-    );
+    const data = sanitizedOrders.map(({ driverId, clientId, machineId, machine, ...rest }) => {
+      return {
+        ...rest,
+        machine: machine
+          ? {
+              name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
+              id: machine?.id || null,
+              img: machine?.img || null,
+            }
+          : null,
+      };
+    });
 
     return {
       data: formatResponseDates(data),
@@ -159,8 +154,7 @@ const endOrder = async (orderId) => {
         });
         break;
       case orderType.km:
-        updateData =
-          await orderCalculateWorkHelper.calculateWorkKmAmount(order);
+        updateData = await orderCalculateWorkHelper.calculateWorkKmAmount(order);
         break;
       default:
         updateData;
@@ -186,12 +180,7 @@ const endOrder = async (orderId) => {
   }
 };
 
-const getNewOrderByDriverParams = async (
-  driverParams,
-  region,
-  structureId,
-  status
-) => {
+const getNewOrderByDriverParams = async (driverParams, region, structureId, status) => {
   try {
     const orders = await orderRepo.getNewOrder(region, structureId, status);
     if (!orders) return [];
@@ -225,12 +214,7 @@ const getNewOrderByDriverParams = async (
 function filterOrdersByDriverParams(orders, driverParams) {
   if (!driverParams) return [];
 
-  const driverMap = new Map(
-    driverParams.map((d) => [
-      d.key,
-      Array.isArray(d.params) ? d.params : [d.params],
-    ])
-  );
+  const driverMap = new Map(driverParams.map((d) => [d.key, Array.isArray(d.params) ? d.params : [d.params]]));
 
   return orders.filter((order) => {
     if (!order.params || !Array.isArray(order.params)) return false; // 🔹 order.params yo‘q bo‘lsa, o‘tib ketish
@@ -251,9 +235,7 @@ const getOrderByDriverId = async (driverId, lang) => {
     }
 
     const machine = await machineService.getMachineById(order.machineId, lang);
-    const machinePrice = await machinePriceService.getPriceByMachineId(
-      order.machineId
-    );
+    const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
 
     let structure = {};
 
@@ -293,9 +275,7 @@ const getOrderByClientId = async (lang, clientId) => {
     }
 
     const machine = await machineService.getMachineById(order.machineId, lang);
-    const machinePrice = await machinePriceService.getPriceByMachineId(
-      order.machineId
-    );
+    const machinePrice = await machinePriceService.getPriceByMachineId(order.machineId);
     const structure = await structureService.getById(order.structureId, lang);
 
     const sanitizedOrders = ({ driverId, clientId, machineId, ...rest }) => {
@@ -392,6 +372,10 @@ const cancelOrder = async (orderId) => {
       },
     };
 
+    if (order.driverId) {
+      await driverService.updateById(order.driverId, { inWork: false });
+    }
+
     const driverSocket = SocketService.getSocket('driver');
 
     driverSocket.to(`order_room_${orderId}`).emit('cancelOrder', {
@@ -399,9 +383,7 @@ const cancelOrder = async (orderId) => {
       message: 'Order cancelled',
     });
 
-    driverSocket
-      .to(`drivers_room_${order.regionId}_${order.machineId}`)
-      .emit('reloadNewOrders', preparedOrder);
+    driverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', preparedOrder);
     return result;
   } catch (error) {
     throw error;
@@ -431,18 +413,18 @@ async function orderFormatter(order, lang = 'ru') {
   return sanitizedOrders(formattedOrders);
 }
 
-const checkPlannedOrderByDriverParams = async (
-  params,
-  regionId,
-  structureId
-) => {
+const isPlannedOrder = async (driverId) => {
   try {
-    const order = await orderRepo.getPlannedOrder(
-      params,
-      regionId,
-      structureId
-    );
-    return order;
+    const order = await orderRepo.getPlannedOrderByDriverId(driverId);
+    if (!order || !order.startAt) {
+      return false;
+    }
+    // if order is less than 2 hours
+    const expiresAt = Number(order.startAt);
+    const now = Math.floor(Date.now() / 1000);
+    const remainingSeconds = expiresAt - now;
+
+    return remainingSeconds <= 7200 && remainingSeconds > 0; // 2 hours
   } catch (error) {
     throw error;
   }
@@ -461,4 +443,5 @@ export default {
   getOrderByClientId,
   getNewOrderByDriverParams,
   cancelOrder,
+  isPlannedOrder,
 };
