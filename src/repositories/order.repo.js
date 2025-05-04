@@ -360,7 +360,9 @@ const getPlannedOrder = async () => {
   try {
     return await prisma.order.findMany({
       where: {
-        startAt: '!='  null,
+        startAt: {
+          not: null,
+        },
       },
     });
   } catch (error) {
