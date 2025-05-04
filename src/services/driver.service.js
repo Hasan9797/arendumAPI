@@ -1,6 +1,7 @@
 import driverRepository from '../repositories/driver.repo.js';
 import redisSetHelper from '../helpers/redisSetHelper.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
+import { CustomError } from '../Errors/customError.js';
 import {
   PAYMENT_TYPE,
   getPaymentTypeText,
@@ -35,7 +36,7 @@ const getById = async (id) => {
 const getProfile = async (lang, id) => {
   const driver = await driverRepository.getDriverProfile(id);
 
-  if (!driver) return {};
+  if (!driver) throw CustomError.authFailedError();
 
   const formattedDriver = formatResponseDates(driver);
 

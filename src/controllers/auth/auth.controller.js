@@ -9,6 +9,7 @@ import {
 import {
   getUserTokenByUserId,
   updateUserToken,
+  updateOrCreateUserToken,
 } from '../../repositories/userToken.repo.js';
 import { ROLE_NAME } from '../../enums/user/userRoleEnum.js';
 import { blockUserAccessToken } from '../../helpers/jwtTokenHelper.js';
@@ -43,6 +44,12 @@ const login = async (req, res) => {
 
     const accessToken = generateAccessToken(payload, '1d');
 
+    await updateOrCreateUserToken({
+      userId: user.id,
+      accessToken,
+      refreshToken: null,
+    });
+
     return res.status(200).json({
       message: 'Login successful',
       accessToken,
@@ -52,7 +59,7 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -78,6 +85,12 @@ const refreshToken = async (req, res) => {
     const newAccessToken = generateAccessToken({
       id: decoded.id,
       role: decoded.role,
+    });
+
+    await updateOrCreateUserToken({
+      userId: decoded.id,
+      accessToken: newAccessToken,
+      refreshToken: currentRefreshToken?.refreshToken,
     });
 
     return res
@@ -106,15 +119,19 @@ const logout = async (req, res) => {
     const ttl = decoded.exp - now;
 
     if (ttl > 0) {
-      await blockUserAccessToken(userId, ttl);
+      await blockUserAccessToken(token, ttl);
     }
 
     // UserToken modelidan user_id ga mos tokenni o'chirish
-    await updateUserToken(userId, null, true);
+    await updateUserToken({
+      userId,
+      accessToken: null,
+      refreshToken: null,
+    });
 
     return res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
-    return res.status(401).json({ message: 'Token invalid' });
+    return res.status(401).json({ message: error.message });
   }
 };
 

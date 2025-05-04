@@ -10,7 +10,7 @@ export const updateOrCreateUserToken = async (body) => {
     });
 
     if (currentUserToken) {
-      await updateUserToken(body.userId, body.token);
+      await updateUserToken(body);
     } else {
       await createUserToken(body);
     }
@@ -22,26 +22,21 @@ export const updateOrCreateUserToken = async (body) => {
 export const createUserToken = async (body) => {
   try {
     await prisma.userToken.create({
-      data: {
-        userId: parseInt(body.userId),
-        token: body.token,
-        expire: body.expire
-      },
+      data: body,
     });
   } catch (error) {
     throw error;
   }
 };
 
-export const updateUserToken = async (userId, token, isBlock = false) => {
+export const updateUserToken = async (body) => {
   try {
-    if (isBlock) {
-      await blockUserAccessToken(userId);
-    }
-
     await prisma.userToken.update({
-      where: { userId: parseInt(userId) },
-      data: { token },
+      where: { userId: parseInt(body.userId) },
+      data: {
+        accessToken: body?.accessToken,
+        refreshToken: body?.refreshToken,
+      },
     });
   } catch (error) {
     throw error;
@@ -62,7 +57,7 @@ export const deleteUserTokenByUserId = async (userId) => {
           userId: parseInt(userId),
         },
       });
-      await blockUserAccessToken(userId);
+      await blockUserAccessToken(currentUserToken.accessToken);
     }
   } catch (error) {
     throw error;
@@ -76,7 +71,8 @@ export const getUserTokenByUserId = async (userId) => {
         userId: parseInt(userId),
       },
       select: {
-        token: true,
+        accessToken: true,
+        refreshToken: true,
       },
     });
 

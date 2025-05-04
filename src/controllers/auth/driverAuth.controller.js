@@ -176,9 +176,9 @@ const verifySmsCode = async (req, res) => {
     const refreshToken = generateRefreshToken(payload);
 
     const userToken = {
-      token: refreshToken,
       userId: user.id,
-      expire: '7d',
+      accessToken,
+      refreshToken,
     };
 
     await updateOrCreateUserToken(userToken);

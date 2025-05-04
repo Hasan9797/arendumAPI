@@ -23,6 +23,6 @@ router.post('/client/verify-code', clientAuthController.verifySmsCode);
 
 // Refresh Token and Logout for All users
 router.post('/refresh-token', authController.refreshToken);
-router.get('/logout', authController.logout);
+router.get('/logout', authentication, authController.logout);
 
 export default router;

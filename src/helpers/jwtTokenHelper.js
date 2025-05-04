@@ -15,12 +15,12 @@ export const verifyToken = (token) => {
   return jwt.verify(token, JWT_SECRET);
 };
 
-export const blockUserAccessToken = async (userId, expiresAt = 3600) => {
-  const key = `blocked_user_:${userId}`;
-  await redisClient.set(key, token, { EX: expiresAt }); // 1 hour in 3600 seconds
+export const blockUserAccessToken = async (accessToken, expiresAt = 3600) => {
+  const key = `blocked_user_:${accessToken}`;
+  await redisClient.set(key, String(accessToken), { EX: expiresAt }); // 1 hour in 3600 seconds
 };
 
-export const getBlockedAccessToken = async (userId) => {
-  const key = `blocked_user_:${userId}`;
+export const getBlockedAccessToken = async (accessToken) => {
+  const key = `blocked_user_:${accessToken}`;
   return await redisClient.get(key); // Blocked token or null
 };

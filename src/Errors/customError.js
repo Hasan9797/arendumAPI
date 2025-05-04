@@ -14,7 +14,7 @@ export class CustomError extends Error {
     return new CustomError(message, 404);
   }
 
-  static partnerAuthFailedError(message = 'Unauthorized access') {
+  static authFailedError(message = 'Unauthorized access') {
     return new CustomError(message, 401);
   }
 

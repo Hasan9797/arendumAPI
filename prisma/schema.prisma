@@ -174,13 +174,13 @@ model BankCard {
 }
 
 model UserToken {
-  id        Int      @id @default(autoincrement())
-  token     String?
-  expire    String
-  userId    Int      @unique @map("user_id")
-  status    Int      @default(1)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id           Int      @id @default(autoincrement())
+  accessToken  String?  @map("access_token")
+  refreshToken String?  @map("refresh_token")
+  userId       Int      @unique @map("user_id")
+  status       Int      @default(1)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 }
 
 model Merchant {
