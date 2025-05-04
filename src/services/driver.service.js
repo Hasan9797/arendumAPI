@@ -37,9 +37,7 @@ const getById = async (id) => {
 const getProfile = async (lang, id) => {
   const driver = await driverRepository.getDriverProfile(id);
 
-  if (!driver || driver.role != userRoleEnum.DRIVER) {
-    throw CustomError.authFailedError();
-  }
+  if (!driver) throw CustomError.authFailedError();
 
   const formattedDriver = formatResponseDates(driver);
 
