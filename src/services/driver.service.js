@@ -11,6 +11,7 @@ import orderService from './order.service.js';
 import SocketService from '../socket/index.js';
 import { OrderStatus, getStatusText } from '../enums/order/orderStatusEnum.js';
 import { deleteUserTokenByUserId } from '../repositories/userToken.repo.js';
+import { userRoleEnum } from '../enums/user/userRoleEnum.js';
 
 const getAll = async (lang, query) => {
   try {
@@ -36,7 +37,9 @@ const getById = async (id) => {
 const getProfile = async (lang, id) => {
   const driver = await driverRepository.getDriverProfile(id);
 
-  if (!driver) throw CustomError.authFailedError();
+  if (!driver || driver.role != userRoleEnum.DRIVER) {
+    throw CustomError.authFailedError();
+  }
 
   const formattedDriver = formatResponseDates(driver);
 
