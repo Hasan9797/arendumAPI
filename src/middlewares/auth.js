@@ -14,11 +14,11 @@ export const authentication = async (req, res, next) => {
 
     const decode = verifyToken(token);
 
-    const isBlocked = await getBlockedAccessToken(decode.id);
+    //const isBlocked = await getBlockedAccessToken(decode.id);
 
-    if (isBlocked) {
-      throw new Error('Access denied, token is blocked', 401);
-    }
+    //if (isBlocked) {
+      //throw new Error('Access denied, token is blocked', 401);
+    //}
 
     req.user = decode;
     next();
