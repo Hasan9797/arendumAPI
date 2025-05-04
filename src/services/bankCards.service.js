@@ -5,6 +5,7 @@ import CardConfirmRequest from './pay/requests/cardConfirmRequest.js';
 import userRoleEnum from '../enums/user/userRoleEnum.js';
 import CardRemoveRequest from './pay/requests/cardRemoveRequest.js';
 import CardListRequest from './pay/requests/cardListRequest.js';
+import { CustomError } from '../Errors/customError.js';
 
 const getAll = async (query) => {
   const bankCards = await bankCardRepo.getAll(query);
@@ -64,6 +65,10 @@ const cardConfirm = async (user, transactionId, smsCode) => {
 
     const clientId = user.role == userRoleEnum.CLIENT ? user.id : null;
     const driverId = user.role == userRoleEnum.DRIVER ? user.id : null;
+
+    if (!clientId && !driverId) {
+      throw CustomError.validationError('Invalid user role or user not found');
+    }
 
     if (response.isOk()) {
       const result = await bankCardRepo.createBankCard(

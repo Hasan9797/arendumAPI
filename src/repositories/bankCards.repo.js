@@ -23,13 +23,14 @@ const getAll = async (query) => {
             fullName: true,
             phone: true,
           },
-        }, driver: {
+        },
+        driver: {
           select: {
             id: true,
             fullName: true,
             phone: true,
           },
-        }
+        },
       },
     });
 
@@ -60,13 +61,14 @@ const getById = async (id) => {
             fullName: true,
             phone: true,
           },
-        }, driver: {
+        },
+        driver: {
           select: {
             id: true,
             fullName: true,
             phone: true,
           },
-        }
+        },
       },
     });
 
@@ -102,6 +104,7 @@ const getByDriverId = async (driverId) => {
 
 const createBankCard = async (driverId, clientId, body) => {
   try {
+
     return await prisma.bankCard.create({
       data: {
         driverId,

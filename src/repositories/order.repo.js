@@ -126,9 +126,9 @@ const getNewOrder = async (region, structureId, status) => {
   const whereData =
     region.isOpen === true
       ? {
-        regionId: region.id,
-        status: status,
-      }
+          regionId: region.id,
+          status: status,
+        }
       : { structureId: structureId, status: status };
 
   try {
@@ -353,6 +353,21 @@ const getOrderForSchedule = async () => {
   }
 };
 
+const getPlannedOrder = async () => {
+  const now = Date.now(); // Hozirgi vaqt millisekundda
+  const oneHourLater = now + 1 * 60 * 60 * 1000; // 1 soat keyingi vaqt
+
+  try {
+    return await prisma.order.findMany({
+      where: {
+        startAt: '!='  null,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   findAll,
   getById,
@@ -365,4 +380,5 @@ export default {
   getNewOrder,
   getOrderForCalculate,
   getOrderForSchedule,
+  getPlannedOrder,
 };

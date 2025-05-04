@@ -6,7 +6,7 @@ export class CustomError extends Error {
     this.code = code; // PartnersAPI uchun xato kodi
   }
 
-  static partnerValidationError(message = 'Validation failed') {
+  static validationError(message = 'Validation failed') {
     return new CustomError(message, 400);
   }
 

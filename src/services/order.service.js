@@ -431,11 +431,22 @@ async function orderFormatter(order, lang = 'ru') {
   return sanitizedOrders(formattedOrders);
 }
 
-const getNewPlannedOrderByDriverParams = async (
+const checkPlannedOrderByDriverParams = async (
   params,
   regionId,
   structureId
-) => {};
+) => {
+  try {
+    const order = await orderRepo.getPlannedOrder(
+      params,
+      regionId,
+      structureId
+    );
+    return order;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export default {
   getOrders,
