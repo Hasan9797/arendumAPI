@@ -77,25 +77,36 @@ const refreshToken = async (req, res) => {
     const decoded = verifyToken(userRefreshToken);
 
     const currentRefreshToken = await getUserTokenByUserId(decoded.id);
-    
+
     if (!currentRefreshToken) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const newAccessToken = generateAccessToken({
       id: decoded.id,
+      phone: decoded?.phone ?? null,
+      role: decoded.role,
+    });
+
+    const newRefreshToken = generateRefreshToken({
+      id: decoded.id,
+      phone: decoded?.phone ?? null,
       role: decoded.role,
     });
 
     await updateOrCreateUserToken({
       userId: decoded.id,
       accessToken: newAccessToken,
-      refreshToken: currentRefreshToken?.refreshToken,
+      refreshToken: newRefreshToken,
     });
 
     return res
       .status(200)
-      .json({ message: 'Refreshed access token', accessToken: newAccessToken });
+      .json({
+        message: 'Refreshed access token',
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      });
   } catch (error) {
     return res.status(401).json({ message: error.message });
   }
