@@ -85,13 +85,13 @@ const getProcessOrder = async (req, res) => {
 };
 
 const acceptOrder = async (req, res) => {
-  const orderId = parseInt(req.params.id) ?? 0;
+  const orderId = parseInt(req.query.id) ?? 0;
   const driverId = parseInt(req.user.id) ?? 0;
 
   try {
     const driver = await driverService.getById(driverId);
 
-    if (driver?.status !== DriverStatus.ACTIVE || !orderId) {
+    if (driver?.status != DriverStatus.ACTIVE || !orderId) {
       return res.status(400).json({ message: 'Driver is inactive or Order ID is invalid', data: null });
     }
 
