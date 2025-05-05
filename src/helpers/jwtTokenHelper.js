@@ -3,7 +3,7 @@ import redisClient from '../config/redis.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-access-key';
 
-export const generateAccessToken = (payload, expiresIn = '1h') => {
+export const generateAccessToken = (payload, expiresIn = '1d') => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn });
 };
 
@@ -17,7 +17,7 @@ export const verifyToken = (token) => {
 
 export const blockUserAccessToken = async (accessToken, expiresAt = 3600) => {
   const key = `blocked_user_:${accessToken}`;
-  await redisClient.set(key, String(accessToken), { EX: expiresAt }); // 1 hour in 3600 seconds
+  await redisClient.set(key, 'blocked', { EX: expiresAt }); // is blocked for 1 hour in 3600 seconds
 };
 
 export const getBlockedAccessToken = async (accessToken) => {
