@@ -1,128 +1,10 @@
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-function generateHashCode(machineId, params) {
-  // 1. `params`ni tartiblaymiz (key bo‘yicha)
-  const normalizedParams = params
-    .map((param) => ({
-      key: param.key,
-      title: param.title,
-      params: [...param.params], // sonlar tartibi saqlanadi
-    }))
-    .sort((a, b) => a.key.localeCompare(b.key));
+dotenv.config();
 
-  // 2. `machineId`ni qo‘shamiz
-  const payload = {
-    machineId,
-    params: normalizedParams,
-  };
-
-  // 3. JSON ni qat’iy formatda stringga aylantirib, hash qilamiz
-  const stringified = JSON.stringify(payload);
-  const hash = crypto.createHash('sha256').update(stringified).digest('hex');
-
-  return hash;
-}
-
-const params = [
-  {
-    key: 'LIFT_HEIGHT',
-    title: 'ВЫСОТА ПОДЪЕМА (М)',
-    params: [17],
-  },
-  {
-    key: 'Keloggg',
-    title: 'Грузоподъемность (КГ)',
-    params: [200],
-  },
-];
-
-const params2 = [
-  {
-    key: 'LIFT_HEIGHT',
-    title: 'ВЫСОТА ПОДЪЕМА (М)',
-    params: [17],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-  {
-    key: 'Kelog',
-    title: 'Грузоподъемность (КГ)',
-    params: [100],
-  },
-];
-
-// console.log("8d747aa5dc3588b245e322978858f0062447c2b25758a575c05ccafcb030d9f3" === "8d747aa5dc3588b245e322978858f0062447c2b25758a575c05ccafcb030d9f3");
-
-// console.log('Hash: ', generateHashCode(1, params2));
-
+const JWT_SECRET = process.env.JWT_SECRET || 'secret-access-key';
 function errorThrow() {
   const error = new Error('Test Error');
   error.code = 400;
@@ -137,4 +19,13 @@ function getError() {
   }
 }
 
-getError();
+// getError();
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwicGhvbmUiOiI5OTg5OTgyMzIzNjMiLCJyb2xlIjo0LCJpYXQiOjE3NDY0MjY5MzksImV4cCI6MTc0NjQzMDUzOX0.FPQB0c6yOJ8FHtOFpRQiUDrU4H7APmZAsyFlRdzxYPM";
+
+const verifyToken = (token) => {
+  return jwt.verify(token, JWT_SECRET);
+};
+
+const decode = verifyToken(token);
+
+console.log(decode);
