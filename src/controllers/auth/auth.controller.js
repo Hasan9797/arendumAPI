@@ -77,7 +77,7 @@ const refreshToken = async (req, res) => {
     const decoded = verifyToken(userRefreshToken);
 
     const currentRefreshToken = await getUserTokenByUserId(decoded.id);
-
+    
     if (!currentRefreshToken) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -95,7 +95,7 @@ const refreshToken = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: 'Token refreshed', accessToken: newAccessToken });
+      .json({ message: 'Refreshed access token', accessToken: newAccessToken });
   } catch (error) {
     return res.status(401).json({ message: error.message });
   }

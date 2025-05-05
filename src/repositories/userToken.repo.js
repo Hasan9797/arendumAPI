@@ -76,7 +76,7 @@ export const getUserTokenByUserId = async (userId) => {
       },
     });
 
-    return result?.token || null; // faqat token string qaytadi
+    return result; // faqat token string qaytadi
   } catch (error) {
     throw error;
   }
