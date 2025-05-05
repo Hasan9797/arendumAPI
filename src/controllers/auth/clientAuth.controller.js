@@ -129,7 +129,6 @@ const verifySmsCode = async (req, res) => {
     };
 
     const accessToken = generateAccessToken(payload);
-
     const refreshToken = generateRefreshToken(payload);
 
     const userToken = {
