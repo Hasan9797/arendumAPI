@@ -97,14 +97,15 @@ const acceptOrder = async (req, res, next) => {
     if (!driver) {
       throw CustomError.authFailedError('Вы не зарегистрированы или указан неверный ID водителя!');
     }
-    console.log(driver);
 
     const serviceCommission = await serviceCommissionService.getLastActive();
 
-    if (!driver.balance || Number(driver.balance) < serviceCommission?.driverBalance) {
-      throw CustomError.validationError(
-        `Недостаточно средств на вашем счёте, пожалуйста, пополните счёт на ${serviceCommission.driverBalance} сум!`
-      );
+    if (serviceCommission) {
+      if (!driver.balance && Number(driver.balance) < serviceCommission?.driverBalance) {
+        throw CustomError.validationError(
+          `Недостаточно средств на вашем счёте, пожалуйста, пополните счёт на ${serviceCommission.driverBalance} сум!`
+        );
+      }
     }
 
     const result = await driverService.acceptOrder(orderId, driver);

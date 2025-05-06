@@ -16,7 +16,11 @@ const getById = async (id) => {
 };
 
 const getLastActive = async () => {
-  return await serviceCommissionRepo.getLastActive();
+  try {
+    return await serviceCommissionRepo.getLastActive();
+  } catch (error) {
+    throw error;
+  }
 };
 
 const create = async (data) => {
