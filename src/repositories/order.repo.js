@@ -126,9 +126,9 @@ const getNewOrder = async (region, structureId, status) => {
   const whereData =
     region.isOpen === true
       ? {
-          regionId: region.id,
-          status: status,
-        }
+        regionId: region.id,
+        status: status,
+      }
       : { structureId: structureId, status: status };
 
   try {
@@ -343,19 +343,15 @@ const getOrderForSchedule = async () => {
   }
 };
 
-const getPlannedOrderByDriverId = async (driverId) => {
+const getPlannedOrdersByDriverId = async (driverId) => {
   try {
-    return await prisma.order.findFirst({
+    return await prisma.order.findMany({
       where: {
         driverId,
-        status: OrderStatus.ASSIGNED,
         startAt: {
           not: null,
         },
-      },
-      orderBy: {
-        createdAt: 'asc', // eng birinchi yaratilgani (eskiroq)
-      },
+      }
     });
   } catch (error) {
     throw error;
@@ -374,5 +370,5 @@ export default {
   getNewOrder,
   getOrderForCalculate,
   getOrderForSchedule,
-  getPlannedOrderByDriverId,
+  getPlannedOrdersByDriverId,
 };

@@ -30,10 +30,10 @@ const getOrders = async (query, lang = 'ru') => {
         ...rest,
         machine: machine
           ? {
-              name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
-              id: machine?.id || null,
-              img: machine?.img || null,
-            }
+            name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
+            id: machine?.id || null,
+            img: machine?.img || null,
+          }
           : null,
       };
     });
@@ -413,22 +413,36 @@ async function orderFormatter(order, lang = 'ru') {
   return sanitizedOrders(formattedOrders);
 }
 
-const isPlannedOrder = async (driverId) => {
+const isPlannedOrder = async (driverId, newOrder) => {
   try {
-    const order = await orderRepo.getPlannedOrderByDriverId(driverId);
-    if (!order || !order.startAt) {
-      return false;
-    }
-    // if order is less than 2 hours
-    const expiresAt = Number(order.startAt);
-    const now = Math.floor(Date.now() / 1000);
-    const remainingSeconds = expiresAt - now;
+    const orders = await orderRepo.getPlannedOrdersByDriverId(driverId, newOrder);
+    if (!orders || orders.length === 0) return false;
 
-    return remainingSeconds <= 7200 && remainingSeconds > 0; // 2 hours
+    const now = Math.floor(Date.now() / 1000);
+    const newOrderStartAt = newOrder.startAt ? Number(newOrder.startAt) : null;
+
+    return orders.some(({ startAt }) => {
+      if (!startAt) return false;
+
+      const orderStartAt = Number(startAt);
+
+      // 1. Ikkala order ham planli bo‘lsa va bir kunda bo‘lsa — true
+      if (newOrderStartAt) {
+        const sameDay = new Date(newOrderStartAt * 1000).toDateString() === new Date(orderStartAt * 1000).toDateString();
+        if (sameDay)
+           return true;
+      }
+
+      // 2. Aks holda: boshlanishiga 2 soatdan kam qolgan bo‘lsa — true
+      const secondsLeft = orderStartAt - now;
+      return secondsLeft > 0 && secondsLeft <= 7200;
+    });
+
   } catch (error) {
     throw error;
   }
 };
+
 
 export default {
   getOrders,

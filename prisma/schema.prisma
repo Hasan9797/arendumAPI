@@ -402,12 +402,12 @@ model Transaction {
 
 model ServiceCommission {
   id                Int      @id @default(autoincrement())
-  ndsAmount         Int      @map("nds_amount")
+  ndsAmount         Int      @default(0) @map("nds_amount")
   ndsPercentage     Boolean  @default(false) @map("nds_percentage")
   arendumAmount     Int      @default(0) @map("arendum_amount")
   arendumPercentage Boolean  @default(false) @map("arendum_percentage")
   status            Int      @default(1)
-  driverBalance     Int      @map("driver_balance")
+  driverBalance     Int      @default(0) @map("driver_balance")
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
 }

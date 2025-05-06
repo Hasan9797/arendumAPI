@@ -2,6 +2,9 @@ import driverService from '../../services/driver.service.js';
 import { responseSuccess, responseError } from '../../helpers/responseHelper.js';
 import orderService from '../../services/order.service.js';
 import { DriverStatus } from '../../enums/driver/driverStatusEnum.js';
+import { CustomError } from '../../Errors/customError.js';
+import serviceCommissionService from '../../services/serviceCommission.service.js';
+import userBalanceService from '../../services/userBalance.service.js';
 
 const getAll = async (req, res) => {
   const query = {
@@ -84,30 +87,40 @@ const getProcessOrder = async (req, res) => {
   }
 };
 
-const acceptOrder = async (req, res) => {
+const acceptOrder = async (req, res, next) => {
   const orderId = parseInt(req.query.id) ?? 0;
   const driverId = parseInt(req.user.id) ?? 0;
 
   try {
     const driver = await driverService.getById(driverId);
 
-    if (driver?.status != DriverStatus.ACTIVE || !orderId) {
-      return res.status(400).json({ message: 'Driver is inactive or Order ID is invalid', data: null });
+    if (!driver) {
+      throw CustomError.authFailedError('Вы не зарегистрированы или указан неверный ID водителя!')
+    }
+
+    const serviceCommission = await serviceCommissionService.getLastActive();
+
+    if (!driver.balance || Number(driver.balance) < serviceCommission?.driverBalance) {
+      throw CustomError.validationError(
+        `Недостаточно средств на вашем счёте, пожалуйста, пополните счёт на ${serviceCommission.driverBalance} сум!`
+      )
     }
 
     const result = await driverService.acceptOrder(orderId, driver);
 
     if (result == null) {
-      return res.status(200).json({ message: 'Order not found', data: null });
+      return res.status(200).json({ message: 'Заказ не найден', data: null });
     }
 
-    if (result == false) {
-      return res.status(400).json({ message: 'Order already accepted', data: null });
-    }
+    await userBalanceService.withdrawDriverBalance(driverId, Number(driver.balance), serviceCommission);
 
-    res.status(200).json(responseSuccess(result));
+    res.status(200).json(responseSuccess({
+      message: 'Заказ принят',
+      saccess: true,
+      data: result
+    }));
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    next(error)
   }
 };
 

@@ -9,6 +9,7 @@ import SocketService from '../socket/index.js';
 import { OrderStatus, getStatusText } from '../enums/order/orderStatusEnum.js';
 import { deleteUserTokenByUserId } from '../repositories/userToken.repo.js';
 import userRoleEnum from '../enums/user/userRoleEnum.js';
+import { DriverStatus } from '../enums/driver/driverStatusEnum.js';
 
 const getAll = async (lang, query) => {
   try {
@@ -103,10 +104,12 @@ const getDriversForNewOrder = async (machineId, region, structureId, orderParams
 const acceptOrder = async (orderId, driver) => {
   const statusArray = [OrderStatus.SEARCHING, OrderStatus.PLANNED];
   try {
-    const isPlanned = await orderService.isPlannedOrder(driver.id);
+    if (driver?.status != DriverStatus.ACTIVE || !orderId) {
+      throw CustomError.validationError('Водитель неактивен или идентификатор заказа недействителен')
+    }
 
-    if (isPlanned) {
-      throw CustomError.validationError('У вас назначена встреча через 2 часа.');
+    if (driver.inWork) {
+      throw CustomError.validationError('У вас есть незавершённый заказ, сначала необходимо его завершить!')
     }
 
     const order = await orderService.getCreatedOrder(orderId);
@@ -115,8 +118,18 @@ const acceptOrder = async (orderId, driver) => {
       return null;
     }
 
+    const isPlanned = await orderService.isPlannedOrder(driver.id, order);
+
+    if (order.startAt && isPlanned) {
+      throw CustomError.validationError('У вас уже есть заказ на выбранную дату.');
+    }
+
+    if (isPlanned) {
+      throw CustomError.validationError('У вас назначена встреча через 2 часа.');
+    }
+
     if (!statusArray.includes(order.status)) {
-      return false;
+      throw CustomError.validationError('Заказ неактивен или уже был выбран другим водителем!');
     }
 
     const updatedOrder = await orderService.updateOrder(orderId, {
@@ -156,10 +169,7 @@ const acceptOrder = async (orderId, driver) => {
 
     DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', preparedOrder);
 
-    return {
-      success: true,
-      orderId,
-    };
+    return true;
   } catch (error) {
     throw error;
   }

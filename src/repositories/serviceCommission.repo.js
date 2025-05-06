@@ -46,6 +46,15 @@ const getById = async (id) => {
     return serviceCommission;
 };
 
+const getLastActive = async () => {
+    const serviceCommission = await prisma.serviceCommission.findFirst({
+        where: { status: 2 },
+        orderBy: { createdAt: 'desc' },
+    });
+
+    return serviceCommission;
+};
+
 const create = async (body) => {
     return await prisma.serviceCommission.create({
         data: body,
@@ -58,7 +67,7 @@ const updateById = async (id, body) => {
             where: { id },
             data: body,
         });
-        
+
         return updated;
     } catch (error) {
         throw error;
@@ -81,4 +90,5 @@ export default {
     create,
     updateById,
     deleteById,
+    getLastActive,
 };
