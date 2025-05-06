@@ -99,7 +99,8 @@ const acceptOrder = async (req, res, next) => {
     }
 
     const serviceCommission = await serviceCommissionService.getLastActive();
-
+    console.log(serviceCommission);
+    
     if (serviceCommission) {
       if (!driver.balance && Number(driver.balance) < serviceCommission?.driverBalance) {
         throw CustomError.validationError(

@@ -58,7 +58,7 @@ const deleteById = async (id) => {
 
 const withdrawDriverBalance = async (driverId, driverBalance, serviceCommission) => {
   try {
-    const updateData = { balance: String(driverBalance - serviceCommission.driverBalance) };
+    const updateData = { balance: String(driverBalance - serviceCommission.arendumAmount) };
 
     const updateDriverBalance = await userBalanceRepo.updateByDriverId(driverId, updateData);
 
