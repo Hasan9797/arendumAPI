@@ -95,7 +95,7 @@ const update = async (req, res) => {
 
 const updateByUserId = async (req, res) => {
   try {
-    await userBalanceService.updateByUserId(parseInt(req.params.id), req.body);
+    await userBalanceService.updateByUserId(req.body.userId, req.body.role, amount);
     res.status(200).json({
       success: true,
       error: false,
@@ -114,7 +114,8 @@ const updateByUserId = async (req, res) => {
 export default {
   getAll,
   getById,
+  update,
   getByDriverId,
   getByClientId,
-  update,
+  updateByUserId,
 };

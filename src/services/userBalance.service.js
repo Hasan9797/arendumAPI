@@ -68,6 +68,20 @@ const withdrawDriverBalance = async (driverId, driverBalance, serviceCommission)
   }
 };
 
+const updateByUserId = async (userId, role, amount) => {
+  try {
+    const updateData = { balance: String(amount) };
+    if (role == userRoleEnum.CLIENT) {
+      return await userBalanceRepo.updateByDriverId(userId, updateData);
+    } else if (role == userRoleEnum.DRIVER) {
+      return await userBalanceRepo.updateByClientId(userId, updateData);
+    }
+    return false;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getAll,
   getById,

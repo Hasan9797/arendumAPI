@@ -127,6 +127,17 @@ const updateByDriverId = async (driverId, newData) => {
   }
 };
 
+const updateByClientId = async (clientId, newData) => {
+  try {
+    return await prisma.userBalance.update({
+      where: { clientId },
+      data: newData,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const deleteById = async (id) => {
   try {
     return await prisma.userBalance.delete({
@@ -145,5 +156,5 @@ export default {
   create,
   updateById,
   deleteById,
-  updateByDriverId
+  updateByDriverId,
 };
