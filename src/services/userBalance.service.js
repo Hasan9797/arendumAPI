@@ -18,10 +18,19 @@ const getById = async (id) => {
   }
 };
 
-const getByUserId = async (userId, role) => {
+const getByDriverId = async (driverId) => {
   try {
-    const balance = await userBalanceRepo.getByUserId(userId, role);
-    return formatResponseDates(balance);
+    const driverBalance = await userBalanceRepo.getByDriverId(driverId);
+    return formatResponseDates(driverBalance);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getByClientId = async (clientId) => {
+  try {
+    const clietnBalance = await userBalanceRepo.getByClientId(clientId);
+    return formatResponseDates(clietnBalance);
   } catch (error) {
     throw error;
   }
@@ -57,7 +66,7 @@ const withdrawDriverBalance = async (driverId, driverBalance, serviceCommission)
   } catch (error) {
     throw error;
   }
-}
+};
 
 export default {
   getAll,
@@ -66,5 +75,5 @@ export default {
   createBalance,
   updateById,
   deleteById,
-  withdrawDriverBalance
+  withdrawDriverBalance,
 };

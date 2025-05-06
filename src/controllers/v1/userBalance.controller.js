@@ -5,7 +5,7 @@ const getAll = async (req, res) => {
 
   const query = {
     page: parseInt(req.query.page) || 1,
-    limit: parseInt(req.query.limit) || 10,
+    limit: parseInt(req.query.limit) || 20,
     filters: req.query.filters || [],
     sort: req.query.sort || {
       column: 'id',
@@ -51,9 +51,9 @@ const getById = async (req, res) => {
   }
 };
 
-const getByIdUserId = async (req, res) => {
+const getByIdDriverId = async (req, res) => {
   try {
-    const balance = await userBalanceService.getByIdUserId(req.user.id);
+    const balance = await userBalanceService.getByIdDriverId(req.user.id);
     res.status(200).json({
       success: true,
       data: balance,
