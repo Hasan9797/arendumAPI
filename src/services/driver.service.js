@@ -132,21 +132,22 @@ const acceptOrder = async (orderId, driver) => {
       throw CustomError.validationError('Заказ неактивен или уже был выбран другим водителем!');
     }
 
-    let updatedOrder = order;
+    let newData = {
+      driverId: driver.id,
+    };
 
     if (!order.isPlanned) {
-      updatedOrder = await orderService.updateOrder(orderId, {
-        status: OrderStatus.ASSIGNED,
-        driverId: driver.id,
-      });
+      newData.status = OrderStatus.ASSIGNED;
+    }
 
-      if (!updatedOrder) {
-        throw new Error('Order update error');
-      }
+    const updatedOrder = await orderService.updateOrder(orderId, newData);
+
+    if (!updatedOrder) {
+      throw new Error('Order update error');
     }
 
     const preparedOrder = {
-      ...updatedOrder,
+      ...order,
       paymentType: {
         id: updatedOrder.paymentType,
         text: getPaymentTypeText(updatedOrder.paymentType),
