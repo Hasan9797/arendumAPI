@@ -1,5 +1,6 @@
 import userBalanceRepo from '../repositories/userBalance.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
+import userRoleEnum from '../enums/user/userRoleEnum.js';
 
 const getAll = async (query) => {
   const result = await userBalanceRepo.getAll(query);
