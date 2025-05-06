@@ -73,9 +73,9 @@ const updateByUserId = async (userId, role, amount) => {
   try {
     const updateData = { balance: String(amount) };
     if (role == userRoleEnum.CLIENT) {
-      return await userBalanceRepo.updateByDriverId(userId, updateData);
-    } else if (role == userRoleEnum.DRIVER) {
       return await userBalanceRepo.updateByClientId(userId, updateData);
+    } else if (role == userRoleEnum.DRIVER) {
+      return await userBalanceRepo.updateByDriverId(userId, updateData);
     }
     return false;
   } catch (error) {
