@@ -99,10 +99,15 @@ const acceptOrder = async (req, res, next) => {
     }
 
     const serviceCommission = await serviceCommissionService.getLastActive();
-    console.log(serviceCommission);
-    
+
     if (serviceCommission) {
-      if (!driver.balance && Number(driver.balance) < serviceCommission?.driverBalance) {
+      console.log('nimadur netto chota :(');
+      console.log(driver.balance);
+
+      // const driverBalance = await userBalanceService.getByDriverId(driverId);
+      // console.log(driverBalance);
+
+      if (!driver.balance || Number(driver.balance) < serviceCommission?.driverBalance) {
         throw CustomError.validationError(
           `Недостаточно средств на вашем счёте, пожалуйста, пополните счёт на ${serviceCommission.driverBalance} сум!`
         );
