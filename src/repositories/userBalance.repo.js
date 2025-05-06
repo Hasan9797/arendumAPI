@@ -69,32 +69,27 @@ const getById = async (id) => {
   if (!balance) {
     return {};
   }
-  //   const adjustName = ({ nameRu, nameUz, nameEn, ...res }) => {
-  //     return {
-  //       ...res,
-  //       name: lang === 'ru' ? nameRu : nameUz,
-  //       nameRu,
-  //       nameUz,
-  //       nameEn,
-  //     };
-  //   };
+
   return balance;
 };
 
-const getByUserId = async (userId, role) => {
+const getByDriverId = async (driverId) => {
   try {
-    if (role === userRoleEnum.DRIVER) {
-      const balance = await prisma.userBalance.findFirst({
-        where: { driverId: userId },
-      });
-      return balance;
-    } else if (role === userRoleEnum.CLIENT) {
-      const balance = await prisma.userBalance.findFirst({
-        where: { clientId: userId },
-      });
-      return balance;
-    }
-    return null;
+    const balance = await prisma.userBalance.findFirst({
+      where: { driverId },
+    });
+    return balance;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getByClientId = async (clientId) => {
+  try {
+    const balance = await prisma.userBalance.findFirst({
+      where: { clientId },
+    });
+    return balance;
   } catch (error) {
     throw error;
   }
@@ -121,6 +116,17 @@ const updateById = async (id, newData) => {
   }
 };
 
+const updateByDriverId = async (driverId, newData) => {
+  try {
+    return await prisma.userBalance.update({
+      where: { driverId },
+      data: newData,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const deleteById = async (id) => {
   try {
     return await prisma.userBalance.delete({
@@ -134,8 +140,10 @@ const deleteById = async (id) => {
 export default {
   getAll,
   getById,
-  getByUserId,
+  getByDriverId,
+  getByClientId,
   create,
   updateById,
   deleteById,
+  updateByDriverId
 };

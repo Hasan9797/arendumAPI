@@ -47,6 +47,18 @@ const deleteById = async (id) => {
   return await userBalanceRepo.deleteById(id);
 };
 
+const withdrawDriverBalance = async (driverId, driverBalance, serviceCommission) => {
+  try {
+    const updateData = { balance: String(driverBalance - serviceCommission.driverBalance) };
+
+    const updateDriverBalance = await userBalanceRepo.updateByDriverId(driverId, updateData);
+
+    return updateDriverBalance;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export default {
   getAll,
   getById,
@@ -54,4 +66,5 @@ export default {
   createBalance,
   updateById,
   deleteById,
+  withdrawDriverBalance
 };

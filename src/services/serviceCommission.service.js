@@ -11,8 +11,12 @@ const getAll = async (query) => {
 };
 
 const getById = async (id) => {
-  const structure = await serviceCommissionRepo.getById(id);
-  return formatResponseDates(structure);
+  const serviceCommission = await serviceCommissionRepo.getById(id);
+  return formatResponseDates(serviceCommission);
+};
+
+const getLastActive = async () => {
+  return await serviceCommissionRepo.getLastActive();
 };
 
 const create = async (data) => {
@@ -43,4 +47,5 @@ export default {
   create,
   updateById,
   deleteById,
+  getLastActive,
 };
