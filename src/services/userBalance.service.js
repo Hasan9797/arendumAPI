@@ -92,4 +92,5 @@ export default {
   updateById,
   deleteById,
   withdrawDriverBalance,
+  updateByUserId,
 };

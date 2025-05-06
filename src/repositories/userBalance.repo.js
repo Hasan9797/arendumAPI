@@ -157,4 +157,5 @@ export default {
   updateById,
   deleteById,
   updateByDriverId,
+  updateByClientId,
 };
