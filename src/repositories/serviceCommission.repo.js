@@ -40,7 +40,7 @@ const getById = async (id) => {
   });
 
   if (!serviceCommission) {
-    return {};
+    return null;
   }
 
   return serviceCommission;

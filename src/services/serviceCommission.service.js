@@ -31,8 +31,8 @@ const updateById = async (id, data) => {
   try {
     const record = await serviceCommissionRepo.getById(id);
 
-    if (typeof record == 'object') {
-      throw CustomError.notFound('Service Commission not found', 404);
+    if (!record) {
+      throw CustomError.notFoundError('Service Commission not found', 404);
     }
 
     return await serviceCommissionRepo.updateById(id, data);
