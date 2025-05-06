@@ -101,12 +101,6 @@ const acceptOrder = async (req, res, next) => {
     const serviceCommission = await serviceCommissionService.getLastActive();
 
     if (serviceCommission) {
-      console.log('nimadur netto chota :(');
-      console.log(driver.balance);
-
-      // const driverBalance = await userBalanceService.getByDriverId(driverId);
-      // console.log(driverBalance);
-
       if (!driver.balance || Number(driver.balance) < serviceCommission?.driverBalance) {
         throw CustomError.validationError(
           `Недостаточно средств на вашем счёте, пожалуйста, пополните счёт на ${serviceCommission.driverBalance} сум!`
@@ -120,7 +114,7 @@ const acceptOrder = async (req, res, next) => {
       return res.status(200).json({ message: 'Заказ не найден', data: null });
     }
 
-    await userBalanceService.withdrawDriverBalance(driverId, Number(driver.balance), serviceCommission);
+    await userBalanceService.withdrawDriverBalance(driverId, Number(driver.balance), serviceCommission, orderId);
 
     res.status(200).json(
       responseSuccess({

@@ -1,6 +1,7 @@
 import userBalanceRepo from '../repositories/userBalance.repo.js';
 import { formatResponseDates } from '../helpers/formatDateHelper.js';
 import userRoleEnum from '../enums/user/userRoleEnum.js';
+import SocketService from '../socket/index.js';
 
 const getAll = async (query) => {
   const result = await userBalanceRepo.getAll(query);
@@ -57,11 +58,20 @@ const deleteById = async (id) => {
   return await userBalanceRepo.deleteById(id);
 };
 
-const withdrawDriverBalance = async (driverId, driverBalance, serviceCommission) => {
+const withdrawDriverBalance = async (driverId, driverBalance, serviceCommission, orderId) => {
   try {
-    const updateData = { balance: String(driverBalance - serviceCommission.arendumAmount) };
+    const DriverSocket = SocketService.getSocket('driver');
 
-    const updateDriverBalance = await userBalanceRepo.updateByDriverId(driverId, updateData);
+    const updateBalance = String(driverBalance - serviceCommission.arendumAmount);
+
+    DriverSocket.to(`order_room_${orderId}`).emit('updateBalance', {
+      success: true,
+      balance: updateBalance,
+    });
+
+    const updateDriverBalance = await userBalanceRepo.updateByDriverId(driverId, {
+      balance: updateBalance,
+    });
 
     return updateDriverBalance;
   } catch (error) {
