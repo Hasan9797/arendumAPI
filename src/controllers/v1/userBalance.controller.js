@@ -51,9 +51,21 @@ const getById = async (req, res) => {
   }
 };
 
-const getByIdDriverId = async (req, res) => {
+const getByDriverId = async (req, res) => {
   try {
-    const balance = await userBalanceService.getByIdDriverId(req.user.id);
+    const balance = await userBalanceService.getByDriverId(req.user.id);
+    res.status(200).json({
+      success: true,
+      data: balance,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getByClientId = async (req, res) => {
+  try {
+    const balance = await userBalanceService.getByClientId(req.user.id);
     res.status(200).json({
       success: true,
       data: balance,
@@ -84,6 +96,7 @@ const update = async (req, res) => {
 export default {
   getAll,
   getById,
-  getByIdUserId,
+  getByDriverId,
+  getByClientId,
   update,
 };

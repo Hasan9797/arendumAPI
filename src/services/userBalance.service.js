@@ -71,7 +71,8 @@ const withdrawDriverBalance = async (driverId, driverBalance, serviceCommission)
 export default {
   getAll,
   getById,
-  getByUserId,
+  getByClientId,
+  getByDriverId,
   createBalance,
   updateById,
   deleteById,
