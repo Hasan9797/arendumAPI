@@ -95,7 +95,7 @@ const update = async (req, res) => {
 
 const updateByUserId = async (req, res) => {
   try {
-    await userBalanceService.updateByUserId(req.body.userId, req.body.role, amount);
+    await userBalanceService.updateByUserId(req.body.userId, req.body.role, req.body.amount);
     res.status(200).json({
       success: true,
       error: false,
