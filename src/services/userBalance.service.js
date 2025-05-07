@@ -58,16 +58,10 @@ const deleteById = async (id) => {
   return await userBalanceRepo.deleteById(id);
 };
 
-const withdrawDriverBalance = async (driverId, driverBalance, serviceCommission, orderId) => {
+const withdrawDriverBalance = async (driverId, driverBalance, serviceCommission) => {
   try {
-    const DriverSocket = SocketService.getSocket('driver');
 
     const updateBalance = String(driverBalance - serviceCommission.arendumAmount);
-
-    DriverSocket.to(`order_room_${orderId}`).emit('updateBalance', {
-      success: true,
-      balance: updateBalance,
-    });
 
     const updateDriverBalance = await userBalanceRepo.updateByDriverId(driverId, {
       balance: updateBalance,

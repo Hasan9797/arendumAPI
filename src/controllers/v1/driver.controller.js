@@ -114,7 +114,7 @@ const acceptOrder = async (req, res, next) => {
       return res.status(200).json({ message: 'Заказ не найден', data: null });
     }
 
-    await userBalanceService.withdrawDriverBalance(driverId, Number(driver.balance), serviceCommission, orderId);
+    await userBalanceService.withdrawDriverBalance(driverId, Number(driver.balance), serviceCommission);
 
     res.status(200).json(
       responseSuccess({
