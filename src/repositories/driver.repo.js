@@ -174,11 +174,11 @@ const deleteById = async (id) => {
   }
 };
 
-const getDriverProfile = async (id) => {
+const getDriverProfile = async (driverId) => {
   try {
     // 2. Agar cache'da bo‘lmasa, bazadan olish
     const driver = await prisma.driver.findUnique({
-      where: { id },
+      where: { id: driverId },
       include: {
         region: {
           select: {
