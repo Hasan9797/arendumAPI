@@ -419,18 +419,19 @@ const isPlannedOrder = async (driverId, newOrder) => {
     if (!orders || orders.length === 0) return false;
 
     const now = Math.floor(Date.now() / 1000);
-    const newOrderStartAt = newOrder.startAt ? Number(newOrder.startAt) : null;
+    const newOrderStartAt = newOrder.startAt
+      ? Math.floor(new Date(newOrder.startAt).getTime() / 1000)
+      : null;
 
     return orders.some(({ startAt }) => {
       if (!startAt) return false;
 
-      const orderStartAt = Number(startAt);
+      const orderStartAt = Math.floor(new Date(startAt).getTime() / 1000);
 
       // 1. Ikkala order ham planli bo‘lsa va bir kunda bo‘lsa — true
       if (newOrderStartAt) {
         const sameDay = new Date(newOrderStartAt * 1000).toDateString() === new Date(orderStartAt * 1000).toDateString();
-        if (sameDay)
-           return true;
+        if (sameDay) return true;
       }
 
       // 2. Aks holda: boshlanishiga 2 soatdan kam qolgan bo‘lsa — true

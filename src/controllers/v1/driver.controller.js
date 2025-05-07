@@ -107,14 +107,15 @@ const acceptOrder = async (req, res, next) => {
         );
       }
     }
-
+    console.log('eeeeeyaaaa o`tib kettikuu :((');
+    
     const result = await driverService.acceptOrder(orderId, driver);
 
     if (result == null) {
       return res.status(200).json({ message: 'Заказ не найден', data: null });
     }
 
-    await userBalanceService.withdrawDriverBalance(driverId, Number(driver.balance), serviceCommission, orderId);
+    await userBalanceService.withdrawDriverBalance(driverId, Number(driver.balance), serviceCommission);
 
     res.status(200).json(
       responseSuccess({
