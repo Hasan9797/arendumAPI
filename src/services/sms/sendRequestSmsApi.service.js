@@ -13,29 +13,18 @@ class AxiosApiService {
 
   async send() {
     try {
-      const response = await axios({
-        method: this.#request.method,
-        maxBodyLength: this.#request.maxBodyLength,
-        url: `${baseUrl}/${this.#request.route}`,
-        headers: this.#request.headers,
-        data: this.#request.data,
-      });
+      const response = await axios(this.#request);
 
       if (!response || !response.data) {
-        logData.status = 'error';
-        logData.error = 'No response or empty response';
         throw new Error('Response is empty or no response');
       }
 
       if (response.data.error) {
-        logData.status = 'error';
-        logData.error = response.data.error;
         throw new Error(`API Error: ${response.data.error.message}`);
       }
 
       this.#response = response.data;
-      logData.response = this.#response;
-      // console.log(logData);
+      console.log(this.#response);
 
       return this;
     } catch (error) {
