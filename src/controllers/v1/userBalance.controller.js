@@ -53,7 +53,7 @@ const getById = async (req, res) => {
 
 const getByDriverId = async (req, res) => {
   try {
-    const balance = await userBalanceService.getByDriverId(req.user.id);
+    const balance = await userBalanceService.getByDriverId(parseInt(req.query.id));
     res.status(200).json({
       success: true,
       data: balance,
@@ -65,7 +65,7 @@ const getByDriverId = async (req, res) => {
 
 const getByClientId = async (req, res) => {
   try {
-    const balance = await userBalanceService.getByClientId(req.user.id);
+    const balance = await userBalanceService.getByClientId(parseInt(req.query.id));
     res.status(200).json({
       success: true,
       data: balance,

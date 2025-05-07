@@ -56,7 +56,7 @@ const getProfile = async (lang, id) => {
       region: adjustName(rest.region),
       structure: adjustName(rest.structure),
       machine: adjustName(rest.machine),
-      // balance: rest.balance?.balance ?? '0',
+      balance: rest.balance?.balance ?? '0',
     };
   };
 
