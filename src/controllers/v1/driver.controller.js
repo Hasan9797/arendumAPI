@@ -95,15 +95,17 @@ const acceptOrder = async (req, res, next) => {
     const driver = await driverService.getById(driverId);
 
     if (!driver) {
-      throw CustomError.authFailedError('Вы не зарегистрированы или указан неверный ID водителя!')
+      throw CustomError.authFailedError('Вы не зарегистрированы или указан неверный ID водителя!');
     }
 
     const serviceCommission = await serviceCommissionService.getLastActive();
 
-    if (!driver.balance || Number(driver.balance) < serviceCommission?.driverBalance) {
-      throw CustomError.validationError(
-        `Недостаточно средств на вашем счёте, пожалуйста, пополните счёт на ${serviceCommission.driverBalance} сум!`
-      )
+    if (serviceCommission) {
+      if (!driver.balance || Number(driver.balance) < serviceCommission?.driverBalance) {
+        throw CustomError.validationError(
+          `Недостаточно средств на вашем счёте, пожалуйста, пополните счёт на ${serviceCommission.driverBalance} сум!`
+        );
+      }
     }
 
     const result = await driverService.acceptOrder(orderId, driver);
@@ -112,15 +114,17 @@ const acceptOrder = async (req, res, next) => {
       return res.status(200).json({ message: 'Заказ не найден', data: null });
     }
 
-    await userBalanceService.withdrawDriverBalance(driverId, Number(driver.balance), serviceCommission);
+    await userBalanceService.withdrawDriverBalance(driverId, Number(driver.balance), serviceCommission, orderId);
 
-    res.status(200).json(responseSuccess({
-      message: 'Заказ принят',
-      saccess: true,
-      data: result
-    }));
+    res.status(200).json(
+      responseSuccess({
+        message: 'Заказ принят',
+        saccess: true,
+        data: result,
+      })
+    );
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 

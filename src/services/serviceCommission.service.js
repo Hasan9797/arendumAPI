@@ -16,7 +16,11 @@ const getById = async (id) => {
 };
 
 const getLastActive = async () => {
-  return await serviceCommissionRepo.getLastActive();
+  try {
+    return await serviceCommissionRepo.getLastActive();
+  } catch (error) {
+    throw error;
+  }
 };
 
 const create = async (data) => {
@@ -27,8 +31,8 @@ const updateById = async (id, data) => {
   try {
     const record = await serviceCommissionRepo.getById(id);
 
-    if (typeof record == 'object') {
-      throw CustomError.notFound('Service Commission not found', 404);
+    if (!record) {
+      throw CustomError.notFoundError('Service Commission not found', 404);
     }
 
     return await serviceCommissionRepo.updateById(id, data);

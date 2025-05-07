@@ -105,11 +105,11 @@ const acceptOrder = async (orderId, driver) => {
   const statusArray = [OrderStatus.SEARCHING, OrderStatus.PLANNED];
   try {
     if (driver?.status != DriverStatus.ACTIVE || !orderId) {
-      throw CustomError.validationError('Водитель неактивен или идентификатор заказа недействителен')
+      throw CustomError.validationError('Водитель неактивен или идентификатор заказа недействителен');
     }
 
     if (driver.inWork) {
-      throw CustomError.validationError('У вас есть незавершённый заказ, сначала необходимо его завершить!')
+      throw CustomError.validationError('У вас есть незавершённый заказ, сначала необходимо его завершить!');
     }
 
     const order = await orderService.getCreatedOrder(orderId);
@@ -132,10 +132,15 @@ const acceptOrder = async (orderId, driver) => {
       throw CustomError.validationError('Заказ неактивен или уже был выбран другим водителем!');
     }
 
-    const updatedOrder = await orderService.updateOrder(orderId, {
-      status: OrderStatus.ASSIGNED,
+    let newData = {
       driverId: driver.id,
-    });
+    };
+
+    if (!order.isPlanned) {
+      newData.status = OrderStatus.ASSIGNED;
+    }
+
+    const updatedOrder = await orderService.updateOrder(orderId, newData);
 
     if (!updatedOrder) {
       throw new Error('Order update error');
@@ -144,8 +149,8 @@ const acceptOrder = async (orderId, driver) => {
     const preparedOrder = {
       ...order,
       paymentType: {
-        id: order.paymentType,
-        text: getPaymentTypeText(order.paymentType),
+        id: updatedOrder.paymentType,
+        text: getPaymentTypeText(updatedOrder.paymentType),
       },
       status: {
         id: updatedOrder.status,
@@ -153,8 +158,8 @@ const acceptOrder = async (orderId, driver) => {
       },
     };
 
+    //order.isPlanned
     if (order.startAt === null) {
-      // driver in work
       await driverRepository.updateById(driver.id, { inWork: true });
     }
 

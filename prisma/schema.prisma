@@ -264,6 +264,7 @@ model Order {
   long              String?
   lat               String?
   address           String?
+  isPlanned         Boolean    @default(false) @map("is_planned")
   serviceAmount     Int?       @map("service_amount")
   timeIsContinue    Boolean    @default(false) @map("time_is_continue")
   structureId       Int?       @map("structure_id")

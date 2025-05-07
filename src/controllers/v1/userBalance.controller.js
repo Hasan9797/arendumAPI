@@ -5,7 +5,7 @@ const getAll = async (req, res) => {
 
   const query = {
     page: parseInt(req.query.page) || 1,
-    limit: parseInt(req.query.limit) || 10,
+    limit: parseInt(req.query.limit) || 20,
     filters: req.query.filters || [],
     sort: req.query.sort || {
       column: 'id',
@@ -51,9 +51,21 @@ const getById = async (req, res) => {
   }
 };
 
-const getByIdUserId = async (req, res) => {
+const getByDriverId = async (req, res) => {
   try {
-    const balance = await userBalanceService.getByIdUserId(req.user.id);
+    const balance = await userBalanceService.getByDriverId(req.user.id);
+    res.status(200).json({
+      success: true,
+      data: balance,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getByClientId = async (req, res) => {
+  try {
+    const balance = await userBalanceService.getByClientId(req.user.id);
     res.status(200).json({
       success: true,
       data: balance,
@@ -81,9 +93,29 @@ const update = async (req, res) => {
   }
 };
 
+const updateByUserId = async (req, res) => {
+  try {
+    await userBalanceService.updateByUserId(req.body.userId, req.body.role, req.body.amount);
+    res.status(200).json({
+      success: true,
+      error: false,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: error.message,
+        code: 500,
+      },
+    });
+  }
+};
+
 export default {
   getAll,
   getById,
-  getByIdUserId,
   update,
+  getByDriverId,
+  getByClientId,
+  updateByUserId,
 };
