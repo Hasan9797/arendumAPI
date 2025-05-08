@@ -159,7 +159,7 @@ const acceptOrder = async (orderId, driver) => {
     };
 
     //order.isPlanned
-    if (order.startAt === null) {
+    if (!order.isPlanned) {
       await driverRepository.updateById(driver.id, { inWork: true });
     }
 

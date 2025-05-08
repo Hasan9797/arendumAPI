@@ -24,7 +24,6 @@ class AxiosApiService {
       }
 
       this.#response = response.data;
-      console.log(this.#response);
 
       return this;
     } catch (error) {
