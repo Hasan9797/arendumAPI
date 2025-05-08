@@ -40,7 +40,6 @@ class DriverSocketHandler {
 
       next();
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -52,7 +51,7 @@ class DriverSocketHandler {
     socket.join(`drivers_room_${socket.regionId}_${socket.machineId}`);
 
     // Driver room'ga qo'shilishi
-    socket.on('joinRoom', (orderId) => {
+    socket.on('joinRoom', ({orderId}) => {
       socket.join(`order_room_${orderId}`);
       socket.emit('inRoom', { success: true, orderId });
     });
