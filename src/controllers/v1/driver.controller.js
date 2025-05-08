@@ -108,6 +108,7 @@ const acceptOrder = async (req, res, next) => {
         );
       }
     }
+    
     console.log('eeeeeyaaaa o`tib kettikuu :((');
     
     const result = await driverService.acceptOrder(orderId, driver);
