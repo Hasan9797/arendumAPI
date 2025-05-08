@@ -351,6 +351,9 @@ const getPlannedOrdersByDriverId = async (driverId) => {
         startAt: {
           not: null,
         },
+        status: {
+          in: [OrderStatus.ASSIGNED, OrderStatus.PLANNED],
+        },
       }
     });
   } catch (error) {
