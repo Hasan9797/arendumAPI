@@ -16,7 +16,7 @@ export class AuthTokenRequest extends AxiosApiService {
       },
       data: data,
     }).send();
-
+    
     return this;
   }
 }
