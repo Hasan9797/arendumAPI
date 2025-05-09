@@ -4,7 +4,7 @@ import {
   saveSmsCode,
   getSmsCode,
   deleteSmsCode,
-} from '../../services/sms/sms.service.js';
+} from '../../services/sms/smsGate.service.js';
 
 import {
   generateAccessToken,
