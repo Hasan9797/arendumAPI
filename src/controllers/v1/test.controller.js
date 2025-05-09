@@ -1,5 +1,6 @@
 import { sendNotification } from '../../helpers/sendNotificationHelper.js';
 import driverRepository from '../../repositories/driver.repo.js';
+import axios from 'axios';
 import FormData from 'form-data';
 const data = new FormData();
 
