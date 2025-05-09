@@ -1,7 +1,7 @@
 import axios from 'axios';
 import EskisTokenService from './eskizToken.service.js';
 
-const baseUrl = process.env.SMS_API_BASE_URL;
+const baseUrl = process.env.ESKIZ_BASE_URL;
 
 class AxiosApiService extends EskisTokenService {
   #request = {};
@@ -15,7 +15,9 @@ class AxiosApiService extends EskisTokenService {
 
   async send() {
     try {
-      const response = await axios(this.getRequest());
+      const token = await this.getToken();
+            
+      const response = await axios(this.getRequest(token));
 
       if (!response || !response.data) {
         throw new Error('Response is empty or no response');
@@ -24,7 +26,7 @@ class AxiosApiService extends EskisTokenService {
       if (response.data.error) {
         throw new Error(`API Error: ${response.data.error.message}`);
       }
-
+      
       this.#response = response.data;
 
       return this;
@@ -49,8 +51,15 @@ class AxiosApiService extends EskisTokenService {
     return this.getResponse()?.data?.message;
   }
 
-  getRequest() {
-    return this.#request;
+  getRequest(token) {
+    return {
+      ...this.#request,
+      url: `${baseUrl}/${this.#request.url}`,
+      headers: {
+        ...this.#request.headers,
+        Authorization: `Bearer ${token}`,
+      },
+    }
   }
 }
 

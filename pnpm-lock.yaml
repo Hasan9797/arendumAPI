@@ -38,9 +38,9 @@ importers:
       firebase-admin:
         specifier: ^13.0.2
         version: 13.0.2
-      formdata-node:
-        specifier: ^6.0.3
-        version: 6.0.3
+      form-data:
+        specifier: ^4.0.2
+        version: 4.0.2
       haversine-distance:
         specifier: ^1.2.3
         version: 1.2.3
@@ -770,10 +770,6 @@ packages:
   form-data@4.0.2:
     resolution: {integrity: sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w==}
     engines: {node: '>= 6'}
-
-  formdata-node@6.0.3:
-    resolution: {integrity: sha512-8e1++BCiTzUno9v5IZ2J6bv4RU+3UKDmqWUQD0MIMVCd9AdhWkO1gw57oo1mNEX1dMq2EGI+FbWz4B92pscSQg==}
-    engines: {node: '>= 18'}
 
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -2168,8 +2164,6 @@ snapshots:
       combined-stream: 1.0.8
       es-set-tostringtag: 2.1.0
       mime-types: 2.1.35
-
-  formdata-node@6.0.3: {}
 
   forwarded@0.2.0: {}
 

@@ -1,7 +1,6 @@
 import prisma from '../config/prisma.js';
 import redisClient from '../config/redis.js';
 
-Math.floor(Date.now() / 1000);
 
 export const getEskizToken = async () => {
   try {
@@ -12,7 +11,15 @@ export const getEskizToken = async () => {
       return JSON.parse(cachedData);
     }
 
-    const token = await prisma.eskizToken.findFirst();
+    const token = await prisma.eskizToken.findFirst({
+      orderBy: {
+        id: 'desc',
+      },
+    });
+
+    if (!token) {
+      return null;
+    }
 
     await redisClient.setEx(cacheKey, 86400, JSON.stringify(token)); // 86400 sekund = 24 soat
 

@@ -434,5 +434,5 @@ model SmsHistory {
 model EskizToken {
   id     Int    @id @default(autoincrement())
   token  String
-  expire BigInt
+  expire String
 }

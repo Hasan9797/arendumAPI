@@ -1,15 +1,24 @@
 import redisClient from '../../config/redis.js';
 import { formatResponseDates } from '../../helpers/formatDateHelper.js';
+import SendSmsRequest from './requests/sendSmsRequest.js';
 
 export const saveSmsCode = async (phoneNumber, code, expiresIn) => {
   const key = `sms:${phoneNumber}`;
   await redisClient.set(key, code, { EX: expiresIn }); // EX: TTL sekundlarda
 };
 
-export const sendSms = async (phoneNumber, code, mobileHash) => {
-  const data = await eskizTokenRepo.getToken();
+export const sendSms = async (phoneNumber, code) => {
+  const message = `для регистрации в приложении ARENDUM введите ${code} код; 
+  ARENDUM ilovasiga ro'yhatdan o'tish uchun ${code} kodni kiriting;`;
 
-  if (!data) {
+  try {
+    const request = new SendSmsRequest(phoneNumber, message);
+    const response = await request.send();
+    const data = response.getResponse();
+    
+    return true;
+  } catch (error) {
+    return false;
   }
 };
 
