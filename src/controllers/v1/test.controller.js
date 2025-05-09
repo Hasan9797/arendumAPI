@@ -44,22 +44,23 @@ export const sendSmsRequest = async (req, res) => {
   data.append('from', '4546');
   data.append('callback_url', '');
 
-  try {
-    const config = {
-      method: 'post',
-      url: `${process.env.ESKIZ_BASE_URL}/message/sms/send`,
-      headers: {
-        ...data.getHeaders(),
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk0MDM5NDksImlhdCI6MTc0NjgxMTk0OSwicm9sZSI6InVzZXIiLCJzaWduIjoiYmE3OTNhM2ZkYThjMmE0NmEyNjcwZGM0ZDMxM2M4MTcwYjc4N2ExMjA1NzdiZmE2YWQ3OWUyNTlhZjUyODBjYyIsInN1YiI6IjEwNjcwIn0.Ho_Fpn3egdVisaBcv8EUQMItAtugTFafBb2UBB-8YrM`,
-      },
-      data,
-      timeout: 5000
-    }
+  var config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'notify.eskiz.uz/api/message/sms/send',
+    headers: {
+      ...data.getHeaders()
+    },
+    data: data
+  };
 
-    const response = await axios(config);
-
-    res.status(200).json({ success: true, request: config, response: response });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error });
-  }
+  axios(config)
+    .then(function (response) {
+      res.status(200).json({ success: true, request: config, response: response });
+    })
+    .catch(function (error) {
+      res.status(500).json({ success: false, error: error });
+    });
 }
+
+
