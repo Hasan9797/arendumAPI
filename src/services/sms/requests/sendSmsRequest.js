@@ -1,15 +1,25 @@
 import { FormData } from 'formdata-node';
-import AxiosApiService from '../sendRequestSmsApi.service.js';
-import e from 'cors';
+import AxiosApiService from '../httpRequest.service.js';
 
-var data = new FormData();
-data.append('mobile_phone', '99899012345678');
-data.append('message', 'Eskiz Test');
-data.append('from', '4546');
-data.append('callback_url', 'http://0000.uz/test.php');
+const data = new FormData();
+
 
 export class SendSmsRequest extends AxiosApiService {
-    static sendSms() {
-        return AxiosApiService.post('/send', data);
+    constructor(phone, message) {
+        super();
+        data.append('mobile_phone', phone);
+        data.append('message', message);
+        data.append('from', '4546');
+        data.append('callback_url', 'http://0000.uz/test.php');
+
+        this.setRequest({
+            method: 'post',
+            route: 'sms/send',
+            headers: {
+                ...data.getHeaders(),
+            },
+            data: data,
+        }).send();
+        return this;
     }
 }
