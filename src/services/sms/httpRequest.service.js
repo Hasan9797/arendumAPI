@@ -16,19 +16,18 @@ class AxiosApiService extends EskisTokenService {
   async send() {
     try {
       const token = await this.getToken();
-      console.log(token);
-      
+
       const response = await axios(this.getRequest(token));
 
       if (!response || !response.data) {
         throw new Error('Response is empty or no response');
       }
       console.log(response.data);
-      
+
       if (response.data.error) {
         throw new Error(`API Error: ${response.data.error.message}`);
       }
-      
+
       this.#response = response.data;
 
       return this;
@@ -61,6 +60,7 @@ class AxiosApiService extends EskisTokenService {
         ...this.#request.headers,
         Authorization: `Bearer ${token}`,
       },
+      timeout: 5000 // 5 soniya kutish
     }
   }
 }

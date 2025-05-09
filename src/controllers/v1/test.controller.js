@@ -1,5 +1,8 @@
 import { sendNotification } from '../../helpers/sendNotificationHelper.js';
 import driverRepository from '../../repositories/driver.repo.js';
+import FormData from 'form-data';
+const data = new FormData();
+
 export const test = async (req, res) => {
   try {
     const title = 'New Order';
@@ -19,9 +22,9 @@ export const test = async (req, res) => {
 export const test2 = async (req, res) => {
   try {
     const drivers = await driverRepository.getDriversForNotification(
-      req.body.machineId, 
-      req.body.regionId, 
-      req.body.structureId, 
+      req.body.machineId,
+      req.body.regionId,
+      req.body.structureId,
       req.body.legal
     );
 
@@ -30,3 +33,28 @@ export const test2 = async (req, res) => {
     res.status(500).json({ success: false, error: error });
   }
 };
+
+const message = `для регистрации в приложении ARENDUM введите 979797 код; 
+  ARENDUM ilovasiga ro'yhatdan o'tish uchun 979797 kodni kiriting;`;
+
+export const sendSmsRequest = async (req, res) => {
+  data.append('mobile_phone', "998999893328");
+  data.append('message', message);
+  data.append('from', '4546');
+  data.append('callback_url', '');
+
+  try {
+    const response = await axios({
+      method: 'post',
+      url: `${process.env.ESKIZ_BASE_URL}/message/sms/send`,
+      headers: {
+        ...data.getHeaders(),
+      },
+      data: data,
+    })
+
+    res.status(200).json({ success: true, data: response.data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error });
+  }
+}
