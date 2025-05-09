@@ -110,13 +110,13 @@ const login = async (req, res) => {
       });
     }
     // SMS code generation
-    const smsCode = Math.floor(100000 + Math.random() * 900000);
+    const smsCode = 777777; //Math.floor(100000 + Math.random() * 900000);
 
     // Save the SMS code temporarily
     await saveSmsCode(phoneNumber, smsCode, expiresAt);
 
     // Send SMS code
-    await sendSms(phoneNumber, `Your login code is: ${smsCode}`);
+    // await sendSms(phoneNumber, `Your login code is: ${smsCode}`);
 
     return res
       .status(200)

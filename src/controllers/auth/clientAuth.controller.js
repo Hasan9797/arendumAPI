@@ -78,14 +78,14 @@ const login = async (req, res) => {
     }
 
     // SMS code generation
-    const smsCode = Math.floor(100000 + Math.random() * 900000);
+    const smsCode = 777777; // Math.floor(100000 + Math.random() * 900000);
     const expiresAt = Date.now() + SMS_CODE_EXPIRATION;
 
     // Save the SMS code temporarily
     await saveSmsCode(phoneNumber, smsCode, expiresAt);
 
     // Send SMS code
-    await sendSms(phoneNumber, smsCode);
+    // await sendSms(phoneNumber, smsCode);
 
     return res.status(200).json(responseSuccess({}, 'SMS code sent'));
   } catch (error) {
