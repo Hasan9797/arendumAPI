@@ -53,7 +53,8 @@ export const sendSmsRequest = async (req, res) => {
         Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk0MDM5NDksImlhdCI6MTc0NjgxMTk0OSwicm9sZSI6InVzZXIiLCJzaWduIjoiYmE3OTNhM2ZkYThjMmE0NmEyNjcwZGM0ZDMxM2M4MTcwYjc4N2ExMjA1NzdiZmE2YWQ3OWUyNTlhZjUyODBjYyIsInN1YiI6IjEwNjcwIn0.Ho_Fpn3egdVisaBcv8EUQMItAtugTFafBb2UBB-8YrM`,
       },
       data: data,
-    })
+      timeout: 5000
+    });
 
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
