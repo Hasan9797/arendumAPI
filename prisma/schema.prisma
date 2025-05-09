@@ -412,3 +412,27 @@ model ServiceCommission {
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
 }
+
+model SmsHistory {
+  id             Int     @id @default(autoincrement())
+  partnerId      String? @map("partner_id")
+  merchantId     Int?    @map("merchant_id")
+  dispatchId     Int?    @map("dispatch_id")
+  userSmsId      Int?    @map("user_sms_id")
+  requestId      String? @map("request_id")
+  price          Int?
+  totalPrice     Int?    @map("total_price")
+  fromCompany    String? @map("from_company") // nick
+  toPhone        String? @map("to_phone")
+  message        String?
+  status         Int     @default(1)
+  sentAt         String? @map("sent_at")
+  submitSmRespAt String? @map("submit_sm_resp_at")
+  deliverySmAt   String? @map("delivery_sm_at")
+}
+
+model EskizToken {
+  id     Int    @id @default(autoincrement())
+  token  String
+  expire BigInt
+}

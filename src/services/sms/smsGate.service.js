@@ -1,5 +1,6 @@
 import redisClient from '../../config/redis.js';
 import { formatResponseDates } from '../../helpers/formatDateHelper.js';
+import eskizTokenRepo from '../../repositories/eskizToken.repo.js';
 
 export const saveSmsCode = async (phoneNumber, code, expiresIn) => {
   const key = `sms:${phoneNumber}`;
@@ -7,7 +8,10 @@ export const saveSmsCode = async (phoneNumber, code, expiresIn) => {
 };
 
 export const sendSms = async (phoneNumber, code, mobileHash) => {
-  // Send SMS code to the provided phone number
+  const data = await eskizTokenRepo.getToken();
+
+  if (!data) {
+  }
 };
 
 export const getSmsCode = async (phoneNumber) => {
