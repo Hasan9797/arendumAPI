@@ -19,10 +19,10 @@ class EskisTokenService {
 
   async getToken() {
     const eskizToken = await getEskizToken();
-    
+
     if (eskizToken && eskizToken.expire) {
       if (Number(eskizToken.expire) >= now) {
-        // console.log('Using cached token');
+        console.log('Using cached token');
         return eskizToken.token;
       }
       return this.getRefreshToken(eskizToken);
@@ -35,11 +35,12 @@ class EskisTokenService {
     try {
       const baseUrl = `${this.#eskizBaseUrl}/${route}`;
       console.log(baseUrl);
-      
+
       const axiosResponse = await axios({
         ...params,
         url: baseUrl,
       });
+      console.log(axiosResponse.data.data);
 
       if (!axiosResponse || !axiosResponse.data) {
         throw new Error('Response is empty or no response');
@@ -71,7 +72,7 @@ class EskisTokenService {
       token: data.token,
       expire: String(newTimestamp),
     });
-    // console.log('new token');
+    console.log('new token');
 
     return newEskizToken.token;
   }
@@ -86,12 +87,12 @@ class EskisTokenService {
       route: 'auth/refresh',
       headers,
     });
-    
+
     const updateData = await updateEskizToken(eskizToken.id, {
       token: data.token,
       expire: String(newTimestamp),
     });
-    // console.log('refresh token');
+    console.log('refresh token');
 
     return updateData.token;
   }
