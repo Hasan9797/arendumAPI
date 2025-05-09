@@ -18,7 +18,7 @@ export const sendSms = async (phoneNumber, code) => {
     
     return true;
   } catch (error) {
-    return false;
+    throw error;
   }
 };
 
