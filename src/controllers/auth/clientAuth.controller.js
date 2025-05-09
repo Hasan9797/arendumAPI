@@ -78,7 +78,7 @@ const login = async (req, res) => {
     }
 
     // SMS code generation
-    const smsCode = 979797; // Math.floor(100000 + Math.random() * 900000).toString();
+    const smsCode = Math.floor(100000 + Math.random() * 900000);
     const expiresAt = Date.now() + SMS_CODE_EXPIRATION;
 
     // Save the SMS code temporarily

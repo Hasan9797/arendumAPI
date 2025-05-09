@@ -22,7 +22,8 @@ class AxiosApiService extends EskisTokenService {
       if (!response || !response.data) {
         throw new Error('Response is empty or no response');
       }
-
+      console.log(response.data);
+      
       if (response.data.error) {
         throw new Error(`API Error: ${response.data.error.message}`);
       }
