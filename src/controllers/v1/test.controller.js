@@ -42,26 +42,31 @@ export const sendSmsRequest = async (req, res) => {
   data.append('mobile_phone', "998999893328");
   data.append('message', message);
   data.append('from', '4546');
-  data.append('callback_url', '');
+  data.append('callback_url', 'http://0000.uz/test.php');
 
   const config = {
     method: 'post',
-    maxBodyLength: Infinity,
     url: 'https://notify.eskiz.uz/api/message/sms/send',
     headers: {
       ...data.getHeaders(),
       Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk0MDM5NDksImlhdCI6MTc0NjgxMTk0OSwicm9sZSI6InVzZXIiLCJzaWduIjoiYmE3OTNhM2ZkYThjMmE0NmEyNjcwZGM0ZDMxM2M4MTcwYjc4N2ExMjA1NzdiZmE2YWQ3OWUyNTlhZjUyODBjYyIsInN1YiI6IjEwNjcwIn0.Ho_Fpn3egdVisaBcv8EUQMItAtugTFafBb2UBB-8YrM`,
     },
-    data: data
+    data: data,
+    timeout: 10000 // 10 soniya
   };
 
   axios(config)
     .then(function (response) {
-      res.status(200).json({ success: true, request: config, response: response });
-    })
-    .catch(function (error) {
+      res.status(200).json({ success: true, request: config, response: response.data });
+    }).catch(function (error) {
+      console.error('Axios Error:', {
+        message: error.message,
+        code: error.code,
+        config: error.config,
+        response: error.response?.data,
+      });
       res.status(500).json({ success: false, error: error });
-    });
+    })
 }
 
 
