@@ -44,6 +44,7 @@ class EskisTokenService {
       const axiosResponse = await axios({
         ...params,
         url: baseUrl,
+        timeout: 5000 // 5 soniya kutish
       });
       console.log(axiosResponse.data.data);
 
