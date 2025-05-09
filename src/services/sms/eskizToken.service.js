@@ -18,18 +18,22 @@ class EskisTokenService {
   #password = process.env.ESKIZ_PASSWORD;
 
   async getToken() {
-    const eskizToken = await getEskizToken();
-    console.log(eskizToken);
-    
-    if (eskizToken && eskizToken.expire) {
-      if (Number(eskizToken.expire) >= now) {
-        console.log('Using cached token');
-        return eskizToken.token;
-      }
-      return this.getRefreshToken(eskizToken);
-    }
+    try {
+      const eskizToken = await getEskizToken();
+      console.log(eskizToken);
 
-    return this.getAuthToken();
+      if (eskizToken && eskizToken.expire) {
+        if (Number(eskizToken.expire) >= now) {
+          console.log('Using cached token');
+          return eskizToken.token;
+        }
+        return this.getRefreshToken(eskizToken);
+      }
+
+      return this.getAuthToken();
+    } catch (error) {
+      throw error;
+    }
   }
 
   async #axiosHandler({ route, ...params }) {
@@ -62,20 +66,24 @@ class EskisTokenService {
       ...formData.getHeaders(),
     };
 
-    const data = await this.#axiosHandler({
-      route: 'auth/login',
-      method: 'post',
-      data: formData,
-      headers,
-    });
+    try {
+      const data = await this.#axiosHandler({
+        route: 'auth/login',
+        method: 'post',
+        data: formData,
+        headers,
+      });
 
-    const newEskizToken = await createEskizToken({
-      token: data.token,
-      expire: String(newTimestamp),
-    });
-    console.log('new token');
+      const newEskizToken = await createEskizToken({
+        token: data.token,
+        expire: String(newTimestamp),
+      });
+      console.log('new token');
 
-    return newEskizToken.token;
+      return newEskizToken.token;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getRefreshToken(eskizToken) {
@@ -83,19 +91,23 @@ class EskisTokenService {
       Authorization: `Bearer ${eskizToken.token}`,
     };
 
-    const data = await this.#axiosHandler({
-      method: 'patch',
-      route: 'auth/refresh',
-      headers,
-    });
+    try {
+      const data = await this.#axiosHandler({
+        method: 'patch',
+        route: 'auth/refresh',
+        headers,
+      });
 
-    const updateData = await updateEskizToken(eskizToken.id, {
-      token: data.token,
-      expire: String(newTimestamp),
-    });
-    console.log('refresh token');
+      const updateData = await updateEskizToken(eskizToken.id, {
+        token: data.token,
+        expire: String(newTimestamp),
+      });
+      console.log('refresh token');
 
-    return updateData.token;
+      return updateData.token;
+    } catch (error) {
+      throw error;
+    }
   }
 }
 
