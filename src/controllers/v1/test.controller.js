@@ -44,10 +44,10 @@ export const sendSmsRequest = async (req, res) => {
   data.append('from', '4546');
   data.append('callback_url', '');
 
-  var config = {
+  const config = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: 'http://notify.eskiz.uz/api/message/sms/send',
+    url: 'https://notify.eskiz.uz/api/message/sms/send',
     headers: {
       ...data.getHeaders(),
       Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk0MDM5NDksImlhdCI6MTc0NjgxMTk0OSwicm9sZSI6InVzZXIiLCJzaWduIjoiYmE3OTNhM2ZkYThjMmE0NmEyNjcwZGM0ZDMxM2M4MTcwYjc4N2ExMjA1NzdiZmE2YWQ3OWUyNTlhZjUyODBjYyIsInN1YiI6IjEwNjcwIn0.Ho_Fpn3egdVisaBcv8EUQMItAtugTFafBb2UBB-8YrM`,
