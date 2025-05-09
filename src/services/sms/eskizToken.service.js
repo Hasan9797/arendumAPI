@@ -1,7 +1,16 @@
 import axios from 'axios';
 import redisClient from '../../config/redis.js';
 import FormData from 'form-data';
-import eskizTokenRepo from '../../repositories/eskizToken.repo.js';
+
+import { createEskizToken, getEskizToken, updateEskizToken } from '../../repositories/eskizToken.repo.js';
+
+const daysToAdd = 25 * 86400;
+
+const now = Math.floor(Date.now() / 1000);
+const newTimestamp = now + daysToAdd;
+
+// console.log('25 kun keyingi UNIX:', newTimestamp);
+// console.log('Sana:', new Date(newTimestamp * 1000).toISOString());
 
 class EskisTokenService {
   #eskizBaseUrl = process.env.ESKIZ_BASE_URL;
@@ -9,11 +18,11 @@ class EskisTokenService {
   #password = process.env.ESKIZ_PASSWORD;
 
   async getToken() {
-    const eskizToken = await eskizTokenRepo.getToken();
-    const now = Math.floor(Date.now() / 1000);
-
+    const eskizToken = await getEskizToken();
+    
     if (eskizToken && eskizToken.expire) {
       if (Number(eskizToken.expire) >= now) {
+        // console.log('Using cached token');
         return eskizToken.token;
       }
       return this.getRefreshToken(eskizToken);
@@ -22,22 +31,21 @@ class EskisTokenService {
     return this.getAuthToken();
   }
 
-  async #axiosHandler({ method, route, data, headers }) {
+  async #axiosHandler({ route, ...params }) {
     try {
       const baseUrl = `${this.#eskizBaseUrl}/${route}`;
-
+      console.log(baseUrl);
+      
       const axiosResponse = await axios({
-        method,
+        ...params,
         url: baseUrl,
-        data,
-        headers,
       });
 
       if (!axiosResponse || !axiosResponse.data) {
         throw new Error('Response is empty or no response');
       }
 
-      return response.data;
+      return axiosResponse.data.data;
     } catch (error) {
       throw error;
     }
@@ -53,19 +61,17 @@ class EskisTokenService {
     };
 
     const data = await this.#axiosHandler({
-      method: 'post',
       route: 'auth/login',
+      method: 'post',
       data: formData,
       headers,
     });
 
-    const currentUnixTimestamp = Math.floor(Date.now() / 1000);
-    const twentyFiveDaysLaterTimestamp = currentUnixTimestamp + secondsInDay * daysLater;
-
-    const newEskizToken = await eskizTokenRepo.createEskizToken({
+    const newEskizToken = await createEskizToken({
       token: data.token,
-      expire: String(twentyFiveDaysLaterTimestamp),
+      expire: String(newTimestamp),
     });
+    // console.log('new token');
 
     return newEskizToken.token;
   }
@@ -78,19 +84,16 @@ class EskisTokenService {
     const data = await this.#axiosHandler({
       method: 'patch',
       route: 'auth/refresh',
-      data: formData,
       headers,
     });
-
-    const currentUnixTimestamp = Math.floor(Date.now() / 1000);
-    const twentyFiveDaysLaterTimestamp = currentUnixTimestamp + secondsInDay * daysLater;
-
-    const updateEskizToken = await eskizTokenRepo.updateEskizToken(eskizToken.id, {
+    
+    const updateData = await updateEskizToken(eskizToken.id, {
       token: data.token,
-      expire: String(twentyFiveDaysLaterTimestamp),
+      expire: String(newTimestamp),
     });
+    // console.log('refresh token');
 
-    return updateEskizToken.token;
+    return updateData.token;
   }
 }
 
