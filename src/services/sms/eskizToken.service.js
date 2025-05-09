@@ -19,7 +19,8 @@ class EskisTokenService {
 
   async getToken() {
     const eskizToken = await getEskizToken();
-
+    console.log(eskizToken);
+    
     if (eskizToken && eskizToken.expire) {
       if (Number(eskizToken.expire) >= now) {
         console.log('Using cached token');

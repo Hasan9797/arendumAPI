@@ -16,7 +16,8 @@ class AxiosApiService extends EskisTokenService {
   async send() {
     try {
       const token = await this.getToken();
-            
+      console.log(token);
+      
       const response = await axios(this.getRequest(token));
 
       if (!response || !response.data) {
