@@ -35,8 +35,7 @@ export const test2 = async (req, res) => {
   }
 };
 
-const message = `для регистрации в приложении ARENDUM введите 979797 код; 
-  ARENDUM ilovasiga ro'yhatdan o'tish uchun 979797 kodni kiriting;`;
+const message = `для регистрации в приложении ARENDUM введите 979797 код; ARENDUM ilovasiga ro'yhatdan o'tish uchun 979797 kodni kiriting;`;
 
 export const sendSmsRequest = async (req, res) => {
   data.append('mobile_phone', "998999893328");
