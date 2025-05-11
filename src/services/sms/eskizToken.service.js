@@ -1,5 +1,4 @@
 import axios from 'axios';
-import redisClient from '../../config/redis.js';
 import FormData from 'form-data';
 
 import { createEskizToken, getEskizToken, updateEskizToken } from '../../repositories/eskizToken.repo.js';
