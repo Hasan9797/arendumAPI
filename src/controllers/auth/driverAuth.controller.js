@@ -1,10 +1,5 @@
 import prisma from '../../config/prisma.js';
-import {
-  sendSms,
-  saveSmsCode,
-  getSmsCode,
-  deleteSmsCode,
-} from '../../services/sms/smsGate.service.js';
+import EskizSmsService from '../../services/sms/eskizSms.service.js';
 
 import {
   generateAccessToken,
@@ -113,10 +108,10 @@ const login = async (req, res) => {
     const smsCode = Math.floor(100000 + Math.random() * 900000);
 
     // Save the SMS code temporarily
-    await saveSmsCode(phoneNumber, smsCode, expiresAt);
+    await EskizSmsService.saveSmsCode(phoneNumber, smsCode, expiresAt);
 
     // Send SMS code
-    await sendSms(phoneNumber, `Your login code is: ${smsCode}`);
+    await EskizSmsService.sendSms(phoneNumber, `Your login code is: ${smsCode}`);
 
     return res
       .status(200)
@@ -133,7 +128,7 @@ const login = async (req, res) => {
 const verifySmsCode = async (req, res) => {
   try {
     const { phoneNumber, code, fcmToken } = req.body;
-    const savedCode = await getSmsCode(phoneNumber);
+    const savedCode = await EskizSmsService.getSmsCode(phoneNumber);
 
     if (!savedCode) {
       throw new Error('SMS code not found or expired');
@@ -144,7 +139,7 @@ const verifySmsCode = async (req, res) => {
     }
 
     // Delete the SMS code temporarily
-    await deleteSmsCode(phoneNumber);
+    await EskizSmsService.deleteSmsCode(phoneNumber);
 
     const user = await prisma.driver.findUnique({
       where: { phone: phoneNumber },
