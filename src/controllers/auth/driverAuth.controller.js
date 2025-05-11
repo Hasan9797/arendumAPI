@@ -111,7 +111,7 @@ const login = async (req, res) => {
     await EskizSmsService.saveSmsCode(phoneNumber, smsCode, expiresAt);
 
     // Send SMS code
-    await EskizSmsService.sendSms(phoneNumber, `Your login code is: ${smsCode}`);
+    await EskizSmsService.sendSms(phoneNumber, smsCode);
 
     return res
       .status(200)
