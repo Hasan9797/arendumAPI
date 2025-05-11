@@ -1,8 +1,8 @@
 import { sendNotification } from '../../helpers/sendNotificationHelper.js';
 import driverRepository from '../../repositories/driver.repo.js';
 import axios from 'axios';
-import FormData from 'form-data';
-const data = new FormData();
+import FormData  from 'form-data';
+
 
 export const test = async (req, res) => {
   try {
@@ -35,37 +35,50 @@ export const test2 = async (req, res) => {
   }
 };
 
-const message = `для регистрации в приложении ARENDUM введите 979797 код; ARENDUM ilovasiga ro'yhatdan o'tish uchun 979797 kodni kiriting;`;
+
+const message = `для регистрации в приложении ARENDUM введите 549810 код; ARENDUM ilovasiga ro'yhatdan o'tish uchun 549810 kodni kiriting;`;
 
 export const sendSmsRequest = async (req, res) => {
-  data.append('mobile_phone', "998999893328");
-  data.append('message', message);
-  data.append('from', '4546');
-  data.append('callback_url', 'http://0000.uz/test.php');
+  try {
+    // Har safar yangi FormData yaratish
+    const data = new FormData();
+    data.append('mobile_phone', '998903549810'); // Dinamik telefon raqami
+    data.append('message', message);
+    data.append('from', '4546');
+    data.append('callback_url', 'http://0000.uz/test.php');
 
-  const config = {
-    method: 'post',
-    url: 'https://notify.eskiz.uz/api/message/sms/send',
-    headers: {
-      ...data.getHeaders(),
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk0MDM5NDksImlhdCI6MTc0NjgxMTk0OSwicm9sZSI6InVzZXIiLCJzaWduIjoiYmE3OTNhM2ZkYThjMmE0NmEyNjcwZGM0ZDMxM2M4MTcwYjc4N2ExMjA1NzdiZmE2YWQ3OWUyNTlhZjUyODBjYyIsInN1YiI6IjEwNjcwIn0.Ho_Fpn3egdVisaBcv8EUQMItAtugTFafBb2UBB-8YrM`,
-    },
-    data: data,
-    timeout: 10000 // 10 soniya
-  };
+    const config = {
+      method: 'post',
+      url: 'https://notify.eskiz.uz/api/message/sms/send',
+      headers: {
+        Authorization: `Bearer ${process.env.ESKIZ_TOKEN}`, // Tokenni env dan olish
+        ...data.getHeaders(), // FormData uchun kerakli headerlar
+      },
+      data,
+      timeout: 15000, // Timeoutni 15 soniyaga oshirish
+    };
 
-  axios(config)
-    .then(function (response) {
-      res.status(200).json({ success: true, request: config, response: response.data });
-    }).catch(function (error) {
-      console.error('Axios Error:', {
+    const response = await axios(config);
+
+    return res.status(200).json({
+      success: true,
+      data: response.data,
+    });
+  } catch (error) {
+    console.error('SMS Send Error:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      responseData: error.response?.data,
+    });
+
+    // Faqat kerakli xato ma'lumotlarini qaytarish
+    return res.status(500).json({
+      success: false,
+      error: {
         message: error.message,
-        code: error.code,
-        config: error.config,
-        response: error.response?.data,
-      });
-      res.status(500).json({ success: false, error: error });
-    })
-}
-
-
+        code: error.code || 'UNKNOWN_ERROR',
+      },
+    });
+  }
+};
