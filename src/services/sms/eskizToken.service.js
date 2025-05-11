@@ -3,13 +3,17 @@ import FormData from 'form-data';
 
 import { createEskizToken, getEskizToken, updateEskizToken } from '../../repositories/eskizToken.repo.js';
 
-const daysToAdd = 25 * 86400;
+function getFutureUnixTimestamp(days = 28) {
+  const daysToAdd = days * 86400;
 
-const now = Math.floor(Date.now() / 1000);
-const newTimestamp = now + daysToAdd;
+  const now = Math.floor(Date.now() / 1000);
+  const newTimestamp = now + daysToAdd;
 
-// console.log('25 kun keyingi UNIX:', newTimestamp);
-// console.log('Sana:', new Date(newTimestamp * 1000).toISOString());
+  console.log('25 kun keyingi UNIX:', newTimestamp);
+  console.log('Sana:', new Date(newTimestamp * 1000).toISOString());
+
+  return String(newTimestamp);
+}
 
 class EskisTokenService {
   #eskizBaseUrl = process.env.ESKIZ_BASE_URL;
@@ -17,6 +21,7 @@ class EskisTokenService {
   #password = process.env.ESKIZ_PASSWORD;
 
   async getToken() {
+    const now = Math.floor(Date.now() / 1000);
     try {
       const eskizToken = await getEskizToken();
       console.log(eskizToken);
@@ -35,7 +40,7 @@ class EskisTokenService {
     }
   }
 
-  async #axiosHandler({ route, ...params }) {
+  async axiosHandler({ route, ...params }) {
     try {
       const baseUrl = `${this.#eskizBaseUrl}/${route}`;
       console.log(baseUrl);
@@ -45,13 +50,13 @@ class EskisTokenService {
         url: baseUrl,
         timeout: 5000 // 5 soniya kutish
       });
-      console.log(axiosResponse.data.data);
+      console.log(axiosResponse.data);
 
       if (!axiosResponse || !axiosResponse.data) {
         throw new Error('Response is empty or no response');
       }
 
-      return axiosResponse.data.data;
+      return axiosResponse.data;
     } catch (error) {
       throw error;
     }
@@ -67,7 +72,7 @@ class EskisTokenService {
     };
 
     try {
-      const data = await this.#axiosHandler({
+      const { data } = await this.axiosHandler({
         route: 'auth/login',
         method: 'post',
         data: formData,
@@ -76,7 +81,7 @@ class EskisTokenService {
 
       const newEskizToken = await createEskizToken({
         token: data.token,
-        expire: String(newTimestamp),
+        expire: getFutureUnixTimestamp(),
       });
       console.log('new token');
 
@@ -92,7 +97,7 @@ class EskisTokenService {
     };
 
     try {
-      const data = await this.#axiosHandler({
+      const { data } = await this.axiosHandler({
         method: 'patch',
         route: 'auth/refresh',
         headers,
@@ -100,7 +105,7 @@ class EskisTokenService {
 
       const updateData = await updateEskizToken(eskizToken.id, {
         token: data.token,
-        expire: String(newTimestamp),
+        expire: getFutureUnixTimestamp(),
       });
       console.log('refresh token');
 
