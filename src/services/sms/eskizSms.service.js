@@ -15,8 +15,7 @@ class EskizSmsService extends EskisTokenService {
   };
 
   async sendSms(phone, code) {
-    const message = `для регистрации в приложении ARENDUM введите ${code} код; 
-    ARENDUM ilovasiga ro'yhatdan o'tish uchun ${code} kodni kiriting;`;
+    const message = `ARENDUM ilovasiga ro'yhatdan o'tish uchun ${code} kodni kiriting`;
     try {
       const token = await this.getToken();
 
