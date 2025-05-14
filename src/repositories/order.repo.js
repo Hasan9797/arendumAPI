@@ -122,50 +122,48 @@ const deleteById = async (id) => {
   }
 };
 
-const getNewOrder = async (region, structureId, status) => {
-  const whereData =
-    region.isOpen === true
-      ? {
-        regionId: region.id,
-        status: status,
-      }
-      : { structureId: structureId, status: status };
+const getNewOrder = async (region, structureId) => {
+  const whereData = {
+    status: {
+      in: [OrderStatus.SEARCHING, OrderStatus.PLANNED],
+    },
+    ...(region.isOpen
+      ? { regionId: region.id }
+      : { structureId }),
+  };
 
-  try {
-    return await prisma.order.findMany({
-      where: whereData,
-      include: {
-        client: {
-          select: {
-            id: true,
-            fullName: true,
-            phone: true,
-          },
-        },
-        machine: {
-          select: {
-            id: true,
-            name: true,
-            nameRu: true,
-            nameUz: true,
-            img: true,
-          },
-        },
-        region: {
-          select: {
-            id: true,
-            name: true,
-            nameUz: true,
-            nameRu: true,
-            isOpen: true,
-          },
+  return prisma.order.findMany({
+    where: whereData,
+    include: {
+      client: {
+        select: {
+          id: true,
+          fullName: true,
+          phone: true,
         },
       },
-    });
-  } catch (error) {
-    throw error;
-  }
+      machine: {
+        select: {
+          id: true,
+          name: true,
+          nameRu: true,
+          nameUz: true,
+          img: true,
+        },
+      },
+      region: {
+        select: {
+          id: true,
+          name: true,
+          nameUz: true,
+          nameRu: true,
+          isOpen: true,
+        },
+      },
+    },
+  });
 };
+
 
 const getOrderByDriverId = async (driverId) => {
   try {
