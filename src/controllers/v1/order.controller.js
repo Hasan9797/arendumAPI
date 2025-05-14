@@ -189,7 +189,6 @@ const orderEndWork = async (req, res) => {
 // Driver lar uchun yangi (status driver SEARCHING) qo'shilgan orderlarni chiqarish,
 // driver params ga moslarini
 const getNewOrderByDriverParams = async (req, res) => {
-  const status = parseInt(req.query.status) ?? OrderStatus.SEARCHING;
   try {
     const driver = await driverService.getById(req.user.id);
     if (!driver) throw new Error('Driver not found');
@@ -205,7 +204,6 @@ const getNewOrderByDriverParams = async (req, res) => {
       driver?.params,
       driver?.region,
       driver?.structureId,
-      status
     );
 
     res.status(200).json({

@@ -180,9 +180,9 @@ const endOrder = async (orderId) => {
   }
 };
 
-const getNewOrderByDriverParams = async (driverParams, region, structureId, status) => {
+const getNewOrderByDriverParams = async (driverParams, region, structureId) => {
   try {
-    const orders = await orderRepo.getNewOrder(region, structureId, status);
+    const orders = await orderRepo.getNewOrder(region, structureId);
     if (!orders) return [];
 
     const sanitizedOrders = orders.map((order) => {
