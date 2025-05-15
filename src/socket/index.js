@@ -32,9 +32,7 @@ class SocketService {
       case 'driver':
         return SocketService.io.of('/driver');
       default:
-        throw new Error(
-          "Noto‘g‘ri namespace: 'client' yoki 'driver' kiritilishi kerak"
-        );
+        SocketService.io
     }
   }
 
