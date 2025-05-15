@@ -17,6 +17,8 @@ router.get('/accept-order', authentication, driverController.acceptOrder); // qu
 
 router.get('/driver-came', driverController.driverCame); // query params: order ID
 
+router.get('/cancel-order', authentication, driverController.cancelOrder); // query params: order ID
+
 router.put('/is-online', authentication, driverController.setOnline);
 
 router.get('/:id', driverController.getById);
