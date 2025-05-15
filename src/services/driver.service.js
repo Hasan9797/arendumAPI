@@ -142,6 +142,7 @@ const acceptOrder = async (orderId, driver) => {
 
     const updatedOrder = await orderService.updateOrder(orderId, newData);
 
+
     if (!updatedOrder) {
       throw new Error('Order update error');
     }
@@ -228,6 +229,37 @@ function filterDriversByOrderParams(drivers, orderParams) {
   });
 }
 
+const driverCancelOrder = async (orderId, driverId) => {
+  try {
+    const order = await orderService.getOrderById(orderId);
+
+    if (!order) {
+      throw new CustomError.notFoundError('Заказ не найден');
+    }
+
+    await orderService.updateOrder(orderId, {
+      status: OrderStatus.CANCELED,
+      driverId: null,
+    });
+
+    await driverRepository.updateById(driverId, { inWork: false });
+
+    const clientSocket = SocketService.getSocket('client');
+
+    clientSocket.to(`order_room_${orderId}`).emit('driverCancelOrder', {
+      success: true,
+    });
+
+    // await redisSetHelper.startNotificationForOrder(String(orderId));
+    return {
+      success: true,
+      orderId,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
 export default {
   getAll,
   getById,
@@ -238,4 +270,5 @@ export default {
   getDriversForNewOrder,
   acceptOrder,
   driverArrived,
+  driverCancelOrder,
 };

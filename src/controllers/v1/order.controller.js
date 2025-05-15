@@ -221,19 +221,13 @@ const getNewOrderByDriverParams = async (req, res) => {
   }
 };
 
-const orderCancel = async (req, res) => {
+const orderCancel = async (req, res, next) => {
   const orderId = Number(req.query.id);
   try {
     const result = await orderService.cancelOrder(orderId);
     res.status(200).json(responseSuccess());
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: {
-        message: error.message,
-        code: 500,
-      },
-    });
+    next(error);
   }
 };
 
