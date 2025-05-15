@@ -377,8 +377,14 @@ const cancelOrder = async (orderId) => {
     }
 
     const driverSocket = SocketService.getSocket('driver');
+    const clientSocket = SocketService.getSocket('client');
 
     driverSocket.to(`order_room_${order.id}`).emit('cancelOrder', {
+      success: true,
+      message: 'Order cancelled',
+    });
+
+    clientSocket.to(`order_room_${order.id}`).emit('cancelOrder', {
       success: true,
       message: 'Order cancelled',
     });
