@@ -9,6 +9,7 @@ import structureService from './structure.service.js';
 import machineService from './machines.service.js';
 import SocketService from '../socket/index.js';
 import driverService from './driver.service.js';
+import { CustomError } from '../Errors/customError.js';
 
 const getOrders = async (query, lang = 'ru') => {
   try {
@@ -350,15 +351,15 @@ const driverArrived = async (orderId) => {
 
 const cancelOrder = async (orderId) => {
   try {
+    const order = await orderRepo.getCreatedOrder(orderId);
+
+    if (!order) {
+      throw new CustomError.notFoundError('Order not found');
+    }
+
     const result = await orderRepo.updateById(orderId, {
       status: OrderStatus.CANCELLED,
     });
-
-    if (!result) {
-      throw new Error('Order update error');
-    }
-
-    const order = await orderRepo.getCreatedOrder(orderId);
 
     const preparedOrder = {
       ...order,
@@ -377,14 +378,8 @@ const cancelOrder = async (orderId) => {
     }
 
     const driverSocket = SocketService.getSocket('driver');
-    const clientSocket = SocketService.getSocket('client');
 
     driverSocket.to(`order_room_${order.id}`).emit('cancelOrder', {
-      success: true,
-      message: 'Order cancelled',
-    });
-
-    clientSocket.to(`order_room_${order.id}`).emit('cancelOrder', {
       success: true,
       message: 'Order cancelled',
     });

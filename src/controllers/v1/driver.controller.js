@@ -99,7 +99,7 @@ const acceptOrder = async (req, res, next) => {
     }
 
     const serviceCommission = await serviceCommissionService.getLastActive();
-    console.log(serviceCommission);
+    // console.log(serviceCommission);
     
     if (serviceCommission) {
       if (!driver.balance || Number(driver.balance) < serviceCommission?.driverBalance) {
@@ -109,7 +109,7 @@ const acceptOrder = async (req, res, next) => {
       }
     }
     
-    console.log('eeeeeyaaaa o`tib kettikuu :((');
+    // console.log('eeeeeyaaaa o`tib kettikuu :((');
     
     const result = await driverService.acceptOrder(orderId, driver);
 
@@ -152,6 +152,16 @@ const setOnline = async (req, res) => {
   }
 };
 
+const cancelOrder = async (req, res, next) => {
+  const orderId = Number(req.query.id);
+  try {
+    const result = await driverService.driverCancelOrder(orderId, req.user.id);
+    res.status(200).json(responseSuccess());
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   getAll,
   getById,
@@ -163,4 +173,5 @@ export default {
   setOnline,
   driverCame,
   getProcessOrder,
+  cancelOrder,
 };
