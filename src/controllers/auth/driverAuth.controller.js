@@ -1,58 +1,46 @@
 import prisma from '../../config/prisma.js';
 import EskizSmsService from '../../services/sms/eskizSms.service.js';
 
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  verifyToken,
-} from '../../helpers/jwtTokenHelper.js';
+import { generateAccessToken, generateRefreshToken, verifyToken } from '../../helpers/jwtTokenHelper.js';
 
 import userRoleEnum from '../../enums/user/userRoleEnum.js';
 import driverService from '../../services/driver.service.js';
 
 import { updateOrCreateUserToken } from '../../repositories/userToken.repo.js';
 
-import {
-  DriverStatus,
-  getDriverStatusText,
-} from '../../enums/driver/driverStatusEnum.js';
+import { DriverStatus, getDriverStatusText } from '../../enums/driver/driverStatusEnum.js';
 
 import machineService from '../../services/machines.service.js';
 import regionService from '../../services/regiosn.service.js';
 import structureService from '../../services/structure.service.js';
 import userBalanceService from '../../services/userBalance.service.js';
-import { normalizePhoneNumber } from '../../helpers/phoneHelper.js';
+import { formatPhoneNumberWithPlus } from '../../helpers/phoneHelper.js';
+import { CustomError } from '../../Errors/customError.js';
 
-const expiresAt = 5 * 60; // 5 daqiqa = 300 soniya
+const expiresAt = 5 * 60; // 5 daqiqa = 300 sekund
 
 const register = async (req, res) => {
   try {
     if (!req.user) {
-      return res
-        .status(400)
-        .json({ message: 'Driver not found for Register', success: false });
+      return res.status(400).json({ message: 'Driver not found for Register', success: false });
     }
 
-    const machine = await machineService.getMachineById(
-      parseInt(req.body.machineId)
-    );
+    const machine = await machineService.getMachineById(parseInt(req.body.machineId));
 
     if (!machine) {
-      throw new Error('Machine not found');
+      throw CustomError.validateNumber('Machine not found');
     }
 
     const region = await regionService.getOne(parseInt(req.body.regionId));
 
     if (!region) {
-      throw new Error('Region not found');
+      throw CustomError.validateNumber('Region not found');
     }
 
-    const structure = await structureService.getById(
-      parseInt(req.body.structureId)
-    );
+    const structure = await structureService.getById(parseInt(req.body.structureId));
 
     if (!structure) {
-      throw new Error('Structure not found');
+      throw CustomError.validateNumber('Structure not found');
     }
 
     const driver = await driverService.updateById(req.user.id, {
@@ -67,9 +55,7 @@ const register = async (req, res) => {
       });
     }
 
-    res
-      .status(201)
-      .json({ success: true, message: 'Driver registered', data: driver });
+    res.status(201).json({ success: true, message: 'Driver registered', data: driver });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -78,51 +64,40 @@ const register = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { phoneNumber } = req.body;
 
   if (!phoneNumber) {
-    return res
-      .status(400)
-      .json({ message: 'phoneNumber is required', success: false });
+    return res.status(400).json({ message: 'phoneNumber is required', success: false });
   }
 
   try {
-    if (!normalizePhoneNumber(phoneNumber)) {
-      return res.status(400).json({
-        message: 'Invalid phone number',
-        success: false,
-      });
-    }
+    const validateNumber = formatPhoneNumberWithPlus(phoneNumber);
 
     const user = await prisma.driver.findUnique({
-      where: { phone: phoneNumber },
+      where: { phone: validateNumber },
     });
 
     if (!user) {
       await driverService.create({
-        phone: phoneNumber,
+        phone: validateNumber,
       });
     }
-    // SMS code generation
-    const smsCode = Math.floor(100000 + Math.random() * 900000);
 
-    if (!['+998903549810', '998903549810', '903549810'].includes(phoneNumber)) {
+    if (validateNumber !== '+998903549810') {
+      // SMS code generation
+      const smsCode = Math.floor(100000 + Math.random() * 900000);
+
       // Save the SMS code temporarily
-      await EskizSmsService.saveSmsCode(phoneNumber, smsCode, expiresAt);
+      await EskizSmsService.saveSmsCode(validateNumber, smsCode, expiresAt);
 
       // Send SMS code
-      await EskizSmsService.sendSms(phoneNumber, smsCode);
+      await EskizSmsService.sendSms(validateNumber, smsCode);
     }
 
-    return res
-      .status(200)
-      .json({ message: 'SMS code sent successfully', success: true });
+    return res.status(200).json({ message: 'SMS code sent successfully', success: true });
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-      success: false,
-    });
+    next(error);
   }
 };
 
@@ -130,9 +105,10 @@ const login = async (req, res) => {
 const verifySmsCode = async (req, res) => {
   try {
     const { phoneNumber, code, fcmToken } = req.body;
-    const savedCode = await EskizSmsService.getSmsCode(phoneNumber);
+    const validateNumber = formatPhoneNumberWithPlus(phoneNumber);
 
-    if (code !== 777777, !['+998903549810', '998903549810', '903549810'].includes(phoneNumber)) {
+    if (validateNumber !== '+998903549810') {
+      const savedCode = await EskizSmsService.getSmsCode(validateNumber);
 
       if (!savedCode) {
         throw new Error('SMS code not found or expired', 400);
@@ -142,13 +118,13 @@ const verifySmsCode = async (req, res) => {
         throw new Error('Invalid SMS code', 400);
       }
 
-      await EskizSmsService.deleteSmsCode(phoneNumber);
+      await EskizSmsService.deleteSmsCode(validateNumber);
     }
 
     // Delete the SMS code temporarily
 
     const user = await prisma.driver.findUnique({
-      where: { phone: phoneNumber },
+      where: { phone: validateNumber },
     });
 
     if (!user) {

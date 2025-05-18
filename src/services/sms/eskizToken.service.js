@@ -9,8 +9,8 @@ function getFutureUnixTimestamp(days = 28) {
   const now = Math.floor(Date.now() / 1000);
   const newTimestamp = now + daysToAdd;
 
-  console.log('25 kun keyingi UNIX:', newTimestamp);
-  console.log('Sana:', new Date(newTimestamp * 1000).toISOString());
+  // console.log('25 kun keyingi UNIX:', newTimestamp);
+  // console.log('Sana:', new Date(newTimestamp * 1000).toISOString());
 
   return String(newTimestamp);
 }
@@ -24,11 +24,10 @@ class EskisTokenService {
     const now = Math.floor(Date.now() / 1000);
     try {
       const eskizToken = await getEskizToken();
-      console.log(eskizToken);
 
       if (eskizToken && eskizToken.expire) {
         if (Number(eskizToken.expire) >= now) {
-          console.log('Using cached token');
+          // console.log('Using cached token');
           return eskizToken.token;
         }
         return this.getRefreshToken(eskizToken);
@@ -43,14 +42,14 @@ class EskisTokenService {
   async axiosHandler({ route, ...params }) {
     try {
       const baseUrl = `${this.#eskizBaseUrl}/${route}`;
-      console.log(baseUrl);
+      // console.log(baseUrl);
 
       const axiosResponse = await axios({
         ...params,
         url: baseUrl,
-        timeout: 5000 // 5 soniya kutish
+        timeout: 5000, // 5 soniya kutish
       });
-      console.log(axiosResponse.data);
+      // console.log(axiosResponse.data);
 
       if (!axiosResponse || !axiosResponse.data) {
         throw new Error('Response is empty or no response');

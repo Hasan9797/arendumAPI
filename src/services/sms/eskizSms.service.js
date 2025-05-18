@@ -4,7 +4,6 @@ import redisClient from '../../config/redis.js';
 import EskisTokenService from './eskizToken.service.js';
 
 class EskizSmsService extends EskisTokenService {
-
   constructor() {
     super();
   }
@@ -12,7 +11,7 @@ class EskizSmsService extends EskisTokenService {
   async saveSmsCode(phoneNumber, code, expiresIn) {
     const key = `sms:${phoneNumber}`;
     await redisClient.set(key, code, { EX: expiresIn }); // EX: TTL sekundlarda
-  };
+  }
 
   async sendSms(phone, code) {
     const message = `ARENDUM ilovasiga ro'yhatdan o'tish uchun ${code} kodni kiriting`;
@@ -54,12 +53,12 @@ class EskizSmsService extends EskisTokenService {
   async getSmsCode(phoneNumber) {
     const key = `sms:${phoneNumber}`;
     return await redisClient.get(key); // SMS kodni qaytaradi yoki null
-  };
+  }
 
   async deleteSmsCode(phoneNumber) {
     const key = `sms:${phoneNumber}`;
     await redisClient.del(key); // Redis'dan SMS kodni o'chirish
-  };
+  }
 
   async verifySmsCode(phoneNumber, code) {
     const savedCode = await getSmsCode(phoneNumber);
@@ -70,10 +69,7 @@ class EskizSmsService extends EskisTokenService {
       throw new Error('Invalid SMS code');
     }
     await deleteSmsCode(phoneNumber);
-  };
-
+  }
 }
 
 export default new EskizSmsService();
-
-

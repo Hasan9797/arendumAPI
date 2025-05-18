@@ -4,35 +4,32 @@ import SocketService from '../socket/index.js';
 
 async function orderDriverSearchScheduler() {
   try {
+    const drivers = await driverService.getAllDrivers();
 
-    const drivetrs = await driverService.getAllDrivers();
-
-    for (const driver of drivetrs) {
-      const orders = await orderRepo.getPlannedOrdersByDriverId(driver.id);
+    for (const driver of drivers) {
+      const orders = await orderService.getPlannedOrderByDriverId(driver.id);
 
       if (!orders || orders.length === 0) continue;
 
-      orders.forEach(async (order) => {
+      for (const order of orders) {
+        const title = 'New Order';
+        const body = 'You have a new order';
+        const data = { orderId: order.id };
 
         const now = Math.floor(Date.now() / 1000);
-        const newOrderStartAt = order.startAt
-          ? Math.floor(new Date(order.startAt).getTime() / 1000)
-          : null;
+        const newOrderStartAt = order.startAt ? Math.floor(new Date(order.startAt).getTime() / 1000) : null;
 
-        if (!newOrderStartAt){
-          
-        };
+        if (!newOrderStartAt) {
+          continue;
+        }
+
         await sendNotification(driver?.fcmToken, title, body, data);
         // Send Reload new orders page message to drivers
         const DriverSocket = SocketService.getSocket('driver');
 
-        DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit(
-          'reloadNewOrders',
-          order
-        );
-      })
+        DriverSocket.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', order);
+      }
     }
-
   } catch (error) {
     console.log(error);
     throw error;
