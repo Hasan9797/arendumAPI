@@ -54,15 +54,11 @@ class ClientSocketHandler {
         if (!order || typeof order.id !== 'number') {
           throw new Error('orderId is required');
         }
-        console.log(order);
+        // console.log(order);
 
-        socket.orderId = order.id;
-
-        if (order?.startAt === null) {
-          await orderService.updateOrder(order.id, {
-            status: OrderStatus.SEARCHING,
-          });
-        }
+        await orderService.updateOrder(order.id, {
+          status: OrderStatus.SEARCHING,
+        });
 
         socket.join(`order_room_${order.id}`);
 
@@ -73,7 +69,7 @@ class ClientSocketHandler {
           order.params,
           order.paymentType.id
         );
-        console.log('drivers:', drivers);
+        // console.log('drivers:', drivers);
 
         if (drivers.length === 0) {
           socket.emit('driverNotFound', {
@@ -106,9 +102,7 @@ class ClientSocketHandler {
 
         // Send notification to drivers
         for (const driver of drivers) {
-          const orderExists = await redisSetHelper.isNotificationStopped(
-            String(order.id)
-          );
+          const orderExists = await redisSetHelper.isNotificationStopped(String(order.id));
 
           if (orderExists === true) break;
 
@@ -116,21 +110,15 @@ class ClientSocketHandler {
 
           await new Promise((resolve) => setTimeout(resolve, 5000));
 
-          const stillExists = await redisSetHelper.isNotificationStopped(
-            String(order.id)
-          );
+          const stillExists = await redisSetHelper.isNotificationStopped(String(order.id));
 
           if (stillExists === true) break;
         }
 
         // Send Reload new orders page message to drivers
-        this.driverNamespace
-          .to(`drivers_room_${order.regionId}_${order.machineId}`)
-          .emit('reloadNewOrders', order);
+        this.driverNamespace.to(`drivers_room_${order.regionId}_${order.machineId}`).emit('reloadNewOrders', order);
 
-        const finalCheck = await redisSetHelper.isNotificationStopped(
-          String(order.id)
-        );
+        const finalCheck = await redisSetHelper.isNotificationStopped(String(order.id));
 
         if (finalCheck === false) {
           socket.emit('driverWaiting', {

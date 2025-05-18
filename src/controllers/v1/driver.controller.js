@@ -6,7 +6,7 @@ import { CustomError } from '../../Errors/customError.js';
 import serviceCommissionService from '../../services/serviceCommission.service.js';
 import userBalanceService from '../../services/userBalance.service.js';
 
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
   const query = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 20,
@@ -27,16 +27,16 @@ const getAll = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    next(error);
   }
 };
 
-const getById = async (req, res) => {
+const getById = async (req, res, next) => {
   try {
     const driver = await driverService.getById(parseInt(req.params.id));
     res.status(201).json(responseSuccess(driver));
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    next(error);
   }
 };
 
@@ -50,40 +50,40 @@ const getMe = async (req, res, next) => {
   }
 };
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
   try {
     await driverService.create(req.body);
     res.status(201).json(responseSuccess());
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    next(error);
   }
 };
 
-const update = async (req, res) => {
+const update = async (req, res, next) => {
   try {
     const user = await driverService.updateById(parseInt(req.params.id), req.body);
     res.status(200).json(responseSuccess());
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    next(error);
   }
 };
 
-const distroy = async (req, res) => {
+const distroy = async (req, res, next) => {
   try {
     await driverService.deleteById(parseInt(req.params.id));
     res.status(200).json(responseSuccess());
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    next(error);
   }
 };
 
-const getProcessOrder = async (req, res) => {
+const getProcessOrder = async (req, res, next) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
     const order = await orderService.getOrderByDriverId(parseInt(req.user.id), lang);
     res.status(200).json(responseSuccess(order));
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    next(error);
   }
 };
 
@@ -100,7 +100,7 @@ const acceptOrder = async (req, res, next) => {
 
     const serviceCommission = await serviceCommissionService.getLastActive();
     // console.log(serviceCommission);
-    
+
     if (serviceCommission) {
       if (!driver.balance || Number(driver.balance) < serviceCommission?.driverBalance) {
         throw CustomError.validationError(
@@ -108,9 +108,9 @@ const acceptOrder = async (req, res, next) => {
         );
       }
     }
-    
+
     // console.log('eeeeeyaaaa o`tib kettikuu :((');
-    
+
     const result = await driverService.acceptOrder(orderId, driver);
 
     if (result == null) {
@@ -131,16 +131,16 @@ const acceptOrder = async (req, res, next) => {
   }
 };
 
-const driverCame = async (req, res) => {
+const driverCame = async (req, res, next) => {
   try {
     const result = await driverService.driverArrived(Number(req.query.id));
     res.status(200).json(responseSuccess(result));
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    next(error);
   }
 };
 
-const setOnline = async (req, res) => {
+const setOnline = async (req, res, next) => {
   try {
     await driverService.updateById(req.user.id, {
       isOnline: req.body.isOnline,
@@ -148,7 +148,7 @@ const setOnline = async (req, res) => {
 
     res.status(200).json(responseSuccess());
   } catch (error) {
-    res.status(500).json(responseError(error.message, 500));
+    next(error);
   }
 };
 
@@ -157,6 +157,15 @@ const cancelOrder = async (req, res, next) => {
   try {
     const result = await driverService.driverCancelOrder(orderId, req.user.id);
     res.status(200).json(responseSuccess());
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getPlannedOrders = async (req, res, next) => {
+  try {
+    const result = await driverService.getMyPlannedOrders(req.user.id);
+    res.status(200).json(responseSuccess(result));
   } catch (error) {
     next(error);
   }
@@ -174,4 +183,5 @@ export default {
   driverCame,
   getProcessOrder,
   cancelOrder,
+  getPlannedOrders,
 };

@@ -124,12 +124,8 @@ const deleteById = async (id) => {
 
 const getNewOrder = async (region, structureId) => {
   const whereData = {
-    status: {
-      in: [OrderStatus.SEARCHING, OrderStatus.PLANNED],
-    },
-    ...(region.isOpen
-      ? { regionId: region.id }
-      : { structureId }),
+    status: OrderStatus.SEARCHING,
+    ...(region.isOpen ? { regionId: region.id } : { structureId }),
   };
 
   return prisma.order.findMany({
@@ -163,7 +159,6 @@ const getNewOrder = async (region, structureId) => {
     },
   });
 };
-
 
 const getOrderByDriverId = async (driverId) => {
   try {
@@ -346,13 +341,8 @@ const getPlannedOrdersByDriverId = async (driverId) => {
     return await prisma.order.findMany({
       where: {
         driverId,
-        startAt: {
-          not: null,
-        },
-        status: {
-          in: [OrderStatus.ASSIGNED, OrderStatus.PLANNED],
-        },
-      }
+        status: OrderStatus.PLANNED,
+      },
     });
   } catch (error) {
     throw error;

@@ -21,6 +21,8 @@ router.get('/cancel-order', authentication, driverController.cancelOrder); // qu
 
 router.put('/is-online', authentication, driverController.setOnline);
 
+router.put('/get-planned-orders', authentication, driverController.getPlannedOrders); // auth required
+
 router.get('/:id', driverController.getById);
 
 router.post('/create', driverController.create);

@@ -102,7 +102,6 @@ const getDriversForNewOrder = async (machineId, region, structureId, orderParams
 };
 
 const acceptOrder = async (orderId, driver) => {
-  const statusArray = [OrderStatus.SEARCHING, OrderStatus.PLANNED];
   try {
     if (driver?.status != DriverStatus.ACTIVE || !orderId) {
       throw CustomError.validationError('Водитель неактивен или идентификатор заказа недействителен');
@@ -118,9 +117,13 @@ const acceptOrder = async (orderId, driver) => {
       return null;
     }
 
+    if (order.status != OrderStatus.SEARCHING) {
+      throw CustomError.validationError('Заказ неактивен или уже был выбран другим водителем!');
+    }
+
     const isPlanned = await orderService.isPlannedOrder(driver.id, order);
 
-    if (order.startAt && isPlanned) {
+    if (order.isPlanned && isPlanned) {
       throw CustomError.validationError('У вас уже есть заказ на выбранную дату.');
     }
 
@@ -128,16 +131,13 @@ const acceptOrder = async (orderId, driver) => {
       throw CustomError.validationError('У вас назначена встреча через 2 часа.');
     }
 
-    if (!statusArray.includes(order.status)) {
-      throw CustomError.validationError('Заказ неактивен или уже был выбран другим водителем!');
-    }
-
     let newData = {
       driverId: driver.id,
+      status: OrderStatus.ASSIGNED,
     };
 
-    if (order.isPlanned === false) {
-      newData.status = OrderStatus.ASSIGNED;
+    if (order.isPlanned) {
+      newData.status = OrderStatus.PLANNED;
     }
 
     const updatedOrder = await orderService.updateOrder(orderId, newData);
@@ -257,7 +257,15 @@ const driverCancelOrder = async (orderId, driverId) => {
   } catch (error) {
     throw error;
   }
-}
+};
+
+const getMyPlannedOrders = async (driverId) => {
+  try {
+    return await orderService.getPlannedOrderByDriverId(driverId);
+  } catch (error) {
+    throw error;
+  }
+};
 
 export default {
   getAll,
@@ -270,4 +278,5 @@ export default {
   acceptOrder,
   driverArrived,
   driverCancelOrder,
+  getMyPlannedOrders,
 };

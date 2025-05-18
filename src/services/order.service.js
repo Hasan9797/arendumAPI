@@ -31,10 +31,10 @@ const getOrders = async (query, lang = 'ru') => {
         ...rest,
         machine: machine
           ? {
-            name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
-            id: machine?.id || null,
-            img: machine?.img || null,
-          }
+              name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
+              id: machine?.id || null,
+              img: machine?.img || null,
+            }
           : null,
       };
     });
@@ -416,13 +416,11 @@ async function orderFormatter(order, lang = 'ru') {
 
 const isPlannedOrder = async (driverId, newOrder) => {
   try {
-    const orders = await orderRepo.getPlannedOrdersByDriverId(driverId, newOrder);
+    const orders = await orderRepo.getPlannedOrdersByDriverId(driverId);
     if (!orders || orders.length === 0) return false;
 
     const now = Math.floor(Date.now() / 1000);
-    const newOrderStartAt = newOrder.startAt
-      ? Math.floor(new Date(newOrder.startAt).getTime() / 1000)
-      : null;
+    const newOrderStartAt = newOrder.startAt ? Math.floor(new Date(newOrder.startAt).getTime() / 1000) : null;
 
     return orders.some(({ startAt }) => {
       if (!startAt) return false;
@@ -431,7 +429,8 @@ const isPlannedOrder = async (driverId, newOrder) => {
 
       // 1. Ikkala order ham planli bo‘lsa va bir kunda bo‘lsa — true
       if (newOrderStartAt) {
-        const sameDay = new Date(newOrderStartAt * 1000).toDateString() === new Date(orderStartAt * 1000).toDateString();
+        const sameDay =
+          new Date(newOrderStartAt * 1000).toDateString() === new Date(orderStartAt * 1000).toDateString();
         if (sameDay) return true;
       }
 
@@ -439,12 +438,18 @@ const isPlannedOrder = async (driverId, newOrder) => {
       const secondsLeft = orderStartAt - now;
       return secondsLeft > 0 && secondsLeft <= 7200;
     });
-
   } catch (error) {
     throw error;
   }
 };
 
+const getPlannedOrderByDriverId = async (driverId) => {
+  try {
+    return await orderRepo.getPlannedOrdersByDriverId(driverId);
+  } catch (error) {
+    throw error;
+  }
+};
 
 export default {
   getOrders,
@@ -460,4 +465,5 @@ export default {
   getNewOrderByDriverParams,
   cancelOrder,
   isPlannedOrder,
+  getPlannedOrderByDriverId,
 };
