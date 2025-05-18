@@ -267,6 +267,14 @@ const getMyPlannedOrders = async (driverId) => {
   }
 };
 
+const getDriversForCronJob = async () => {
+  try {
+    return await driverRepository.getDriversForCronJob();
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getAll,
   getById,
@@ -279,4 +287,5 @@ export default {
   driverArrived,
   driverCancelOrder,
   getMyPlannedOrders,
+  getDriversForCronJob,
 };

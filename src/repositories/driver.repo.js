@@ -1,10 +1,7 @@
 import prisma from '../config/prisma.js';
 import redisClient from '../config/redis.js';
 import { buildWhereFilter } from '../helpers/whereFilterHelper.js';
-import {
-  getDriverStatusText,
-  DriverStatus,
-} from '../enums/driver/driverStatusEnum.js';
+import { getDriverStatusText, DriverStatus } from '../enums/driver/driverStatusEnum.js';
 
 const findAll = async (lang, query) => {
   const { page, limit, sort, filters = [] } = query;
@@ -61,9 +58,7 @@ const findAll = async (lang, query) => {
     const total = await prisma.driver.count({ where });
 
     // Bog‘liq bo‘lmagan ID maydonlarini olib tashlash
-    const sanitizedDrivers = drivers.map(
-      ({ regionId, structureId, machineId, ...rest }) => rest
-    );
+    const sanitizedDrivers = drivers.map(({ regionId, structureId, machineId, ...rest }) => rest);
 
     // Ma’lumotlarni formatlash
     const data = sanitizedDrivers.map((driver) => {
@@ -218,12 +213,7 @@ const getDriverProfile = async (driverId) => {
   }
 };
 
-const getDriversForNotification = async (
-  machineId,
-  region,
-  structureId,
-  legal
-) => {
+const getDriversForNotification = async (machineId, region, structureId, legal) => {
   try {
     // Parametr validatsiyasi
     if (!machineId || typeof machineId !== 'number') {
@@ -266,6 +256,16 @@ const getDriversForNotification = async (
   }
 };
 
+const getDriversForCronJob = async () => {
+  try {
+    return await prisma.driver.findMany({
+      where: { status: DriverStatus.ACTIVE },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   findAll,
   getById,
@@ -274,4 +274,5 @@ export default {
   deleteById,
   getDriverProfile,
   getDriversForNotification,
+  getDriversForCronJob,
 };
