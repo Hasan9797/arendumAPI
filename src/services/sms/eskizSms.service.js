@@ -13,8 +13,8 @@ class EskizSmsService extends EskisTokenService {
     await redisClient.set(key, code, { EX: expiresIn }); // EX: TTL sekundlarda
   }
 
-  async sendSms(phone, code) {
-    const message = `ARENDUM ilovasiga ro'yhatdan o'tish uchun ${code} kodni kiriting`;
+  async sendSms(phone, code, autoCompleteHashCode) {
+    const message = `ARENDUM mobile ilovasiga kirish uchun kod ${code} \n\n ${autoCompleteHashCode}`;
     try {
       const token = await this.getToken();
 
