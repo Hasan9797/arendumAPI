@@ -343,6 +343,15 @@ const getPlannedOrdersByDriverId = async (driverId) => {
         driverId,
         status: OrderStatus.PLANNED,
       },
+      include: {
+        client: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        },
+      },
     });
   } catch (error) {
     throw error;
