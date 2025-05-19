@@ -31,10 +31,10 @@ const getOrders = async (query, lang = 'ru') => {
         ...rest,
         machine: machine
           ? {
-            name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
-            id: machine?.id || null,
-            img: machine?.img || null,
-          }
+              name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
+              id: machine?.id || null,
+              img: machine?.img || null,
+            }
           : null,
       };
     });
@@ -458,7 +458,7 @@ const getPlannedOrderByDriverId = async (driverId) => {
         },
         status: { id: order.status, text: getStatusText(order.status) },
       };
-      return orderFormatter(serializedOrder);
+      return formatResponseDates(serializedOrder);
     });
   } catch (error) {
     throw error;
