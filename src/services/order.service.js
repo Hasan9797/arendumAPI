@@ -31,10 +31,10 @@ const getOrders = async (query, lang = 'ru') => {
         ...rest,
         machine: machine
           ? {
-              name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
-              id: machine?.id || null,
-              img: machine?.img || null,
-            }
+            name: lang === 'ru' ? machine?.nameRu || null : machine?.nameUz || null,
+            id: machine?.id || null,
+            img: machine?.img || null,
+          }
           : null,
       };
     });
@@ -445,7 +445,21 @@ const isPlannedOrder = async (driverId, newOrder) => {
 
 const getPlannedOrderByDriverId = async (driverId) => {
   try {
-    return await orderRepo.getPlannedOrdersByDriverId(driverId);
+    const orders = await orderRepo.getPlannedOrdersByDriverId(driverId);
+
+    if (!orders || orders.length === 0) return [];
+
+    return orders.map((order) => {
+      const serializedOrder = {
+        ...order,
+        paymentType: {
+          id: order.paymentType,
+          text: getPaymentTypeText(order.paymentType),
+        },
+        status: { id: order.status, text: getStatusText(order.status) },
+      };
+      return orderFormatter(serializedOrder);
+    });
   } catch (error) {
     throw error;
   }
