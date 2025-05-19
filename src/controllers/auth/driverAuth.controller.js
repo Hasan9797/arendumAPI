@@ -65,7 +65,7 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res, next) => {
-  const { phoneNumber } = req.body;
+  const { phoneNumber, autoComplete = 'not required' } = req.body;
 
   if (!phoneNumber) {
     return res.status(400).json({ message: 'phoneNumber is required', success: false });
@@ -92,7 +92,7 @@ const login = async (req, res, next) => {
       await EskizSmsService.saveSmsCode(validateNumber, smsCode, expiresAt);
 
       // Send SMS code
-      await EskizSmsService.sendSms(validateNumber, smsCode);
+      await EskizSmsService.sendSms(validateNumber, smsCode, autoComplete);
     }
 
     return res.status(200).json({ message: 'SMS code sent successfully', success: true });

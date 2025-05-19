@@ -37,7 +37,7 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res, next) => {
-  const { phoneNumber } = req.body;
+  const { phoneNumber,  autoComplete = 'not required' } = req.body;
   try {
     const validateNumber = formatPhoneNumberWithPlus(phoneNumber);
 
@@ -60,7 +60,7 @@ const login = async (req, res, next) => {
       await EskizSmsService.saveSmsCode(validateNumber, smsCode, expiresAt);
 
       // Send SMS code
-      await EskizSmsService.sendSms(validateNumber, smsCode);
+      await EskizSmsService.sendSms(validateNumber, smsCode, autoComplete);
 
     }
 
