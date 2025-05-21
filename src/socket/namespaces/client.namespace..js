@@ -88,7 +88,7 @@ class ClientSocketHandler {
         }
 
         const title = 'New Order';
-        const body = 'You have a new order';
+        const body = 'Sizda yangi buyurtma bor. \nУ вас новый заказ.';
         const data = {
           key: 'new_order',
           order: JSON.stringify({
