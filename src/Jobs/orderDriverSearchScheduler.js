@@ -4,61 +4,75 @@ import { sendNotification } from '../helpers/sendNotificationHelper.js';
 
 async function orderDriverSearchScheduler() {
   try {
-    // Faol driverlarni olish
+    console.log('📅 Cron ishga tushdi: orderDriverSearchScheduler');
     const drivers = await driverService.getDriversForCronJob();
     console.log('Drivers found: ', drivers.length);
 
-    // Har bir driver uchun
     for (const driver of drivers) {
-      // Driverning rejalashtirilgan zakazlarini olish
       const orders = await orderService.getPlannedOrderByDriverId(driver.id);
       console.log(`Orders for driver ${driver.id}: `, orders.length);
 
-      // Agar zakazlar bo'lmasa, keyingi driverga o'tish
       if (!orders || orders.length === 0) {
+        console.log(`No planned orders for driver ${driver.id}`);
         continue;
       }
 
-      // Har bir zakazni tekshirish
       for (const order of orders) {
-        // Zakaz boshlanish vaxtini olish
         const orderStartAt = order.startAt ? new Date(order.startAt) : null;
 
-        // Agar startAt mavjud bo'lmasa, keyingi zakazga o'tish
         if (!orderStartAt || isNaN(orderStartAt)) {
+          console.log(`Invalid startAt for order ${order.id}: ${order.startAt}`);
           continue;
         }
 
-        // Hozirgi vaxtni olish
         const now = new Date();
+        const nowUTC = new Date(now.toUTCString());
+        const timeDifference = orderStartAt.getTime() - nowUTC.getTime();
+        const secondsLeft = Math.floor(timeDifference / 1000);
+        const minutesLeft = Math.floor(secondsLeft / 60);
+        const hoursLeft = Math.floor(minutesLeft / 60);
 
-        // Vaqtlar farqini millisekundlarda hisoblash
-        const timeDifference = orderStartAt.getTime() - now.getTime();
-        const secondsLeft = Math.floor(timeDifference / 1000); // Sekundlarga aylantirish
-        console.log(`Order ${order.id} - seconds left: ${secondsLeft}`);
+        console.log(
+          `Order ${order.id} - startAt: ${order.startAt}, ` +
+          `now: ${nowUTC.toISOString()}, seconds left: ${secondsLeft}, ` +
+          `minutes left: ${minutesLeft}, hours left: ${hoursLeft}, ` +
+          `orderId type: ${typeof order.id}`
+        );
 
-        // Agar zakaz allaqachon o'tib ketgan bo'lsa, o'tkazib yuborish
         if (secondsLeft <= 0) {
           console.log(`Order ${order.id} has already passed`);
           continue;
         }
 
-        // Agar 2 soat yoki undan kam vaqt qolgan bo'lsa
         if (secondsLeft <= 2 * 60 * 60) {
-          console.log(`Order ${order.id} is within 2 hours: ${secondsLeft} seconds left`);
+          console.log(
+            `Order ${order.id} is within 2 hours: ${secondsLeft} seconds ` +
+            `(${minutesLeft} minutes) left`
+          );
 
-          // Notification ma'lumotlarini tayyorlash
           const title = 'Planned Order';
-          const body = 'You have a planned order';
-          const data = { orderId: order.id };
+          const body = 'Rejalashtirilgan buyurtma vaqti keldi. \nПришло время для запланированного заказа.';
+          const data = { orderId: String(order.id) }; // order.id ni string ga aylantirish
 
-          // Notification yuborish
           if (driver?.fcmToken) {
-            await sendNotification(driver.fcmToken, title, body, data);
-            console.log(`Notification sent for order ${order.id} to driver ${driver.id}`);
+            try {
+              console.log(`Sending notification with data:`, data);
+              await sendNotification(driver.fcmToken, title, body, data);
+              console.log(`Notification sent for order ${order.id} to driver ${driver.id}`);
+            } catch (notificationError) {
+              console.error(
+                `Failed to send notification for order ${order.id} to driver ${driver.id}:`,
+                notificationError.response?.data || notificationError.message
+              );
+            }
           } else {
             console.log(`No FCM token for driver ${driver.id}`);
           }
+        } else {
+          console.log(
+            `Order ${order.id} is more than 2 hours away: ${secondsLeft} seconds ` +
+            `(${minutesLeft} minutes) left`
+          );
         }
       }
     }
