@@ -6,10 +6,8 @@ async function orderDriverSearchScheduler() {
   try {
     console.log('📅 Cron ishga tushdi: orderDriverSearchScheduler');
     // const drivers = await driverService.getDriversForCronJob();
-    // console.log('Drivers found: ', drivers.length);
 
     const driverPlannedOrders = await orderService.getDriverPlannedOrders();
-    console.log('Driver planned orders: ', driverPlannedOrders);
 
     if (!driverPlannedOrders || driverPlannedOrders.length === 0) {
       return;
