@@ -373,12 +373,14 @@ const getDriverPlannedOrders = async () => {
             fcmToken: true,
           },
         },
-      }
+      },
+      take: 10, // limit 10 ta
     });
   } catch (error) {
     throw error;
   }
 };
+
 
 export default {
   findAll,
