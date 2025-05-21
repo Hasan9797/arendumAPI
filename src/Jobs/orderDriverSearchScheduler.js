@@ -10,15 +10,15 @@ async function orderDriverSearchScheduler() {
 
     const driverPlannedOrders = await orderService.getDriverPlannedOrders();
     console.log('Driver planned orders: ', driverPlannedOrders);
-    
+
     if (!driverPlannedOrders || driverPlannedOrders.length === 0) {
       return;
     }
-    console.log(`Orders for driver ${driverPlannedOrders.driver}: `, driverPlannedOrders.length);
 
     for (const order of driverPlannedOrders) {
 
       if (!order?.driver) continue
+      console.log(`Driver ${order}`);
 
       const orderStartAt = order.startAt ? new Date(order.startAt) : null;
 
