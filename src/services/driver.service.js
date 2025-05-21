@@ -133,18 +133,14 @@ const acceptOrder = async (orderId, driver) => {
 
     let newData = {
       driverId: driver.id,
-      status: OrderStatus.ASSIGNED,
+      status: OrderStatus.DRIVER_ON_WAY,
     };
 
     if (order.isPlanned) {
-      newData.status = OrderStatus.PLANNED;
+      newData.status = OrderStatus.ASSIGNED;
     }
 
     const updatedOrder = await orderService.updateOrder(orderId, newData);
-
-    if (!updatedOrder) {
-      throw new Error('Order update error');
-    }
 
     const preparedOrder = {
       ...order,
