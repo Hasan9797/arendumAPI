@@ -465,6 +465,14 @@ const getPlannedOrderByDriverId = async (driverId) => {
   }
 };
 
+const getDriverPlannedOrders = async () => {
+  try {
+    return await orderRepo.getDriverPlannedOrders();
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getOrders,
   getOrderById,
@@ -480,4 +488,5 @@ export default {
   cancelOrder,
   isPlannedOrder,
   getPlannedOrderByDriverId,
+  getDriverPlannedOrders,
 };

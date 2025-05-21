@@ -167,7 +167,7 @@ const getOrderByDriverId = async (driverId) => {
       where: {
         driverId,
         status: {
-          in: [OrderStatus.ASSIGNED, OrderStatus.ARRIVED, OrderStatus.START_WORK, OrderStatus.PAUSE_WORK],
+          in: [OrderStatus.DRIVER_ON_WAY, OrderStatus.ARRIVED, OrderStatus.START_WORK, OrderStatus.PAUSE_WORK],
         },
       },
       include: {
@@ -341,7 +341,8 @@ const getPlannedOrdersByDriverId = async (driverId) => {
     return await prisma.order.findMany({
       where: {
         driverId,
-        status: OrderStatus.PLANNED,
+        isPlanned: true,
+        isDriverNotified: false,
       },
       include: {
         client: {
@@ -352,6 +353,27 @@ const getPlannedOrdersByDriverId = async (driverId) => {
           },
         },
       },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getDriverPlannedOrders = async () => {
+  try {
+    return await prisma.order.findMany({
+      where: {
+        isPlanned: true,
+        isDriverNotified: false,
+      },
+      include: {
+        driver: {
+          select: {
+            id: true,
+            fcmToken: true,
+          },
+        },
+      }
     });
   } catch (error) {
     throw error;
@@ -371,4 +393,5 @@ export default {
   getOrderForCalculate,
   getOrderForSchedule,
   getPlannedOrdersByDriverId,
+  getDriverPlannedOrders,
 };
