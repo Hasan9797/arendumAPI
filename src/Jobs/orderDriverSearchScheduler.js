@@ -9,7 +9,8 @@ async function orderDriverSearchScheduler() {
     // console.log('Drivers found: ', drivers.length);
 
     const driverPlannedOrders = await orderService.getDriverPlannedOrders();
-
+    console.log('Driver planned orders: ', driverPlannedOrders);
+    
     if (!driverPlannedOrders || driverPlannedOrders.length === 0) {
       return;
     }
@@ -22,7 +23,6 @@ async function orderDriverSearchScheduler() {
       const orderStartAt = order.startAt ? new Date(order.startAt) : null;
 
       if (!orderStartAt || isNaN(orderStartAt)) {
-        // console.log(`Invalid startAt for order ${order.id}: ${order.startAt}`);
         continue;
       }
 
