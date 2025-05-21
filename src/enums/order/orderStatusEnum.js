@@ -9,7 +9,7 @@ export const OrderStatus = Object.freeze({
   PAUSE_WORK: 7,
   COMPLETED: 8,
   CLIENT_ACCEPT: 9,
-  CANCELLED: 11,
+  CANCELLED: 10,
   FAILED: 0,
 });
 

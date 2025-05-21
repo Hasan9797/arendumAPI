@@ -342,7 +342,7 @@ const getPlannedOrdersByDriverId = async (driverId) => {
       where: {
         driverId,
         isPlanned: true,
-        isDriverNotified: false,
+        status: OrderStatus.ASSIGNED,
       },
       include: {
         client: {
