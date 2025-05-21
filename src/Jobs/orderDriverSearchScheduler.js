@@ -21,7 +21,9 @@ async function orderDriverSearchScheduler() {
 
         const now = Math.floor(Date.now() / 1000);
         const orderStartAt = order.startAt ? Math.floor(new Date(order.startAt).getTime() / 1000) : null;
-
+        console.log('orderStartAt cron: ', orderStartAt);
+        console.log('now cron: ', now);
+        
         if (!orderStartAt) {
           continue;
         }
