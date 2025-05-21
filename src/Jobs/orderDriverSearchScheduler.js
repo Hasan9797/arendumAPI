@@ -18,7 +18,7 @@ async function orderDriverSearchScheduler() {
     for (const order of driverPlannedOrders) {
 
       if (!order?.driver) continue
-      console.log(`Driver ${order}`);
+      console.log(`Driver ${order.driver}`);
 
       const orderStartAt = order.startAt ? new Date(order.startAt) : null;
 
