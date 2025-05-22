@@ -233,8 +233,7 @@ const driverCancelOrder = async (orderId, driverId) => {
     }
 
     await orderService.updateOrder(orderId, {
-      status: OrderStatus.CANCELED,
-      driverId: null,
+      status: OrderStatus.CANCELLED, // CANCELED
     });
 
     await driverRepository.updateById(driverId, { inWork: false });
@@ -245,7 +244,6 @@ const driverCancelOrder = async (orderId, driverId) => {
       success: true,
     });
 
-    // await redisSetHelper.startNotificationForOrder(String(orderId));
     return {
       success: true,
       orderId,
