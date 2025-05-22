@@ -203,7 +203,7 @@ const getProcessOrderByClientId = async (clientId) => {
       where: {
         clientId,
         status: {
-          in: [OrderStatus.ASSIGNED, OrderStatus.ARRIVED, OrderStatus.START_WORK, OrderStatus.PAUSE_WORK],
+          in: [OrderStatus.DRIVER_ON_WAY, OrderStatus.ARRIVED, OrderStatus.START_WORK, OrderStatus.PAUSE_WORK],
         },
       },
       include: {
