@@ -71,12 +71,13 @@ const create = async (data) => {
   }
 };
 
-const updateById = async (id, data) => {
-  try {
-    return await driverRepository.updateById(id, data);
-  } catch (error) {
-    throw error;
-  }
+const updateById = async (id, data = {}) => {
+  const updatedData = {
+    ...data,
+    status: data.status ?? DriverStatus.INACTIVE,
+  };
+
+  return driverRepository.updateById(id, updatedData);
 };
 
 const deleteById = async (driverId) => {

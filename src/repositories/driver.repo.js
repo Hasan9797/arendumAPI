@@ -141,7 +141,7 @@ const updateById = async (id, driverData) => {
 
     const updatedUser = await prisma.driver.update({
       where: { id },
-      data: { ...driverData, status: DriverStatus.INACTIVE },
+      data: driverData,
     });
 
     // 2. Redis cache'dan o‘chirish (agar bo‘lsa)
