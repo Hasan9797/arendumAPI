@@ -65,7 +65,7 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res, next) => {
-  const { phoneNumber, autoComplete = 'not required' } = req.body;
+  const { phoneNumber, autoComplete = 'arendum' } = req.body;
 
   if (!phoneNumber) {
     return res.status(400).json({ message: 'phoneNumber is required', success: false });
