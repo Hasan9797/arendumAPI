@@ -77,7 +77,11 @@ const updateById = async (id, data = {}) => {
     status: data.status ?? DriverStatus.INACTIVE,
   };
 
-  return driverRepository.updateById(id, updatedData);
+  try {
+    return await driverRepository.updateById(id, updatedData);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const deleteById = async (driverId) => {
