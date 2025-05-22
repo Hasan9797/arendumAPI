@@ -160,7 +160,7 @@ const getNewOrder = async (region, structureId) => {
   });
 };
 
-const getOrderByDriverId = async (driverId) => {
+const getProcessOrderByDriverId = async (driverId) => {
   try {
     if (!driverId) throw new Error('Driver ID is required');
     return await prisma.order.findFirst({
@@ -197,7 +197,7 @@ const getOrderByDriverId = async (driverId) => {
   }
 };
 
-const getOrderByClientId = async (clientId) => {
+const getProcessOrderByClientId = async (clientId) => {
   try {
     return await prisma.order.findFirst({
       where: {
@@ -292,49 +292,6 @@ const getOrderForCalculate = async (id) => {
   }
 };
 
-const getOrderForSchedule = async () => {
-  const now = Date.now(); // Hozirgi vaqt millisekundda
-  const oneHourLater = now + 1 * 60 * 60 * 1000; // 1 soat keyingi vaqt
-  try {
-    return await prisma.order.findMany({
-      where: {
-        startAt: {
-          gte: new Date(now), // startAt >= hozirgi vaqt
-          lte: new Date(oneHourLater), // startAt <= hozirgi + 1 soat
-        },
-      },
-      include: {
-        client: {
-          select: {
-            id: true,
-            fullName: true,
-            phone: true,
-          },
-        },
-        machine: {
-          select: {
-            id: true,
-            name: true,
-            nameRu: true,
-            nameUz: true,
-            img: true,
-          },
-        },
-        region: {
-          select: {
-            id: true,
-            name: true,
-            nameUz: true,
-            nameRu: true,
-            isOpen: true,
-          },
-        },
-      },
-    });
-  } catch (error) {
-    throw error;
-  }
-};
 
 const getPlannedOrdersByDriverId = async (driverId) => {
   try {
@@ -390,11 +347,10 @@ export default {
   getCreatedOrder,
   updateById,
   deleteById,
-  getOrderByDriverId,
-  getOrderByClientId,
+  getProcessOrderByDriverId,
+  getProcessOrderByClientId,
   getNewOrder,
   getOrderForCalculate,
-  getOrderForSchedule,
   getPlannedOrdersByDriverId,
   getDriverPlannedOrders,
 };
