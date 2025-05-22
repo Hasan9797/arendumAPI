@@ -1,6 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import cron from 'node-cron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import http from 'http';
@@ -9,9 +8,10 @@ import SocketService from './socket/index.js';
 import { Server } from 'socket.io';
 import errorHandler from './middlewares/errorHandler.js';
 import { CustomError } from './Errors/customError.js';
-import orderDriverSearchScheduler from './Jobs/orderDriverSearchScheduler.js';
-
 dotenv.config();
+// Importing cron jobs
+import './Jobs/index.js';
+
 
 const app = express();
 app.use(cors());
@@ -26,16 +26,6 @@ new SocketService(io);
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// Cron Jobs: Har 5 daqiqada bir marta ishga tushadi
-cron.schedule('*/5 * * * *', async () => {
-  console.log('📅 Cron ishga tushdi: orderDriverSearchScheduler');
-  try {
-    await orderDriverSearchScheduler();
-  } catch (err) {
-    console.error('❌ Cronda xatolik:', err);
-  }
-});
 
 // Static files
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
