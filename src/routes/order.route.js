@@ -37,7 +37,7 @@ router.get(
   '/get-new-order',
   authentication,
   orderController.getNewOrderByDriverParams
-); // Authentication required
+); // For driver: Authentication required
 
 router.post('/create', authentication, orderController.create);
 

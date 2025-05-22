@@ -89,7 +89,7 @@ const distroy = async (req, res) => {
 const getProcessOrder = async (req, res) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
-    const order = await orderService.getOrderByClientId(lang, req.user.id);
+    const order = await orderService.getProcessOrderByClientId(lang, req.user.id);
     res.status(200).json(responseSuccess(order));
   } catch (error) {
     res.status(500).json(error);

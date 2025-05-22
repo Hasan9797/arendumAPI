@@ -80,7 +80,7 @@ const distroy = async (req, res, next) => {
 const getProcessOrder = async (req, res, next) => {
   const lang = req.headers['accept-language'] || 'ru';
   try {
-    const order = await orderService.getOrderByDriverId(parseInt(req.user.id), lang);
+    const order = await orderService.getProcessOrderByDriverId(parseInt(req.user.id), lang);
     res.status(200).json(responseSuccess(order));
   } catch (error) {
     next(error);

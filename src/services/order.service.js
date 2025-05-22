@@ -48,13 +48,6 @@ const getOrders = async (query, lang = 'ru') => {
   }
 };
 
-const getOrdersForCron = async () => {
-  try {
-    return await orderRepo.getOrderForSchedule();
-  } catch (error) {
-    throw error;
-  }
-};
 
 const getOrderById = async (id, lang = 'ru') => {
   try {
@@ -186,13 +179,17 @@ const getNewOrderByDriverParams = async (driverParams, region, structureId) => {
     const orders = await orderRepo.getNewOrder(region, structureId);
     if (!orders) return [];
 
-    const sanitizedOrders = orders.map((order) => {
+    const filteredOrders = filterOrdersByDriverParams(orders, driverParams);
+
+    const sanitizedOrders = filteredOrders.map((order) => {
       let orderTotalAmount = order.amount;
 
       if (order.type === 'hour') {
         orderTotalAmount = order.amount * order.hourCount;
       } else if (order.type === 'km') {
         orderTotalAmount = order.amount * order.kmCount;
+      }else {
+        orderTotalAmount = order.amount;
       }
 
       return {
@@ -206,7 +203,7 @@ const getNewOrderByDriverParams = async (driverParams, region, structureId) => {
       };
     });
 
-    return filterOrdersByDriverParams(sanitizedOrders, driverParams);
+    return sanitizedOrders;
   } catch (error) {
     throw error;
   }
@@ -227,9 +224,9 @@ function filterOrdersByDriverParams(orders, driverParams) {
   });
 }
 
-const getOrderByDriverId = async (driverId, lang) => {
+const getProcessOrderByDriverId = async (driverId, lang) => {
   try {
-    const order = await orderRepo.getOrderByDriverId(driverId);
+    const order = await orderRepo.getProcessOrderByDriverId(driverId);
 
     if (!order) {
       return null;
@@ -267,9 +264,9 @@ const getOrderByDriverId = async (driverId, lang) => {
   }
 };
 
-const getOrderByClientId = async (lang, clientId) => {
+const getProcessOrderByClientId = async (lang, clientId) => {
   try {
-    const order = await orderRepo.getOrderByClientId(clientId);
+    const order = await orderRepo.getProcessOrderByClientId(clientId);
 
     if (!order) {
       return {};
@@ -482,8 +479,8 @@ export default {
   startOrder,
   endOrder,
   getCreatedOrder,
-  getOrderByDriverId,
-  getOrderByClientId,
+  getProcessOrderByDriverId,
+  getProcessOrderByClientId,
   getNewOrderByDriverParams,
   cancelOrder,
   isPlannedOrder,
