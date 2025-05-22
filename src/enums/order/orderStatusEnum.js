@@ -36,6 +36,7 @@ export const StatusOptions = [
   { value: OrderStatus.DRIVER_ON_WAY, label: StatusTranslations[OrderStatus.DRIVER_ON_WAY] }, // ✅ Yangi
   { value: OrderStatus.ARRIVED, label: StatusTranslations[OrderStatus.ARRIVED] },
   { value: OrderStatus.START_WORK, label: StatusTranslations[OrderStatus.START_WORK] },
+  { value: OrderStatus.PAUSE_WORK, label: StatusTranslations[OrderStatus.PAUSE_WORK] },
   { value: OrderStatus.COMPLETED, label: StatusTranslations[OrderStatus.COMPLETED] },
   { value: OrderStatus.CLIENT_ACCEPT, label: StatusTranslations[OrderStatus.CLIENT_ACCEPT] },
   { value: OrderStatus.CANCELLED, label: StatusTranslations[OrderStatus.CANCELLED] },
