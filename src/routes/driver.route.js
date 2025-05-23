@@ -27,6 +27,8 @@ router.get('/:id', driverController.getById);
 
 router.post('/create', driverController.create);
 
+router.put('/profile-update', authentication, driverController.profileUpdate);
+
 router.put('/update/:id', driverController.update);
 
 router.delete('/delete/:id', driverController.distroy);

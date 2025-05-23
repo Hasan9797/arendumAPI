@@ -68,6 +68,15 @@ const update = async (req, res, next) => {
   }
 };
 
+const profileUpdate = async (req, res, next) => {
+  try {
+    const user = await driverService.updateProfile(parseInt(req.user.id), req.body);
+    res.status(200).json(responseSuccess());
+  } catch (error) {
+    next(error);
+  }
+};
+
 const distroy = async (req, res, next) => {
   try {
     await driverService.deleteById(parseInt(req.params.id));
@@ -176,6 +185,7 @@ export default {
   getById,
   create,
   update,
+  profileUpdate,
   distroy,
   getMe,
   acceptOrder,

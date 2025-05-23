@@ -71,10 +71,18 @@ const create = async (data) => {
   }
 };
 
-const updateById = async (id, data = {}) => {
+const updateById = async (id, data) => {
+  try {
+    return await driverRepository.updateById(id, data);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const updateProfile = async (id, data = {}) => {
   const updatedData = {
     ...data,
-    status: data.status ?? DriverStatus.INACTIVE,
+    status: DriverStatus.INACTIVE,
   };
 
   try {
@@ -280,6 +288,7 @@ export default {
   getProfile,
   create,
   updateById,
+  updateProfile,
   deleteById,
   getDriversForNewOrder,
   acceptOrder,
